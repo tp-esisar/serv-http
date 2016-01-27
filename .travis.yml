@@ -1,0 +1,5 @@
+language: c
+before_script: 
+ - make test
+ - chmod +x test
+script: ./test
