@@ -1,0 +1,3 @@
+src/parser/*.o
+src/parser/*.e
+
