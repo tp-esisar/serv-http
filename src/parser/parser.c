@@ -11,9 +11,13 @@ char pstepch(StringL* s) {
   return r;
 }
 
-int P_method(StringL* pbuff) {
+StringL P_method(StringL* pbuff) {
+  StringL window;
+  while (pstepch(pbuff) != ' ') {
+    
+  }
   
-  return -1;
+  return ;
 }
 
 int parser (char *buf,unsigned int len,char *search, void (*callback)()) {
