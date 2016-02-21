@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1456074880 source:c:\users\guillaume\documents\github\serv-http\src\liste.c
+	<stdlib.h>
+	<stdio.h>
+	"liste.h"
+
+1456074880 c:\users\guillaume\documents\github\serv-http\src\liste.h
+
+1456074895 source:c:\users\guillaume\documents\github\serv-http\src\main.c
+	<stdio.h>
+	<stdlib.h>
+	"liste.h"
+
