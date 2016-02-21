@@ -4,7 +4,7 @@
 
 int main (void)
 {
-    elm_map* map = NULL;
+    field* map = NULL;
     StringL test;
 
     printf("Programme de test pour la MAP\n");

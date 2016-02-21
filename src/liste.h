@@ -9,20 +9,21 @@ typedef struct {
     unsigned int len;
 } StringL;
 
-typedef struct elm_champ elm_champ;
-struct elm_champ {
-    StringL* content;
-    elm_champ* suivant;
+typedef struct field_content field_content;
+struct field_content {
+    StringL content;
+    field_content* suivant;
 } ;
 
-typedef struct elm_map elm_map;
-struct elm_map {
+typedef struct field field;
+struct field {
     header_name header_name;
-    elm_champ* champ;
-    elm_map* suivant;
+    field_content* champ;
+    field* suivant;
 };
 
 
-static elm_map* add_map (elm_map** map, header_name header);
-elm_map* recherche_map (elm_map* map, header_name header);
-elm_map* add_element (elm_map** map, header_name header, StringL element);
+static field* add_map (field** map, header_name header);
+field* recherche_map (field* map, header_name header);
+field* add_element (field** map, header_name header, StringL element);
+static field_content* add_champ (field_content** field, StringL string);
