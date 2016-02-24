@@ -15,7 +15,5 @@ int main (void)
     printf("%d\t ", add_element (&map, t, test));
     printf("%d\t ", add_element (&map, u, test));
 
-    printf("\n%d\t", recherche_map (map, p));
-    printf("%d\t", recherche_map (map, r));
     return EXIT_SUCCESS;
 }
