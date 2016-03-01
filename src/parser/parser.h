@@ -2,7 +2,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-
+#include "stringL.h"
 
 int parser (char *buf,unsigned int len,char *search, void (*callback)()) ;
 
@@ -10,10 +10,7 @@ int parser (char *buf,unsigned int len,char *search, void (*callback)()) ;
 
 #define stepch(a) (pstepch(&a))
 
-typedef struct {
-    char* s;
-    unsigned int len;
-} StringL;
+
 
 typedef struct {
     StringL method;

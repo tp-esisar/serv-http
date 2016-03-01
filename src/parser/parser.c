@@ -12,12 +12,9 @@ char pstepch(StringL* s) {
 }
 
 StringL P_method(StringL* pbuff) {
-  StringL window;
-  while (pstepch(pbuff) != ' ') {
-    
-  }
-  
-  return ;
+  StringL window = {pbuff->s,0}
+  while (pstepch(pbuff) != ' ') window.s++;
+  return window;
 }
 
 int parser (char *buf,unsigned int len,char *search, void (*callback)()) {
