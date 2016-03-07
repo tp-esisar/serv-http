@@ -6,11 +6,7 @@
 
 int parser (char *buf,unsigned int len,char *search, void (*callback)()) ;
 
-
-
 #define stepch(a) (pstepch(&a))
-
-
 
 typedef struct {
     StringL method;
