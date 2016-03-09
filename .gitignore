@@ -1,3 +1,8 @@
 #################
 ## Documentation ##
-/doxygen/html
+/doxygen
+/bin
+/obj
+/serv-http.cbp
+/serv-http.depend
+/serv-http.layout

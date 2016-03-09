@@ -4,109 +4,181 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "liste.h"
 
-/** \brief Fonction qui permet de créer de nouveau bloc dans la MAP
+/** \brief Fonction qui initialise la MAP en remplissant les champs de la StartLine
  *
- * \param map Pointeur sur la MAP
- * \param header Type de header qu'on l'on souhaite créer
- * \return Adresse bloc Si le bloc a été correctement crée
- * \return NULL Sinon
- *
+ * \param   methode     Champ méthode de la requête
+ * \param   target      Champ request-target de la requête
+ * \param   version     Champ HTTP-version de la requête
+ * \return  map         Pointeur sur la MAP crée
  */
-static field* add_map (field** map, header_name header)
+mapStruct* init_map (StringL methode, StringL target, StringL version)
 {
-    field* bloc = NULL;
-    field* current;
-
-    bloc = malloc(sizeof(field));
-    if (bloc == NULL)
-        return NULL;
-    bloc->header_name = header;
-    bloc->champ = NULL;
-    bloc->suivant = NULL;
-
-    if (*map == NULL) /**< Si c'est le premier bloc à être crée, on début la liste chainée */
-        *map = bloc;
-    else /**< Sinon on ajoute le bloc à la suite */
+    mapStruct* map;
+    /**< Allocation de la MAP */
+    map = malloc(sizeof(mapStruct));
+    if (map == NULL)
     {
-        current = *map;
-        while (current->suivant != NULL)
-            current = current->suivant;
-        current->suivant = bloc;
+        perror("Erreur d'allocation memoire");
+        exit(1);
     }
 
-    return bloc;
-}
-
-/** \brief Fonction qui permet de rechercher un header-field particulier dans une MAP
- *
- * \param map MAP dans lequel on fait la recherche
- * \param header header-field à rechercher
- * \return Pointeur sur le bloc qui contient le header recherché
- * \return NULL s'il n'existe pas
- *
- */
-static field* recherche_map (field* map, header_name header)
-{
-    while ((map != NULL)&&(map->header_name != header))
-        map = map->suivant;
-
+    /**< Remplissage des champs de StartLine */
+    map->methode = methode;
+    map->request_target = target;
+    map->http_version = version;
+    map->field = NULL;
     return map;
 }
 
-/** \brief Fonction qui ajoute le contenu d'un header-field dans la MAP
+/** \brief Fonction qui ajoute un header-field à la MAP
  *
- * \param field Pointeur sur le bloc de la MAP dans lequel il faut ajouter le contenu
- * \param string Le contenu à ajouter
- * \return EXIT_SUCCESS Si l'élément a bien été ajouté
- * \return EXIT_FAILURE Si l'élément n'a pas pu être ajouté
+ * \param   map     Pointeur sur la MAP
+ * \param   header  Field-name du header-field à ajouter
+ * \param   content Field-value du header-field à ajouter
+ * \return  EXIT_SUCCESS    Si le header-field a bien été ajouté
+ * \return  EXIT_FAILURE    Si le header-field n'a pas pu être ajouté car déjà présent
  *
+ * A des fins d'optimisation, même si un parseur devrait collecter la totalité des header-field (même ceux en double),
+ *  nous savons qu'une requête avec un champ en double ne pourra être traité, ici la fonction n'ajoute donc pas la
+ *  nouvelle entrée et retourne plutôt un code d'erreur.
  */
-static int add_champ (field_content** field, StringL string)
+int add_field (mapStruct* map, StringL header, StringL content)
 {
-    field_content* bloc = NULL;
-    field_content* champ;
+    field* bloc = NULL;
+    field* chaine = map->field;
 
-    bloc = malloc(sizeof(field_content));
+    /**< On crée un nouveau bloc que l'on rempli avec les informations données en paramètre */
+    bloc = malloc(sizeof(field));
     if (bloc == NULL)
-        return EXIT_FAILURE;
-    bloc->content = string;
+    {
+        perror("Erreur d'allocation memoire");
+        exit(1);
+    }
+    bloc->field_name = header;
+    bloc->header_field = content;
     bloc->suivant = NULL;
 
-    if (*field == NULL) /**< Si c'est le premier élément du bloc, on crée une nouvelle liste chainée */
-        *field = bloc;
-    else /**< Sinon on le met à la suite */
-    {
-        champ = *field;
-        while (champ->suivant != NULL)
-            champ = champ->suivant;
-        champ->suivant = bloc;
-    }
+    /**< Si la MAP est vide, on insére le bloc en le premier élément */
+    if (map->field == NULL)
+        map->field = bloc;
 
+    /**< Sinon on parcourt toute la liste chaine, on regardant si l'élément n'est pas déjà présent dans la liste
+    * Si c'est le cas, on retourne une erreur
+    * Sinon on ajoute l'élement à la fin de la liste */
+    else
+    {
+        while(chaine->suivant != NULL)
+        {
+            if (stringLEq(header, chaine->field_name))
+            {
+                free(bloc);
+                return EXIT_FAILURE;
+            }
+            chaine = chaine->suivant;
+        }
+        chaine->suivant = bloc;
+    }
     return EXIT_SUCCESS;
 }
 
-/** \brief Fonction qui permet d'ajouter un header-field dans la MAP
+/** \brief Fonction qui recherche un header-field dans la MAP
  *
- * \param map Pointeur sur la MAP
- * \param header Type de header qu'on l'on souhaite ajouter
- * \param element L'élément à ajouter
- * \return EXIT_SUCCESS Si l'élément a bien été ajouté
- * \return EXIT_FAILURE Si l'élément n'a pas pu être ajouté
+ * \param   map         Pointeur sur la MAP
+ * \param   search      field-name a rechercher
+ * \param   *callback   Pointeur sur la fonction a appeler lorsque l'on a trouvé le field
  */
-int add_element (field** map, header_name header, StringL element)
+void search_map (mapStruct* map, char* search, void (*callback)(StringL))
 {
-    field* bloc = NULL;
+    int mode = 1; /**< Mode permet de définir si ce qui est demandé est un header complet (2), ou juste le champ (1) */
+    field* bloc = map->field;
+    StringL temp, searchS;
 
-    if ((bloc = recherche_map (*map, header)) == NULL) /**< Si le bloc n'existe pas, on le crée */
+    /**< Conversion de la chaine de caractère en StringL pour pouvoir faire les comparaisons */
+    searchS.s = search;
+    searchS.len = strlen(search);
+
+    /**< On compare tout d'abord les champs spéciaux (pas sous la forme header-field) */
+
+    /**< Tout ce qui concerne la StartLine (methode, request-target, HTTP-version) */
+    if ((strcmp("start-line", search) == 0)||(strcmp("request-line", search) == 0))
     {
-        bloc = add_map(map, header);
-        return add_champ (&(bloc->champ), element);
+        temp = map->methode;
+        temp.len = (map->http_version.s)-(map->methode.s)+(map->http_version.len);
+        callback(temp);
+    }
+    else if(strcmp("methode", search) == 0)
+        callback(map->methode);
+    else if(strcmp("request-target", search) == 0)
+        callback(map->request_target);
+    else if(strcmp("HTTP-version", search) == 0)
+        callback(map->http_version);
+
+    /**< Tout ce qui concerne les requêtes qui liste des champs  */
+    else if(strcmp("header-field", search) == 0)
+    {
+        while (bloc != NULL)
+            callback(bloc->header_field);
+    }
+    else if(strcmp("field-name", search) == 0)
+    {
+        while (bloc != NULL)
+            callback(bloc->field_name);
+    }
+    else if(strcmp("field-value", search) == 0)
+    {
+        while (bloc != NULL)
+            callback(extract_fieldValue(bloc->header_field));
     }
 
-    else  /**< Sinon on ajoute l'information dans le bloc */
-        return add_champ (&(bloc->champ), element);
+    /**< Pour finir, les formes classique : header-field... */
+    else
+    {
+        if (strstr(search, "-header")) /**< Si on veut un header complet, on passe en mode 2 */
+        {
+            searchS.len = strstr(search, "-header") - search;
+            mode =2;
+        }
+        else if(strcmp("cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
+            searchS.len = 6;
+
+        /**< On cherche le champ dans la liste chainée */
+        while ((bloc != NULL) && (!stringLEq(searchS, bloc->field_name)))
+            bloc = bloc->suivant;
+        /**< Si on l'a trouvé et suivant dans quel mode on est, on envoie à callback le StringL contenant le champ recherché */
+        if (bloc != NULL)
+        {
+            if (mode == 1)  /**< Si on veut juste le content, il faut l'extraire de la ligne */
+                callback(extract_fieldValue(bloc->header_field));
+            else            /**< Sinon on renvoie toute la ligne */
+                callback(bloc->header_field);
+        }
+
+    }
+}
+
+/** \brief Fonction qui libère un bloc de la MAP et tout ces précédents (récursivement)
+ *
+ * \param bloc Pointeur sur le bloc à supprimer ainsi que ces précédents
+ */
+static void free_bloc(field* bloc)
+{
+    if (bloc->suivant == NULL)
+        free(bloc);
+    else
+    {
+        free_bloc(bloc->suivant);
+        free(bloc);
+    }
+}
+
+/** \brief Fonction qui libère la mémoire utilisée par la MAP
+ *
+ * \param map Pointeur sur la MAP
+ */
+void free_map(mapStruct* map)
+{
+    free_bloc(map->field);
+    free(map);
 }
