@@ -1,8 +1,12 @@
 #################
-## Documentation ##
-/doxygen
-/bin
-/obj
-/serv-http.cbp
-/serv-http.depend
-/serv-http.layout
+## Eclipse
+#################
+bin/*
+doxygen/*
+obj/*
+tests/*
+
+
+*.cbp
+*.depend
+*.layout

@@ -3,8 +3,8 @@
  * \brief API pour la gestion de la MAP
  *
  */
-
 #include "liste.h"
+#include "api_test.h"
 
 /** \brief Fonction qui initialise la MAP en remplissant les champs de la StartLine
  *
@@ -89,7 +89,7 @@ int add_field (mapStruct* map, StringL header, StringL content)
  * \param   search      field-name a rechercher
  * \param   *callback   Pointeur sur la fonction a appeler lorsque l'on a trouvé le field
  */
-void search_map (mapStruct* map, char* search, void (*callback)(StringL))
+void search_map (mapStruct* map, char* search, void (*callback)(char* found, unsigned int len))
 {
     int mode = 1; /**< Mode permet de définir si ce qui est demandé est un header complet (2), ou juste le champ (1) */
     field* bloc = map->field;
@@ -106,30 +106,30 @@ void search_map (mapStruct* map, char* search, void (*callback)(StringL))
     {
         temp = map->methode;
         temp.len = (map->http_version.s)-(map->methode.s)+(map->http_version.len);
-        callback(temp);
+        convert(temp, callback);
     }
     else if(strcmp("methode", search) == 0)
-        callback(map->methode);
+        convert(map->methode, callback);
     else if(strcmp("request-target", search) == 0)
-        callback(map->request_target);
+        convert(map->request_target, callback);
     else if(strcmp("HTTP-version", search) == 0)
-        callback(map->http_version);
+        convert(map->http_version, callback);
 
     /**< Tout ce qui concerne les requêtes qui liste des champs  */
     else if(strcmp("header-field", search) == 0)
     {
         while (bloc != NULL)
-            callback(bloc->header_field);
+            convert(bloc->header_field, callback);
     }
     else if(strcmp("field-name", search) == 0)
     {
         while (bloc != NULL)
-            callback(bloc->field_name);
+            convert(bloc->field_name, callback);
     }
     else if(strcmp("field-value", search) == 0)
     {
         while (bloc != NULL)
-            callback(extract_fieldValue(bloc->header_field));
+            convert(extract_fieldValue(bloc->header_field), callback);
     }
 
     /**< Pour finir, les formes classique : header-field... */
@@ -150,9 +150,9 @@ void search_map (mapStruct* map, char* search, void (*callback)(StringL))
         if (bloc != NULL)
         {
             if (mode == 1)  /**< Si on veut juste le content, il faut l'extraire de la ligne */
-                callback(extract_fieldValue(bloc->header_field));
+                convert(extract_fieldValue(bloc->header_field), callback);
             else            /**< Sinon on renvoie toute la ligne */
-                callback(bloc->header_field);
+                convert(bloc->header_field, callback);
         }
 
     }

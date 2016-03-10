@@ -3,6 +3,10 @@
  * \brief Structure de la MAP
  *
  */
+
+#ifndef LISTE_H
+#define LISTE_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -33,5 +37,7 @@ struct mapStruct {
 
 mapStruct* init_map (StringL methode, StringL target, StringL version);
 int add_field (mapStruct* map, StringL header, StringL content);
-void search_map (mapStruct* map, char* search, void (*callback)(StringL));
+void search_map (mapStruct* map, char* search, void (*callback)(char* found, unsigned int len));
 void free_map (mapStruct* map);
+
+#endif
