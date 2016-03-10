@@ -14,14 +14,28 @@ typedef struct {
     StringL string;
 } read_return;
 
-//type generique de reader:
-typedef read_return (*reader)(void);
+//type de closure de lecture (emulation du comportement d'une closure)
+struct mult_free { 
+    void* ctxt; //contexte d'execution de la closure
+    int freed;
+};
+typedef struct {
+    struct mult_free context_MF;
+    read_return (*fun)(void*); //code de la closure
+    void (*free)(struct mult_free*);
+} reader;
+
+//#define CALL_CLOSURE(NAME) NAME ## .closure(( ## NAME ## _context) ## NAME ## .context)
+#define CALL_CLOSURE(NAME) NAME.fun(NAME.context_MF.ctxt)
+#define FREE_CLOSURE(NAME) NAME->free(&NAME->context_MF)
 
 //symboles syntaxiques simples
 typedef enum {
     SP,
     HTAB,
-    OWS
+    OWS,
+    DIGIT,
+    day
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)

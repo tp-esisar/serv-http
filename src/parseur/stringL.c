@@ -16,7 +16,7 @@ int stringLEq(StringL s1, StringL s2) {
 
 char* toRegularString(StringL s) {
   char* r = NULL;
-  r = malloc((s.len+1)*sizeof(char));
+  r = malloc((s.len + 1)*sizeof(char));
   if (r == NULL) return NULL;
   else {
     for (int i = 0;i<s.len;i++)

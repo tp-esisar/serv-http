@@ -1,0 +1,4 @@
+			fin. ratio       time/s    time/fin.
+regular finalization:       0.9922        2.774  6.66581e-07
+ finalize on reclaim:       0.9999        0.602  1.43537e-07
+     no finalization:       0.0000        0.172          N/A
