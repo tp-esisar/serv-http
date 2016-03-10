@@ -31,7 +31,7 @@
 #ifndef GC_H
 #define GC_H
 
-#include "gc_version.h"
+//#include "gc_version.h"
         /* Define version numbers here to allow test on build machine   */
         /* for cross-builds.  Note that this defines the header         */
         /* version number, which may or may not match that of the       */

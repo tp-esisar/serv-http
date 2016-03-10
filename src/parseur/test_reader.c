@@ -26,16 +26,12 @@ int main() {
     fprintf(stderr, "test fail reader SP test_SP: %s\n", toRegularString(test_SP));
     exit(2);
   }
-  FREE_CLOSURE((&tempr));
-  
   tempr = read(SP, &test_SP);
   temprr = CALL_CLOSURE(tempr);
   if(temprr.state != FAIL) {
     perror("test fail reader SP state\n");
     exit(2);
   }
-  FREE_CLOSURE((&tempr));
-  
   //test de OWS permet de tester kleene et or
   
   StringL test_OWS = fromRegularString("A    BC");
@@ -53,7 +49,7 @@ int main() {
     fprintf(stderr, "test fail reader OWS test_SP: %s\n", toRegularString(test_OWS));
     exit(2);
   }
-  FREE_CLOSURE((&tempr));
+  
   
   StringL test_OWS2 = fromRegularString("     BC");
   tempr = read(OWS, &test_OWS2);
@@ -70,7 +66,7 @@ int main() {
     fprintf(stderr, "test fail reader OWS test_SP: %s\n", toRegularString(test_OWS2));
     exit(2);
   }
-  FREE_CLOSURE((&tempr));
+  
   
   
   //permet de test charIn et concat
@@ -99,8 +95,10 @@ int main() {
     exit(2);
   }
   
-  FREE_CLOSURE((&tempr));
+  
   
   printf("tests passed OK\n");
+  
+  return 0;
   
 }

@@ -15,19 +15,13 @@ typedef struct {
 } read_return;
 
 //type de closure de lecture (emulation du comportement d'une closure)
-struct mult_free { 
-    void* ctxt; //contexte d'execution de la closure
-    int freed;
-};
 typedef struct {
-    struct mult_free context_MF;
+    void* ctxt;
     read_return (*fun)(void*); //code de la closure
-    void (*free)(struct mult_free*);
 } reader;
 
 //#define CALL_CLOSURE(NAME) NAME ## .closure(( ## NAME ## _context) ## NAME ## .context)
-#define CALL_CLOSURE(NAME) NAME.fun(NAME.context_MF.ctxt)
-#define FREE_CLOSURE(NAME) NAME->free(&NAME->context_MF)
+#define CALL_CLOSURE(NAME) NAME.fun(NAME.ctxt)
 
 //symboles syntaxiques simples
 typedef enum {
