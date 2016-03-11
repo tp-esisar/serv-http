@@ -16,7 +16,7 @@ reader read(syntaxe_elem se, StringL* wBuff) {
             reader digit=read(DIGIT,wBuff);
             return concat(digit,digit);
         }
-        
+        case ALPHA: return CharIn(((StringL){"abcdefghijklmnopqrstuvwxyz",26}));
         default: return bad_symbole();
     }
     

@@ -30,7 +30,8 @@ typedef enum {
     OWS,
     DIGIT,
     day,
-    CRLF
+    CRLF,
+    ALPHA
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
