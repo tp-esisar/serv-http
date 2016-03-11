@@ -1,0 +1,12 @@
+#################
+## Eclipse
+#################
+bin/*
+doxygen/*
+obj/*
+tests/*
+
+
+*.cbp
+*.depend
+*.layout
