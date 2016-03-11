@@ -7,7 +7,7 @@ test_stringL: test_stringL.o stringL.o
 	./test_stringL.e
 
 test_reader: test_reader.o reader.o stringL.o
-	gcc -Igc/include $^ gc/lib/libgc.a -o test_reader.e
+	gcc -Igc/include $^ gc/libgc.a.ext -o test_reader.e
 	./test_reader.e
 
 parseur.o: parseur.c parseur.h
