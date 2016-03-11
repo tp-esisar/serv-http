@@ -31,7 +31,12 @@ typedef enum {
     DIGIT,
     day,
     CRLF,
-    ALPHA
+    ALPHA,
+    alphanum,
+    unreserved,
+    tchar,
+    token,
+    field-name
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
