@@ -29,7 +29,8 @@ typedef enum {
     HTAB,
     OWS,
     DIGIT,
-    day
+    day,
+    CRLF
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)

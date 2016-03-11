@@ -94,7 +94,22 @@ int main() {
     fprintf(stderr, "test fail reader OWS test_SP: %s\n", toRegularString(test_day));
     exit(2);
   }
-  
+  //Test CRLF
+  StringL test_CRLF = fromRegularString("\r\nsqfq");
+  tempr = read(CRLF, &test_CRLF);
+  temprr = CALL_CLOSURE(tempr);
+  if(temprr.state != SUCC) {
+    perror("test fail reader CRLF state\n");
+    exit(2);
+  }
+  if( !stringLEq(temprr.string, fromRegularString("\r\n")) ) {
+    fprintf(stderr, "test fail reader CLRF string: %s\n", toRegularString(temprr.string));
+    exit(2);
+  }
+  if( !stringLEq(test_CRLF, fromRegularString("sqfq"))) {
+    fprintf(stderr, "test fail reader CRLF test_CRLF: %s\n", toRegularString(test_CRLF));
+    exit(2);
+  }
   
   
   printf("tests passed OK\n");
