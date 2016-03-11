@@ -182,3 +182,36 @@ reader bad_symbole_Builder(StringL* wBuff) {
     ctxt->wBuff = wBuff;
     return make_reader_helper(letter);
 }
+
+//Closure untilChar(char c)
+#define untilChar(X) untilChar_Builder(wBuff,X)
+typedef struct {
+    StringL* wBuff;
+    char c;
+} untilChar_context;
+read_return untilChar_closure(untilChar_context* ctxt) {
+    char c = ctxt->c;
+    StringL *wBuff = ctxt->wBuff;
+    if((wBuff->s == NULL) || (wBuff->len == 0)) {
+        return RET_FAIL;
+    }
+    else {
+        int i = 0;
+        while(i<wBuff->len) {
+            if(wBuff->s[i] == c) {
+                read_return rr = {SUCC,{wBuff->s,i-1}};
+                wBuff->s += i; 
+                wBuff->len -= i;
+                return rr;
+            }
+            i++;
+        }
+        return RET_FAIL;
+    }
+}
+reader untilChar_Builder(StringL* wBuff, char c) {
+    untilChar_context* ctxt = GC_MALLOC(sizeof(untilChar_context)); 
+    ctxt->wBuff = wBuff;
+    ctxt->c = c;
+    return make_reader_helper(untilChar);
+}
