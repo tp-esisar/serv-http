@@ -216,7 +216,7 @@ reader untilChar_Builder(StringL* wBuff, char c) {
     return make_reader_helper(untilChar);
 }
 
-//Closure charBetween(char c)
+//Closure charBetween(char c, char c)
 #define charBetween(X,Y) charBetween_Builder(wBuff,X,Y)
 typedef struct {
     StringL* wBuff;
@@ -247,3 +247,43 @@ reader charBetween_Builder(StringL* wBuff, char a, char b) {
     ctxt->b = b;
     return make_reader_helper(charBetween);
 }
+
+//Closure nOccurences(reader r, int n)
+#define nOccurences(X,Y) nOccurences_Builder(wBuff,X,Y)
+typedef struct {
+    StringL* wBuff;
+    reader r;
+    int n;
+} nOccurences_context;
+read_return nOccurences_closure(nOccurences_context* ctxt) {
+    reader r = ctxt->r;
+    int n = ctxt->n;
+    StringL *wBuff = ctxt->wBuff;
+    StringL save = *wBuff;
+    int totalLen = 0;
+    if((wBuff->s == NULL) || (wBuff->len == 0)) {
+        return RET_FAIL;
+    }
+    else {
+        for(int i;i<n;i++) {
+            read_return rr = CALL_CLOSURE(r);
+            if(rr.state == SUCC) {
+                totalLen += rr.string.len;
+                i++;
+            }
+            else {
+                *wBuff = save;
+                return RET_FAIL;
+            }
+        }
+        return (read_return){SUCC,{save.s,totalLen}};
+    }
+}
+reader nOccurences_Builder(StringL* wBuff, reader r, int n) {
+    nOccurences_context* ctxt = GC_MALLOC(sizeof(nOccurences_context)); 
+    ctxt->wBuff = wBuff;
+    ctxt->r = r;
+    ctxt->n = n;
+    return make_reader_helper(nOccurences);
+}
+
