@@ -287,3 +287,32 @@ reader nOccurences_Builder(StringL* wBuff, reader r, int n) {
     return make_reader_helper(nOccurences);
 }
 
+//Closure optionnal(reader r)
+#define optionnal(X) optionnal_Builder(wBuff,X)
+typedef struct {
+    StringL* wBuff;
+    reader r;
+} optionnal_context;
+read_return optionnal_closure(optionnal_context* ctxt) {
+    reader r = ctxt->r;
+    StringL *wBuff = ctxt->wBuff;
+    if((wBuff->s == NULL) || (wBuff->len == 0)) {
+        return (read_return){SUCC,{wBuff->s,0}};
+    }
+    else {
+        read_return rr = CALL_CLOSURE(r);
+        if(rr.state == SUCC) {
+            return rr;
+        }
+        return (read_return){SUCC,{wBuff->s,0}};
+    }
+}
+reader optionnal_Builder(StringL* wBuff, reader r) {
+    optionnal_context* ctxt = GC_MALLOC(sizeof(optionnal_context)); 
+    ctxt->wBuff = wBuff;
+    ctxt->r = r;
+    return make_reader_helper(optionnal);
+}
+
+
+
