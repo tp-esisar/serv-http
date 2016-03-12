@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include "base_readers.c"
 
+#define symb(X) read(X,wBuff)
+
 reader read(syntaxe_elem se, StringL* wBuff) {
     
     switch(se) {
@@ -12,32 +14,33 @@ reader read(syntaxe_elem se, StringL* wBuff) {
         case OWS: return kleene(or(letter(' '),letter('\t')));
         case CRLF: return concat(letter('\r'),letter('\n'));
         case DIGIT: return charIn(((StringL){"0123456789",10}));
-        case day: {
-            reader digit=read(DIGIT,wBuff);
-            return concat(digit,digit);
-        }
+        case day: return concat(symb(DIGIT),symb(DIGIT));
         case ALPHA: return charIn(((StringL){"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",52}));
-        case alphanum: return or(DIGIT, ALPHA);
+        case alphanum: return or(symb(DIGIT), symb(ALPHA));
         case unreserved: return or(alphanum,charIn(((StringL){"-._~"},4)));
-        case tchar: return or(alphanum,charIn(((StringL){"!#$%&'*+-.^_`|~"},15)));
-        case token: return concat(tchar,kleene(tchar));
-        case field-name return token;
-        case VCHAR return charBetween(0x21, 0x7E); //à implémenter : prototype -> reader charBetween(int,int);
-        case obs-text return charBetween(0x21, 0x7E); //à implémenter : prototype -> reader charBetween(int,int);
-        case field-vchar return or(VCHAR, obs-text);
-        case field-content return concat( field-vchar, concat( concat(or(SP, HTAB), kleene(or(SP, HTAB))), field-vchar)); //cette technique de concat(var, kleene(var)) sert à avoir au moins une occurence de var, si on veut au moin n occurences, n défini, faire une fonction ?
-        case obs-fold return concat( CRLF, concat(or(SP, HTAB), kleene(or(SP, HTAB))));
-        case field-value return kleene(or(field-content, obs-fold));
-        case header-field return concat( field-name,concat( letter(':'), concat( OWS, concat( field-value, OWS))));
-        case method return token;
-        case HEXDIG return or(DIGIT, charIn(((StringL){"ABCDEF",6})));
-        case pct-encoded return concat(letter('%'), concat(HEXDIG, HEXDIG));
-        case sub-delims return charIn(((StringL){"!$&'()*+,;="},12));
-        case pchar return or(unreserved, or( pct-encoded, or( sub-delims, or( letter(':') , letter('@')))));
-        case segment return kleene(pchar);
-        case absolute-path return concat(segment, kleene(segment));
-        case query return kleene(or( pchar, or( letter('/'), letter('?'))));
-        case origin-form return concat(absolute-path, optionnal(concat(letter('?'),query))); // à implémenter : prototypr -> reader optionnal(reader);
+        case tchar: return or(symb(alphanum),charIn(((StringL){"!#$%&'*+-.^_`|~"},15)));
+        case token: return concat(symb(tchar),kleene(tchar));
+        case field_name: return symb(token);
+        case VCHAR: return charBetween(0x21, 0x7E); //à implémenter : prototype -> reader charBetween(int,int);
+        case obs_text: return charBetween(0x21, 0x7E); //à implémenter : prototype -> reader charBetween(int,int);
+        case field_vchar: return or(symb(VCHAR), symb(obs_text));
+        case field_content: return concat( symb(field_vchar), concat( concat(or(symb(SP), symb(HTAB)), kleene(or(symb(SP), symb(HTAB)))), symb(field)-vchar)); //cette technique de concat(var, kleene(var)) sert à avoir au moins une occurence de var, si on veut au moin n occurences, n défini, faire une fonction ?
+        case obs_fold: return concat( symb(CRLF), concat(or(symb(SP), symb(HTAB)), kleene(or(symb(SP), symb(HTAB)))));
+        case field_value: return kleene(or(symb(field_content), symb(obs_fold)));
+        case header_field: return concat( symb(field_name),concat( letter(':'), concat( symb(OWS), concat( symb(field_value), symb(OWS)))));
+        case method: return symb(token);
+        case HEXDIG: return or(symb(DIGIT), charIn(((StringL){"ABCDEF",6})));
+        case pct_encoded: return concat(letter('%'), concat(symb(HEXDIG), symb(HEXDIG)));
+        case sub_delims: return charIn(((StringL){"!$&'()*+,;="},12));
+        case pchar: return or(symb(unreserved), or( symb(pct_encoded), or( symb(sub_delims), or( letter(':') , letter('@')))));
+        case segment: return kleene(symb(pchar));
+        case absolute_path: return concat(symb(segment), kleene(symb(segment)));
+        case query: return kleene(or( symb(pchar), or( letter('/'), letter('?'))));
+        case origin_form: return concat(symb(absolute_path), optionnal(concat(letter('?'),symb(query)))); // à implémenter : prototypr -> reader optionnal(reader);
+        case scheme: concat(symb(ALPHA), or(or(ALPHA, DIGIT), or(letter('+'), or(letter('-'), letter('.')))));
+        case userinfo: kleene(or(or(symb(unreserved), symb(pct_encoded)), or(symb(sub_delims),letter(':'))));
+        case h16: concat(concat(concat(symb(HEXDIG),symb(HEXDIG)),concat(symb(HEXDIG),symb(HEXDIG))),kleene(concat(concat(symb(HEXDIG),symb(HEXDIG)),concat(symb(HEXDIG),symb(HEXDIG))))); //serait plus simple avec une fonction du type nOccurences(reader, int)
+        case 
         default: return bad_symbole();
     }
     

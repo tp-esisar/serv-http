@@ -52,7 +52,11 @@ typedef enum {
     segment,
     absolute-path,
     query,
-    origin-form
+    origin-form,
+    sheme,
+    userinfo,
+    h16,
+    
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
