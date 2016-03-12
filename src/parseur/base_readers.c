@@ -215,3 +215,35 @@ reader untilChar_Builder(StringL* wBuff, char c) {
     ctxt->c = c;
     return make_reader_helper(untilChar);
 }
+
+//Closure charBetween(char c)
+#define charBetween(X,Y) charBetween_Builder(wBuff,X,Y)
+typedef struct {
+    StringL* wBuff;
+    char a;
+    char b;
+} charBetween_context;
+read_return charBetween_closure(charBetween_context* ctxt) {
+    char a = ctxt->a;
+    char b = ctxt->b;
+    StringL *wBuff = ctxt->wBuff;
+    if((wBuff->s == NULL) || (wBuff->len == 0)) {
+        return RET_FAIL;
+    }
+    else {
+        if( (wBuff->s[0] >= a) && (wBuff->s[0] <= b) ) {
+            read_return rr = {SUCC,{wBuff->s,1}};
+            wBuff->s++; 
+            wBuff->len--;
+            return rr;
+        }
+        return RET_FAIL;
+    }
+}
+reader charBetween_Builder(StringL* wBuff, char a, char b) {
+    charBetween_context* ctxt = GC_MALLOC(sizeof(charBetween_context)); 
+    ctxt->wBuff = wBuff;
+    ctxt->a = a;
+    ctxt->b = b;
+    return make_reader_helper(charBetween);
+}
