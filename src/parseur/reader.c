@@ -40,6 +40,9 @@ reader read(syntaxe_elem se, StringL* wBuff) {
         case scheme: concat(symb(ALPHA), or(or(symb(ALPHA), symb(DIGIT)), or(letter('+'), or(letter('-'), letter('.')))));
         case userinfo: kleene(or(or(symb(unreserved), symb(pct_encoded)), or(symb(sub_delims),letter(':'))));
         //case h16: concat(nOccurences(symb(HEXDIG),4),kleene(nOccurences(symb(HEXDIG),4))); //à implémenter : prototype -> reader nOccurences(reader, int);
+        //case dec_octet: or(or(symb(DIGIT),concat(charBetween(0x31,0x39),symb(DIGIT))), or(concat(letter('1'),concat(symb(DIGIT),symb(DIGIT))), or(concat(letter('2'),concat(charBetween(0x30,0x34),symb(DIGIT))),concat(letter('2'),concat(letter('5'),charBetween(0x30,0x35))))));
+        //case IPv4address: concat(nOccurences(concat(symb(dec_octet),letter('.')),3),symb(dec_octet));
+        
         //case IPv6address: 
         default: return bad_symbole();
     }

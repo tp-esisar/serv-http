@@ -56,6 +56,9 @@ typedef enum {
     scheme,
     userinfo,
     h16,
+    dec_octet,
+    IPv4address,
+    
     IPv6address,
 } syntaxe_elem;
 
