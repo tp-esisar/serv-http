@@ -36,7 +36,23 @@ typedef enum {
     unreserved,
     tchar,
     token,
-    field-name
+    field-name,
+    VCHAR,
+    obs-text,
+    field-vchar,
+    field-content,
+    obs-fold,
+    field-value,
+    header-field,
+    method,
+    HEXDIG,
+    pct-encoded,
+    sub-delims,
+    pchar,
+    segment,
+    absolute-path,
+    query,
+    origin-form
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
