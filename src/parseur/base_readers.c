@@ -17,6 +17,24 @@ reader make_reader(void* ctxt, read_return (*fun)(void*)) {
 }
 #define make_reader_helper(NAME) make_reader((void*)ctxt,(read_return (*)(void*))NAME ## _closure)
 
+
+//Closure epsilon()
+#define epsilon() epsilon_Builder(wBuff)
+typedef struct {
+    StringL* wBuff;
+} epsilon_context;
+read_return epsilon_closure(epsilon_context* ctxt) {
+    StringL *wBuff = ctxt->wBuff;
+    return (read_return){SUCC,{wBuff->s,0}};
+}
+reader epsilon_Builder(StringL* wBuff) {
+    epsilon_context* ctxt = GC_MALLOC(sizeof(epsilon_context));
+    ctxt->wBuff = wBuff;
+    return make_reader_helper(epsilon);
+}
+
+
+
 //Closure letter(char c)
 #define letter(X) letter_Builder(wBuff,X)
 typedef struct {
@@ -168,6 +186,52 @@ reader concat_Builder(StringL* wBuff, reader a, reader b) {
 
 
 
+//Closure and(reader a, reader b) !en cas de succès, les 2 readers doivent retourner la même string!!
+#define and(X,Y) and_Builder(wBuff,X,Y)
+typedef struct {
+    StringL* wBuff;
+    reader a;
+    reader b;
+} and_context;
+read_return and_closure(and_context* ctxt) {
+    StringL *wBuff = ctxt->wBuff;
+    reader readerA = ctxt->a;
+    reader readerB = ctxt->b;
+    StringL save = *wBuff;
+    read_return a, b;
+    a=CALL_CLOSURE(readerA);
+    if (a.state == SUCC) {
+        *wBuff = save; //on remet le buffer à 0 (!= concat)
+        b=CALL_CLOSURE(readerB);
+        if (b.state == SUCC) {
+            if (a.string.len == b.string.len) {
+                return (read_return){SUCC,{save.s,a.string.len}};
+            }
+            else {
+                *wBuff = save;
+                return RET_FAIL;
+            }
+        }
+        else {
+            *wBuff = save;
+            return RET_FAIL;
+        }
+    }
+    else {
+        *wBuff = save;
+        return RET_FAIL;
+    }
+}
+reader and_Builder(StringL* wBuff, reader a, reader b) {
+    and_context* ctxt = GC_MALLOC(sizeof(and_context));
+    ctxt->wBuff = wBuff;
+    ctxt->a = a;
+    ctxt->b = b;
+    return make_reader_helper(and);
+}
+
+
+
 //Closure bad_symbole()
 #define bad_symbole() bad_symbole_Builder(wBuff)
 typedef struct {
@@ -248,25 +312,26 @@ reader charBetween_Builder(StringL* wBuff, char a, char b) {
     return make_reader_helper(charBetween);
 }
 
-//Closure nOccurences(reader r, int n)
-#define nOccurences(X,Y) nOccurences_Builder(wBuff,X,Y)
+//Closure nOccurencesMin(reader r, int n)
+#define nOccurencesMin(X,Y) nOccurencesMin_Builder(wBuff,X,Y)
 typedef struct {
     StringL* wBuff;
     reader r;
     int n;
-} nOccurences_context;
-read_return nOccurences_closure(nOccurences_context* ctxt) {
+} nOccurencesMin_context;
+read_return nOccurencesMin_closure(nOccurencesMin_context* ctxt) {
     reader r = ctxt->r;
     int n = ctxt->n;
     StringL *wBuff = ctxt->wBuff;
     StringL save = *wBuff;
     int totalLen = 0;
+    read_return rr;
     if((wBuff->s == NULL) || (wBuff->len == 0)) {
         return RET_FAIL;
     }
     else {
-        for(int i;i<n;i++) {
-            read_return rr = CALL_CLOSURE(r);
+        for(int i = 0;i<n;i++) {
+            rr = CALL_CLOSURE(r);
             if(rr.state == SUCC) {
                 totalLen += rr.string.len;
                 i++;
@@ -276,43 +341,68 @@ read_return nOccurences_closure(nOccurences_context* ctxt) {
                 return RET_FAIL;
             }
         }
+        while ( (rr=CALL_CLOSURE(r)).state == SUCC ) {
+            totalLen += rr.string.len;
+        }
         return (read_return){SUCC,{save.s,totalLen}};
     }
 }
-reader nOccurences_Builder(StringL* wBuff, reader r, int n) {
-    nOccurences_context* ctxt = GC_MALLOC(sizeof(nOccurences_context)); 
+reader nOccurencesMin_Builder(StringL* wBuff, reader r, int n) {
+    nOccurencesMin_context* ctxt = GC_MALLOC(sizeof(nOccurencesMin_context)); 
     ctxt->wBuff = wBuff;
     ctxt->r = r;
     ctxt->n = n;
-    return make_reader_helper(nOccurences);
+    return make_reader_helper(nOccurencesMin);
 }
 
-//Closure optionnal(reader r)
-#define optionnal(X) optionnal_Builder(wBuff,X)
+
+//Closure nOccurencesMax(reader r, int n)
+#define nOccurencesMax(X,Y) nOccurencesMax_Builder(wBuff,X,Y)
 typedef struct {
     StringL* wBuff;
     reader r;
-} optionnal_context;
-read_return optionnal_closure(optionnal_context* ctxt) {
+    int n;
+} nOccurencesMax_context;
+read_return nOccurencesMax_closure(nOccurencesMax_context* ctxt) {
     reader r = ctxt->r;
+    int n = ctxt->n;
     StringL *wBuff = ctxt->wBuff;
+    StringL save = *wBuff;
+    int totalLen = 0;
     if((wBuff->s == NULL) || (wBuff->len == 0)) {
         return (read_return){SUCC,{wBuff->s,0}};
     }
     else {
-        read_return rr = CALL_CLOSURE(r);
-        if(rr.state == SUCC) {
-            return rr;
+        for(int i = 0;i<n;i++) {
+            read_return rr = CALL_CLOSURE(r);
+            if(rr.state == SUCC) {
+                totalLen += rr.string.len;
+                i++;
+            }
+            else {
+                *wBuff = save;
+                return (read_return){SUCC,{save.s,totalLen}};
+            }
         }
-        return (read_return){SUCC,{wBuff->s,0}};
+        return RET_FAIL;
     }
 }
-reader optionnal_Builder(StringL* wBuff, reader r) {
-    optionnal_context* ctxt = GC_MALLOC(sizeof(optionnal_context)); 
+reader nOccurencesMax_Builder(StringL* wBuff, reader r, int n) {
+    nOccurencesMax_context* ctxt = GC_MALLOC(sizeof(nOccurencesMax_context)); 
     ctxt->wBuff = wBuff;
     ctxt->r = r;
-    return make_reader_helper(optionnal);
+    ctxt->n = n;
+    return make_reader_helper(nOccurencesMax);
 }
+
+
+
+//Reader composé nOccurences(reader r, int n)
+#define nOccurences(X,Y) and_Builder(wBuff,nOccurencesMax_Builder(xBuff,X,Y),nOccurencesMin_Builder(wBuff,X,Y))
+
+//Reader composé optionnal(reader r)
+#define optionnal(X) or_Builder(wBuff,X,epsilon_Builder(wBuff))
+
 
 
 

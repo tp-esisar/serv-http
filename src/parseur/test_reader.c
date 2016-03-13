@@ -3,7 +3,38 @@
 #include <string.h>
 #include <stdio.h>
 
-//dépends de StringL
+
+
+int test_SUCC(char* name, syntaxe_elem se, char* buffIn, char* buffOut, char* expect) {
+  StringL buffInSL = fromRegularString(buffIn);
+  StringL buffOutSL = fromRegularString(buffOut);
+  StringL expectSL = fromRegularString(expect);
+  reader r = read(se,&buffInSL);
+  read_return rr = CALL_CLOSURE(r);
+  int ok = 0;
+  if(rr.state != SUCC) {
+    fprintf(stderr, "test_SUCC \"%s\" FAIL STATE RETURN\n",name);
+    ok+=1;
+  }
+  if( !stringLEq(buffInSL, buffOutSL) ) {
+    char* modifBuffIn = toRegularString(buffInSL);
+    fprintf(stderr, "test_SUCC \"%s\" FAIL IN/OUT -> \n\tin: \"%s\" out: \"%s\" instead of \"%s\"\n",name,buffIn,modifBuffIn,buffOut);
+    free(modifBuffIn);
+    ok+=1;
+  }
+  if( !stringLEq(rr.string, expectSL) ) {
+    char* strReturn = toRegularString(rr.string);
+    fprintf(stderr, "test_SUCC \"%s\" FAIL EXPECT RETURN -> \n\tgot: \"%s\" instead of \"%s\"\n",name,strReturn,expect);
+    free(strReturn);
+    ok+=1;
+  }
+  free(buffInSL.s);
+  free(buffOutSL.s);
+  free(expectSL.s);
+  return ok;
+}
+
+
 
 int main() {
 
