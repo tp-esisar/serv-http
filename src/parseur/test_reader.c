@@ -4,29 +4,31 @@
 #include <stdio.h>
 
 
-
-int test_SUCC(char* name, syntaxe_elem se, char* buffIn, char* buffOut, char* expect) {
+int test(char* name, syntaxe_elem se,read_state state, char* buffIn, char* expect, char* buffOut) {
   StringL buffInSL = fromRegularString(buffIn);
   StringL buffOutSL = fromRegularString(buffOut);
   StringL expectSL = fromRegularString(expect);
   reader r = read(se,&buffInSL);
   read_return rr = CALL_CLOSURE(r);
   int ok = 0;
-  if(rr.state != SUCC) {
-    fprintf(stderr, "test_SUCC \"%s\" FAIL STATE RETURN\n",name);
-    ok+=1;
+  if(rr.state != state) {
+    fprintf(stderr, "test \"%s\" FAIL STATE RETURN\n",name);
+    return 1;
   }
-  if( !stringLEq(buffInSL, buffOutSL) ) {
+  if( (!stringLEq(buffInSL, buffOutSL)) && (state == SUCC) ) {
     char* modifBuffIn = toRegularString(buffInSL);
-    fprintf(stderr, "test_SUCC \"%s\" FAIL IN/OUT -> \n\tin: \"%s\" out: \"%s\" instead of \"%s\"\n",name,buffIn,modifBuffIn,buffOut);
+    fprintf(stderr, "test \"%s\" FAIL IN/OUT -> \n\tin: \"%s\" out: \"%s\" instead of \"%s\"\n",name,buffIn,modifBuffIn,buffOut);
     free(modifBuffIn);
     ok+=1;
   }
-  if( !stringLEq(rr.string, expectSL) ) {
+  if( (!stringLEq(rr.string, expectSL)) && (state == SUCC)) {
     char* strReturn = toRegularString(rr.string);
-    fprintf(stderr, "test_SUCC \"%s\" FAIL EXPECT RETURN -> \n\tgot: \"%s\" instead of \"%s\"\n",name,strReturn,expect);
+    fprintf(stderr, "test \"%s\" FAIL EXPECT RETURN -> \n\tgot: \"%s\" instead of \"%s\"\n",name,strReturn,expect);
     free(strReturn);
     ok+=1;
+  }
+  if(ok == 0) {
+    printf("test \"%s\" OK",name);
   }
   free(buffInSL.s);
   free(buffOutSL.s);
@@ -141,6 +143,10 @@ int main() {
     fprintf(stderr, "test fail reader CRLF test_CRLF: %s\n", toRegularString(test_CRLF));
     exit(2);
   }
+  
+  test("SP 1",SP,SUCC," A B   "," ","A B   ");
+  test("SP 2",SP,FAIL,"A B   ","","");
+  
   
   
   printf("tests passed OK\n");
