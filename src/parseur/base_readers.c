@@ -398,7 +398,7 @@ reader nOccurencesMax_Builder(StringL* wBuff, reader r, int n) {
 
 
 //Reader composé nOccurences(reader r, int n)
-#define nOccurences(X,Y) and_Builder(wBuff,nOccurencesMax_Builder(xBuff,X,Y),nOccurencesMin_Builder(wBuff,X,Y))
+#define nOccurences(X,Y) and_Builder(wBuff,nOccurencesMax_Builder(wBuff,X,Y),nOccurencesMin_Builder(wBuff,X,Y))
 
 //Reader composé optionnal(reader r)
 #define optionnal(X) or_Builder(wBuff,X,epsilon_Builder(wBuff))
