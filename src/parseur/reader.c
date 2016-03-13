@@ -7,6 +7,7 @@
 #define symb(X) read(X,wBuff)
 //#define nOccurencesRange(X,n1,n2) nOccurencesMax(nOccurencesMin(X,n1),n2)
 #define nOccurencesRange(X,n1,n2) and(nOccurencesMin(X,n1),nOccurencesMin(X,n2))
+#define string(X) epsilon()
 
 reader read(syntaxe_elem se, StringL* wBuff) {
     
@@ -76,7 +77,15 @@ reader read(syntaxe_elem se, StringL* wBuff) {
         case authority_form: return symb(authority);
         case asterisk_form: return letter('*');
         case request_target: return or(or( symb(origin_form), symb(absolute_form)), or( symb(authority_form), symb(asterisk_form)));
-
+        case HTTP_name: return string("HTTP");
+        case HTTP_version: return concat(concat(concat( symb(HTTP_name), letter('/')), symb(DIGIT)),concat( letter('.'), symb(DIGIT)));
+        case request_line: return concat(concat(concat( symb(method), symb(SP)), concat( symb(request_target), symb(SP))),concat( symb(HTTP_version), symb(CRLF)));
+        case status_code: return nOccurences(symb(DIGIT),3);
+        case reason_phrase: return kleene(or(or( symb(HTAB), symb(SP)),or( symb(VCHAR), symb(obs_text))));
+        case status_line: return concat(concat(concat( symb(HTTP_version), symb(SP)), concat( symb(status_code), symb(SP))),concat( symb(reason_phrase), symb(CRLF)));
+        case start_line: return or(symb(request_line), symb(status_line));
+        case OCTET: return charBetween(0x00, 0xFF);
+        case message_body: return kleene(symb(OCTET));
         default: return bad_symbole();
     }
     

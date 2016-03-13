@@ -76,7 +76,16 @@ typedef enum {
     authority_form,
     asterisk_form,
     request_target,
-    port
+    port,
+    HTTP_name,
+    HTTP_version,
+    request_line,
+    start_line,
+    status_code,
+    reason_phrase,
+    status_line,
+    OCTET,
+    message_body
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
