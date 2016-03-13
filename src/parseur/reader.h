@@ -75,7 +75,8 @@ typedef enum {
     absolute_form,
     authority_form,
     asterisk_form,
-    request_target
+    request_target,
+    port
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
