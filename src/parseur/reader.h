@@ -58,8 +58,24 @@ typedef enum {
     h16,
     dec_octet,
     IPv4address,
-    
+    ls32,
     IPv6address,
+    IPvFuture,
+    IP_literal,
+    reg_name,
+    host,
+    authority,
+    path_abempty,
+    segment_nz,
+    path_absolute,
+    path_rootless,
+    path_empty,
+    hier_part,
+    absolute_URI,
+    absolute_form,
+    authority_form,
+    asterisk_form,
+    request_target
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
