@@ -146,6 +146,10 @@ int main() {
   
   test("SP 1",SP,SUCC," A B   "," ","A B   ");
   test("SP 2",SP,FAIL,"A B   ","","");
+  test("OWS 1",OWS,SUCC,"RASCASSE","","RASCASSE");
+  test("OWS 2",OWS,SUCC," RASCASSE"," ","RASCASSE");
+  test("OWS 2",OWS,SUCC,"   RASCASSE","   ","RASCASSE");
+  
   
   
   
