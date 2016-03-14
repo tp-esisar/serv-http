@@ -16,7 +16,7 @@ parseur.o: parseur.c parseur.h
 stringL.o: stringL.c stringL.h
 	gcc -c stringL.c -o stringL.o $(CFLAGS)
 	
-reader.o: reader.c reader.h 
+reader.o: reader.c reader.h base_readers.c
 	gcc $(CFLAGS) -Igc/include -c reader.c -o reader.o 
 	
 test_stringL.o: test_stringL.c stringL.h

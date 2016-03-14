@@ -6,6 +6,7 @@
 
 int test(char* name, syntaxe_elem se,read_state state, char* buffIn, char* expect, char* buffOut) {
   StringL buffInSL = fromRegularString(buffIn);
+  StringL buffInSLSave = buffInSL;
   StringL buffOutSL = fromRegularString(buffOut);
   StringL expectSL = fromRegularString(expect);
   reader r = read(se,&buffInSL);
@@ -28,11 +29,11 @@ int test(char* name, syntaxe_elem se,read_state state, char* buffIn, char* expec
     ok+=1;
   }
   if(ok == 0) {
-    printf("test \"%s\" OK",name);
+    printf("test \"%s\" OK\n",name);
   }
-  free(buffInSL.s);
-  free(buffOutSL.s);
-  free(expectSL.s);
+  if(buffInSLSave.len != 0) free(buffInSLSave.s);
+  if(buffOutSL.len != 0) free(buffOutSL.s);
+  if(expectSL.len != 0) free(expectSL.s);
   return ok;
 }
 
@@ -148,7 +149,7 @@ int main() {
   test("SP 2",SP,FAIL,"A B   ","","");
   test("OWS 1",OWS,SUCC,"RASCASSE","","RASCASSE");
   test("OWS 2",OWS,SUCC," RASCASSE"," ","RASCASSE");
-  test("OWS 2",OWS,SUCC,"   RASCASSE","   ","RASCASSE");
+  test("OWS 3",OWS,SUCC,"   RASCASSE","   ","RASCASSE");
   
   
   

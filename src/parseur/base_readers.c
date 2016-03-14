@@ -326,26 +326,20 @@ read_return nOccurencesMin_closure(nOccurencesMin_context* ctxt) {
     StringL save = *wBuff;
     int totalLen = 0;
     read_return rr;
-    if((wBuff->s == NULL) || (wBuff->len == 0)) {
-        return RET_FAIL;
+    int i = 0;
+    
+    while((rr=CALL_CLOSURE(r)).state == SUCC ) {
+        totalLen += rr.string.len;
+        i++;
     }
-    else {
-        for(int i = 0;i<n;i++) {
-            rr = CALL_CLOSURE(r);
-            if(rr.state == SUCC) {
-                totalLen += rr.string.len;
-                i++;
-            }
-            else {
-                *wBuff = save;
-                return RET_FAIL;
-            }
-        }
-        while ( (rr=CALL_CLOSURE(r)).state == SUCC ) {
-            totalLen += rr.string.len;
-        }
+    if(i>=n) {
         return (read_return){SUCC,{save.s,totalLen}};
     }
+    else {
+        *wBuff = save;
+        return RET_FAIL;
+    }
+    
 }
 reader nOccurencesMin_Builder(StringL* wBuff, reader r, int n) {
     nOccurencesMin_context* ctxt = GC_MALLOC(sizeof(nOccurencesMin_context)); 
@@ -369,23 +363,17 @@ read_return nOccurencesMax_closure(nOccurencesMax_context* ctxt) {
     StringL *wBuff = ctxt->wBuff;
     StringL save = *wBuff;
     int totalLen = 0;
-    if((wBuff->s == NULL) || (wBuff->len == 0)) {
-        return (read_return){SUCC,{wBuff->s,0}};
-    }
-    else {
-        for(int i = 0;i<n;i++) {
-            read_return rr = CALL_CLOSURE(r);
-            if(rr.state == SUCC) {
-                totalLen += rr.string.len;
-                i++;
-            }
-            else {
-                *wBuff = save;
-                return (read_return){SUCC,{save.s,totalLen}};
-            }
+    int i=0;
+    read_return rr;
+    while((rr=CALL_CLOSURE(r)).state == SUCC ) {
+        totalLen += rr.string.len;
+        i++;
+        if(i>n+1) {
+            *wBuff = save;
+            return RET_FAIL;
         }
-        return RET_FAIL;
     }
+    return (read_return){SUCC,{save.s,totalLen}};
 }
 reader nOccurencesMax_Builder(StringL* wBuff, reader r, int n) {
     nOccurencesMax_context* ctxt = GC_MALLOC(sizeof(nOccurencesMax_context)); 
@@ -398,10 +386,10 @@ reader nOccurencesMax_Builder(StringL* wBuff, reader r, int n) {
 
 
 //Reader composé nOccurences(reader r, int n)
-#define nOccurences(X,Y) and_Builder(wBuff,nOccurencesMax_Builder(wBuff,X,Y),nOccurencesMin_Builder(wBuff,X,Y))
+#define nOccurences(X,Y) and(nOccurencesMax(X,Y),nOccurencesMin(X,Y))
 
 //Reader composé optionnal(reader r)
-#define optionnal(X) or_Builder(wBuff,X,epsilon_Builder(wBuff))
+#define optionnal(X) or(X,epsilon())
 
 
 

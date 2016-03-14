@@ -16,7 +16,7 @@ reader read(syntaxe_elem se, StringL* wBuff) {
         case OWS: return kleene(or(letter(' '),letter('\t')));
         case CRLF: return concat(letter('\r'),letter('\n'));
         case DIGIT: return charIn(((StringL){"0123456789",10}));
-        case day: return nOccurences(symb(DIGIT),2);
+        case day: return concat(symb(DIGIT),symb(DIGIT));
         case ALPHA: return charIn(((StringL){"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",52}));
         case alphanum: return or(symb(DIGIT), symb(ALPHA));
         case unreserved: return or(symb(alphanum),charIn(((StringL){"-._~",4})));
