@@ -7,4 +7,4 @@
 -buff_après: état du buffer de lecture après la lecture
 le but est de réaliser 2 ou 3 test pour les symboles les plus importants (pas tous evidement)*/
 
-  test("get message",HTTP_message,SUCC,"GET /path/file.html HTTP/1.0 \r\nFrom: someuser@jmarshall.com\r\nUser-Agent: HTTPTool/1.0\r\n\r\n","GET /path/file.html HTTP/1.0 \r\nFrom: someuser@jmarshall.com\r\nUser-Agent: HTTPTool/1.0\r\n\r\n","");
+test("get message",HTTP_message,SUCC,"GET /path/file.html HTTP/1.0 \r\nFrom: someuser@jmarshall.com\r\nUser-Agent: HTTPTool/1.0\r\n\r\n","GET /path/file.html HTTP/1.0 \r\nFrom: someuser@jmarshall.com\r\nUser-Agent: HTTPTool/1.0\r\n\r\n","");
