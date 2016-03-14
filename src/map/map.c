@@ -3,7 +3,7 @@
  * \brief API pour la gestion de la MAP
  *
  */
-#include "liste.h"
+#include "map.h"
 #include "api_test.h"
 
 /** \brief Fonction qui initialise la MAP en remplissant les champs de la StartLine
@@ -106,30 +106,30 @@ void search_map (mapStruct* map, char* search, void (*callback)(char* found, uns
     {
         temp = map->methode;
         temp.len = (map->http_version.s)-(map->methode.s)+(map->http_version.len);
-        convert(temp, callback);
+        extract_stringL(temp, callback);
     }
     else if(strcmp("methode", search) == 0)
-        convert(map->methode, callback);
+        extract_stringL(map->methode, callback);
     else if(strcmp("request-target", search) == 0)
-        convert(map->request_target, callback);
+        extract_stringL(map->request_target, callback);
     else if(strcmp("HTTP-version", search) == 0)
-        convert(map->http_version, callback);
+        extract_stringL(map->http_version, callback);
 
     /**< Tout ce qui concerne les requêtes qui liste des champs  */
     else if(strcmp("header-field", search) == 0)
     {
         while (bloc != NULL)
-            convert(bloc->header_field, callback);
+            extract_stringL(bloc->header_field, callback);
     }
     else if(strcmp("field-name", search) == 0)
     {
         while (bloc != NULL)
-            convert(bloc->field_name, callback);
+            extract_stringL(bloc->field_name, callback);
     }
     else if(strcmp("field-value", search) == 0)
     {
         while (bloc != NULL)
-            convert(extract_fieldValue(bloc->header_field), callback);
+            extract_stringL(extract_fieldValue(bloc->header_field), callback);
     }
 
     /**< Pour finir, les formes classique : header-field... */
@@ -137,10 +137,10 @@ void search_map (mapStruct* map, char* search, void (*callback)(char* found, uns
     {
         if (strstr(search, "-header")) /**< Si on veut un header complet, on passe en mode 2 */
         {
-            searchS.len = strstr(search, "-header") - search;
+            searchS.len -= 7;
             mode =2;
         }
-        else if(strcmp("cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
+        else if(!strcmp("cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
             searchS.len = 6;
 
         /**< On cherche le champ dans la liste chainée */
@@ -150,9 +150,9 @@ void search_map (mapStruct* map, char* search, void (*callback)(char* found, uns
         if (bloc != NULL)
         {
             if (mode == 1)  /**< Si on veut juste le content, il faut l'extraire de la ligne */
-                convert(extract_fieldValue(bloc->header_field), callback);
+                extract_stringL(extract_fieldValue(bloc->header_field), callback);
             else            /**< Sinon on renvoie toute la ligne */
-                convert(bloc->header_field, callback);
+                extract_stringL(bloc->header_field, callback);
         }
 
     }

@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "liste.h"
+#include "map.h"
 
 void test_chaine (mapStruct* map, char* txt, char* search, void (*callback)());
 
