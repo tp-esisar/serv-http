@@ -41,17 +41,13 @@ StringL fromRegularString(char* s) {
 
 StringL extract_fieldValue(StringL field)
 {
-    int i =0;
-    while(field.s[i] != ':')
-    {
-        i++;
-        field.len --;
-    }
-    while(!isalpha(field.s[i]))
-    {
-        i++;
-        field.len --;
-    }
-    field.s=&(field.s[i]);
+    int i = 0, j = field.len-1;
+    while(field.s[i++] != ':');
+	while(field.s[i] == ' ' || field.s[i] == '\t')
+		i++ ;
+	while(field.s[j] == ' ' || field.s[j] == '\t')
+		j-- ;
+	field.len = &(field.s[j]) - &(field.s[i]) +1;
+	field.s = &(field.s[i]);
     return field;
 }
