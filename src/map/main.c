@@ -36,7 +36,7 @@ int main (int argc, char *argv[])
     } while (txt[i++] != EOF);
     txt[i]='\0';
 
-    retour = parser (txt, strlen(txt), argv[2], &affiche);
+    retour = parser (txt, strlen(txt), argv[2], affiche_string);
     if (retour == -1)
         printf("--- Message correct ---\n");
     else

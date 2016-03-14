@@ -1,6 +1,6 @@
 
 #include "api_test.h"
-#include "test_unitaire.h"
+#include "test_map.h"
 
 
 void test_chaine (mapStruct* map, char* txt, char* search, void (*callback)())
@@ -17,7 +17,7 @@ void test_chaine (mapStruct* map, char* txt, char* search, void (*callback)())
     add_field(map, header4a, header4);
     add_field(map, header5a, header5);
 
-    search_map(map, "start-line", callback);
+    search_map(map,"start-line", callback);
     search_map(map,"request-line", callback);
     search_map(map,"methode", callback);
     search_map(map,"request-target", callback);

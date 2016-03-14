@@ -1,6 +1,6 @@
 
 #include "api_test.h"
-#include "test_unitaire.h"
+#include "test_map.h"
 
 int parser (char *buf, unsigned int len, char *search, void (*callback)(char* found, unsigned int len))
 {
@@ -9,12 +9,12 @@ int parser (char *buf, unsigned int len, char *search, void (*callback)(char* fo
     return -1;
 }
 
-void convert (StringL field, void (*callback)(char* found, unsigned int len))
+void extract_stringL (StringL field, void (*callback)(char* found, unsigned int len))
 {
     callback(field.s, field.len);
 }
 
-void affiche (char *found, unsigned len)
+void affiche_string (char *found, unsigned len)
 {
     int i;
     for (i=0; i<len; i++)
