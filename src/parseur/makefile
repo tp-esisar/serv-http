@@ -2,9 +2,7 @@
 CFLAGS=-g -Wall -std=c99
 
 
-test_stringL: test_stringL.o stringL.o
-	gcc $^ -o test_stringL.e
-	./test_stringL.e
+
 
 test_reader: test_reader.o reader.o stringL.o
 	gcc -Igc/include $^ gc/libgc.a.ext -o test_reader.e

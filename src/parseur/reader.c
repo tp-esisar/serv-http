@@ -86,6 +86,7 @@ reader read(syntaxe_elem se, StringL* wBuff) {
         case start_line: return or(symb(request_line), symb(status_line));
         case OCTET: return charBetween(0x00, 0xFF);
         case message_body: return kleene(symb(OCTET));
+        case colon: return letter(':');//sale
         default: return bad_symbole();
     }
     

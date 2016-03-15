@@ -85,6 +85,7 @@ typedef enum {
     reason_phrase,
     status_line,
     OCTET,
+    colon,
     message_body
 } syntaxe_elem;
 
