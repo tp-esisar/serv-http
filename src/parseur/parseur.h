@@ -3,6 +3,7 @@
 #define PARSEUR_H
 
 #include "stringL.h"
+#include "reader.h"
 
 int parser (char *buf,unsigned int len,char *search, void (*callback)()) ;
 
