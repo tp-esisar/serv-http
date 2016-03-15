@@ -49,9 +49,10 @@ int main() {
   test("OWS 3",OWS,SUCC,"   RASCASSE","   ","RASCASSE");
   test("day 1",day,SUCC,"12RASCASSE","12","RASCASSE");
   test("day 2",day,FAIL,"1RASCASSE","","");
-  test("CRLF",CRLF,SUCC,"\r\nR","\r\n","R");
-  test("CRLF",CRLF,FAIL,"\rRRR","","");
-  
+  test("CRLF 1",CRLF,SUCC,"\r\nR","\r\n","R");
+  test("CRLF 2",CRLF,FAIL,"\rRRR","","");
+  test("token 1",token,SUCC,"jesuisUnsup333r-token* tokenSuivant","jesuisUnsup333r-token*"," tokenSuivant");
+  test("token 2",token,FAIL," ","","");
   
   
   printf("tests passed OK\n");

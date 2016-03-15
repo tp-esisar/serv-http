@@ -21,7 +21,7 @@ reader read(syntaxe_elem se, StringL* wBuff) {
         case ALPHA: return charIn(((StringL){"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",52}));
         case alphanum: return or(symb(DIGIT), symb(ALPHA));
         case unreserved: return or(symb(alphanum),charIn(((StringL){"-._~",4})));
-        case tchar: return or(symb(alphanum),charIn(((StringL){"!#$%&'*+-.^_`|~",15})));
+        case tchar: return or(symb(alphanum),charIn(((StringL){"!#$\%&'*+-.^_`|~",15})));
         case token: return nOccurencesMin(symb(tchar),1);
         case field_name: return symb(token);
         case VCHAR: return charBetween(0x21, 0x7E);
