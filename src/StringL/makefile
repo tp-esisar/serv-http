@@ -5,7 +5,7 @@ BIN=$(PROJECT)/bin
 INC=$(PROJECT)/inc
 CFLAGS=-g -Wall -std=c99 -I$(INC)
 
-all: $(OBJ)/StringL.o
+objects: $(OBJ)/StringL.o
 
 test_stringL: $(BIN)/test_stringL.e
 	$(BIN)/test_stringL.e

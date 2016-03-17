@@ -4,7 +4,7 @@ BIN=$(PROJECT)/bin
 INC=$(PROJECT)/inc
 CFLAGS=-g -Wall -std=c99 -I$(INC)
 
-all: $(OBJ)/map.o
+objects: $(OBJ)/map.o
 
 test_map: $(BIN)/test_map.e
 	$(BIN)/test_map.e
