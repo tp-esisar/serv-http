@@ -1,22 +1,23 @@
 
 #include "../inc/api_test.h"
-#include "../inc/parseur.h"
+#include "../inc/parser.h"
 
 int parser (char *buf, unsigned int len, char *search, void (*callback)(char* found, unsigned int len))
 {
 	parse_return retour;
+	StringL buff ={buf, len};
 	int nombre;
-		
-	retour = parse_HTTP_message (map, (StringL){buf, len});
+
+	retour = parse_HTTP_message (&buff);
 	if (retour.state == FAIL)
-		return retour.buff - buf;
-	
+		return retour.buff.s - buf;
+
 	else
 	{
 		nombre = search_map(retour.map, search, callback);
 		printf("\n --- %d occurences trouvees ---\n", nombre);
-	}	
-	
+	}
+
     return -1;
 }
 
