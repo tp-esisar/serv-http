@@ -1,1 +1,0 @@
-GET /test HTTP/10  Host: www.google.com  Transfer-Encoding :gzip 
