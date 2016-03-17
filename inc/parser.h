@@ -2,7 +2,7 @@
 #ifndef PARSEUR_H
 #define PARSEUR_H
 
-#include "stringL.h"
+#include "StringL.h"
 #include "reader.h"
 
 int parser (char *buf,unsigned int len,char *search, void (*callback)()) ;
