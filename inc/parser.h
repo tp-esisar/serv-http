@@ -5,10 +5,11 @@
 
 #include "StringL.h"
 #include "reader.h"
+#include "map.h"
 
 typedef enum {
-    FAIL,
-    SUCC,
+    PARSE_FAIL,
+    PARSE_SUCC,
 } parse_state;
 
 typedef struct {

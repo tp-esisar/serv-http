@@ -1,39 +1,46 @@
 #include "parser.h"
 #include "reader.h"
-#include "../map/map.h"
+#include "map.h"
 
-#define LIRE(SYMB,VAR) do {\
-	rr=read(SYMB,buff);\
+#define LIRE(SYMB,VAR) {\
+	tempReader=read(SYMB,buff);\
+	rr = CALL_CLOSURE(tempReader);\
     if(rr.state==FAIL) {\
-        return (parse_return){FAIL,NULL,buff};\
+        return (parse_return){PARSE_FAIL,NULL,*buff};\
     }\
 	VAR = rr.string;\
-}while(0)
+}
+
 
 parse_return parse_HTTP_message(StringL* buff) {
-    StringL methode;
-    StringL request_target;
-    StringL http_version;
-	StringL header_field;
-	StringL field_name;
+    StringL Smethod;
+    StringL Srequest_target;
+    StringL SHTTP_version;
+	StringL Sheader_field;
+	StringL Sfield_name;
 	StringL saveBuffer;
     read_return rr;
+    reader tempReader;
     mapStruct* map;
 	
-    LIRE(methode,methode);
-	LIRE(request_target,request_target);
-	LIRE(http_version,http_version);
+    LIRE(method,Smethod);
+	LIRE(request_target,Srequest_target);
+	LIRE(HTTP_version,SHTTP_version);
 
-	map = init_map(methode,request_target,http_version);
-
-	while(read(CLRF,buff).state == FAIL){
+	map = init_map(Smethod,Srequest_target,SHTTP_version);
+	
+	
+	reader crlfReader = read(CRLF,buff);
+	while(CALL_CLOSURE(crlfReader).state == FAIL){
 		saveBuffer = *buff;
-		LIRE(field_name,field_name);
-		buff = *saveBuffer;
-		LIRE(header_field,header_field);
+		LIRE(field_name,Sfield_name);
+		*buff = saveBuffer;
+		LIRE(header_field,Sheader_field);
 		
-		add_field( map, field_name, headerField) == 1)
+		add_field( map, Sfield_name, Sheader_field);
+		
+		CALL_CLOSURE(crlfReader);
 	}
 	
-	return (parse_return){SUCC,map, NULL};
+	return (parse_return){PARSE_SUCC,map, *buff};
 }
