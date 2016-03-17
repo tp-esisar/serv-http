@@ -1,11 +1,10 @@
 
-#ifndef PARSEUR_H
-#define PARSEUR_H
+
+#ifndef PARSER_H
+#define PARSER_H
 
 #include "StringL.h"
 #include "reader.h"
-
-int parser (char *buf,unsigned int len,char *search, void (*callback)()) ;
 
 typedef enum {
     FAIL,
@@ -15,6 +14,7 @@ typedef enum {
 typedef struct {
     parse_state state;
     mapStruct* map;
+	StringL buff;
 } parse_return;
 
 parse_return parse_HTTP_message(StringL* buff);
