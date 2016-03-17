@@ -132,23 +132,24 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
         else if(!strcmp("cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
             searchS.len = 6;
 
-        /**< On cherche le champ dans la liste chainée */
-        while ((bloc != NULL) && (!stringLEq(searchS, bloc->field_name)))
+        /**< On cherche les champs correspondants dans la liste chainée */
+        while (bloc != NULL)
+		{
             bloc = bloc->suivant;
-        /**< Si on l'a trouvé et suivant dans quel mode on est, on envoie à callback le StringL contenant le champ recherché */
-        if (bloc != NULL)
-        {
-            if (mode == 1)  /**< Si on veut juste le content, il faut l'extraire de la ligne */
-            {
-                extract_stringL(extract_fieldValue(bloc->header_field), callback);
-                compteur ++;
-            }
-            else            /**< Sinon on renvoie toute la ligne */
-            {
-                extract_stringL(bloc->header_field, callback);
-                compteur ++;
-            }
-        }
+			if (stringLEq(searchS, bloc->field_name)) /**< Si on l'a trouvé et suivant dans quel mode on est, on envoie à callback le StringL contenant le champ recherché */
+			{
+				if (mode == 1)  /**< Si on veut juste le content, il faut l'extraire de la ligne */
+				{
+					extract_stringL(extract_fieldValue(bloc->header_field), callback);
+					compteur ++;
+				}
+				else            /**< Sinon on renvoie toute la ligne */
+				{
+					extract_stringL(bloc->header_field, callback);
+					compteur ++;
+				}
+			}
+		}
     }
     return compteur;
 }
