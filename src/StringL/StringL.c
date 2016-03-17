@@ -1,7 +1,7 @@
-#include "StringL.h"
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "../../inc/StringL.h"
 
 int stringLEq(StringL s1, StringL s2) {
     int i;

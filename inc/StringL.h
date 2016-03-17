@@ -1,5 +1,5 @@
-#ifndef STRINGL
-#define STRINGL
+#ifndef STRINGL_H
+#define STRINGL_H
 
 typedef struct {
     char* s;

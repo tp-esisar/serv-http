@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "api_test.h"
+#include "../inc/api_test.h"
+
+void affiche_string (char *found, unsigned len)
+{
+    int i;
+    for (i=0; i<len; i++)
+        printf("%c", found[i]);
+    printf("\n");
+}
 
 int main (int argc, char *argv[])
 {
@@ -8,27 +16,18 @@ int main (int argc, char *argv[])
     char* txt;
     int i =0, retour;
 
-    if (argc != 3)
-    {
-        printf("Usage %s file search\n", argv[0]);
-        exit(01);
-    }
+    if (argc != 3) { printf("Usage %s file search\n", argv[0]); exit(01); }
 
     file = fopen(argv[1], "r");
-    if (file == NULL)
-    {
-        perror("Impossible d'ouvrir le fichier ! ");
-        exit(01);
-    }
+    if (file == NULL) { perror("Impossible d'ouvrir le fichier ! "); exit(01); }
 
     while (fgetc(file) != EOF)
         i++;
+
     txt = malloc((i+1)*sizeof(char));
     if (txt == NULL)
-    {
-        perror("Erreur d'allocation memoire");
-        exit(1);
-    }
+    { perror("Erreur d'allocation memoire"); exit(1); }
+
     i=0; rewind(file);
     do
     {
@@ -37,6 +36,7 @@ int main (int argc, char *argv[])
     txt[i]='\0';
 
     retour = parser (txt, strlen(txt), argv[2], affiche_string);
+
     if (retour == -1)
         printf("--- Message correct ---\n");
     else

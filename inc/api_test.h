@@ -7,6 +7,5 @@
 
 int parser (char *buf, unsigned int len, char *search, void (*callback)(char* found, unsigned int len));
 void extract_stringL (StringL field, void (*callback)(char* found, unsigned int len));
-void affiche_string (char *found, unsigned len);
 
 #endif // API_TEST_H

@@ -1,11 +1,16 @@
 
-#include "api_test.h"
-#include "StringL.h"
-#include "map.h"
+#include "../../inc/StringL.h"
+#include "../../inc/map.h"
 
+void affiche_string (char *found, unsigned len)
+{
+    int i;
+    for (i=0; i<len; i++)
+        printf("%c", found[i]);
+    printf("\n");
+}
 
-
-void test_chaine (mapStruct* map, char* txt, char* search, void (*callback)())
+void test_chaine (mapStruct* map, char* txt, void (*callback)())
 {
     StringL header1 = {txt,3};
     StringL header2 = {txt+4, 5};
@@ -19,61 +24,27 @@ void test_chaine (mapStruct* map, char* txt, char* search, void (*callback)())
     add_field(map, header4a, header4);
     add_field(map, header5a, header5);
 
-    search_map(map,"start-line", callback);
-    search_map(map,"request-line", callback);
-    search_map(map,"methode", callback);
-    search_map(map,"request-target", callback);
-    search_map(map,"HTTP-version", callback);
-    search_map(map,"Host", callback);
-    search_map(map,"Host-header", callback);
-    search_map(map,"host", callback);
-    search_map(map,"test", callback);
-    search_map(map,"Transfer-Encoding-header", callback);
-    search_map(map,"Transfer-Encoding-Header", callback);
-    search_map(map,"Transfer-Encoding", callback);
+
+    printf("\n\n--- Cherche : start-line \n"); printf("Trouvé : %d occurences\n", search_map(map,"start-line", callback));
+    printf("\n\n--- Cherche : request-line \n"); printf("Trouvé : %d occurences", search_map(map,"request-line", callback));
+    printf("\n\n--- Cherche : methode \n"); printf("Trouvé : %d occurences", search_map(map,"methode", callback));
+    printf("\n\n--- Cherche : request-target \n"); printf("Trouvé : %d occurences", search_map(map,"request-target", callback));
+    printf("\n\n--- Cherche : HTTP-version \n"); printf("Trouvé : %d occurences", search_map(map,"HTTP-version", callback));
+    printf("\n\n--- Cherche : Host \n"); printf("Trouvé : %d occurences", search_map(map,"Host", callback));
+    printf("\n\n--- Cherche : Host-header \n"); printf("Trouvé : %d occurences", search_map(map,"Host-header", callback));
+    printf("\n\n--- Cherche : host \n"); printf("Trouvé : %d occurences", search_map(map,"host", callback));
+    printf("\n\n--- Cherche : test \n"); printf("Trouvé : %d occurences", search_map(map,"test", callback));
+    printf("\n\n--- Cherche : Transfer-Encoding-header \n"); printf("Trouvé : %d occurences", search_map(map,"Transfer-Encoding-header", callback));
+    printf("\n\n--- Cherche : Transfer-Encoding-Header \n"); printf("Trouvé : %d occurences", search_map(map,"Transfer-Encoding-Header", callback));
+    printf("\n\n--- Cherche : Transfer-Encoding \n"); printf("Trouvé : %d occurences", search_map(map,"Transfer-Encoding", callback));
 
     free_map(map);
 }
 
 int main (int argc, char *argv[])
 {
-    FILE* file;
-    char* txt;
-    int i =0, retour;
-
-    if (argc != 3)
-    {
-        printf("Usage %s file search\n", argv[0]);
-        exit(01);
-    }
-
-    file = fopen(argv[1], "r");
-    if (file == NULL)
-    {
-        perror("Impossible d'ouvrir le fichier ! ");
-        exit(01);
-    }
-
-    while (fgetc(file) != EOF)
-        i++;
-    txt = malloc((i+1)*sizeof(char));
-    if (txt == NULL)
-    {
-        perror("Erreur d'allocation memoire");
-        exit(1);
-    }
-    i=0; rewind(file);
-    do
-    {
-        txt[i]=fgetc(file);
-    } while (txt[i++] != EOF);
-    txt[i]='\0';
-
-    retour = parser (txt, strlen(txt), argv[2], affiche_string);
-    if (retour == -1)
-        printf("--- Message correct ---\n");
-    else
-        printf("Erreur syntaxique ligne %d", retour);
-
-    return EXIT_SUCCESS;
+    mapStruct* map = NULL;
+    char txt[] = "GET /test HTTP/10  Host: www.google.com  Transfer-Encoding :gzip ";
+    test_chaine (map, txt, affiche_string);
+    return 0;
 }
