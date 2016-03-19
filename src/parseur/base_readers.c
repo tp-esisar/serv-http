@@ -10,7 +10,7 @@
 //nous avons essayé l'approche avec des fonctions free dédié, le résultat était trop difficile à maintenir et à faire fonctionner correctement
 
 
-#define RET_FAIL (read_return){FAIL,*wBuff}
+#define RET_FAIL (read_return){FAIL,{wBuff->s,0}}
 
 reader make_reader(void* ctxt, read_return (*fun)(void*)) {
     return (reader){ctxt,fun};
@@ -132,18 +132,37 @@ typedef struct {
 } or_context;
 read_return or_closure(or_context* ctxt) {
     StringL *wBuff = ctxt->wBuff;
+    StringL save = *wBuff;
     reader readerA = ctxt->a;
     reader readerB = ctxt->b;
-    read_return current;
-    if( (current=CALL_CLOSURE(readerA)).state == SUCC ) {
-        return current;
+    read_return retA;
+    read_return retB;
+    retA=CALL_CLOSURE(readerA);
+    *wBuff=save;
+    retB=CALL_CLOSURE(readerB);
+    *wBuff=save;
+    
+    if(retA.state == FAIL) {
+        wBuff->s += retB.string.len;
+        wBuff->len -= retB.string.len;
+        return retB;
     }
-    else if( (current=CALL_CLOSURE(readerB)).state == SUCC ) {
-        return current;
+    if(retB.state == FAIL) {
+        wBuff->s += retA.string.len;
+        wBuff->len -= retA.string.len;
+        return retA;
+    }
+    if(retA.string.len >= retB.string.len) {
+        wBuff->s += retA.string.len;
+        wBuff->len -= retA.string.len;
+        return retA;
     }
     else {
-        return RET_FAIL;
+        wBuff->s += retB.string.len;
+        wBuff->len -= retB.string.len;
+        return retB;
     }
+    
 }
 reader or_Builder(StringL* wBuff, reader a, reader b) {
     or_context* ctxt = GC_MALLOC(sizeof(or_context));

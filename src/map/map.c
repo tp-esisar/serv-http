@@ -85,7 +85,7 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
         extract_stringL(temp, callback);
         compteur ++;
     }
-    else if(strcmp("methode", search) == 0)
+    else if(strcmp("method", search) == 0)
     {
         extract_stringL(map->methode, callback);
         compteur ++;

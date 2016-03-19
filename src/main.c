@@ -40,7 +40,7 @@ int main (int argc, char *argv[])
     if (retour == -1)
         printf("--- Message correct ---\n");
     else
-        printf("Erreur syntaxique ligne %d", retour);
+        printf("Erreur syntaxique ligne %d\n", retour);
 
     return EXIT_SUCCESS;
 }

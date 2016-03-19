@@ -91,7 +91,7 @@ typedef enum {
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
-reader read(syntaxe_elem se, StringL* buff);
+reader get_reader(syntaxe_elem se, StringL* buff);
 
 
 #endif

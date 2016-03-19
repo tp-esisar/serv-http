@@ -2,14 +2,14 @@
 #include "reader.h"
 #include "map.h"
 
-#define LIRE(SYMB,VAR) {\
-	tempReader=read(SYMB,buff);\
+#define LIRE(SYMB,VAR) do {\
+	tempReader=get_reader(SYMB,buff);\
 	rr = CALL_CLOSURE(tempReader);\
     if(rr.state==FAIL) {\
         return (parse_return){PARSE_FAIL,NULL,*buff};\
     }\
 	VAR = rr.string;\
-}
+} while(0)
 
 
 
@@ -23,15 +23,20 @@ parse_return parse_HTTP_message(StringL* buff) {
     read_return rr;
     reader tempReader;
     mapStruct* map;
+    reader crlfReader = get_reader(CRLF,buff);
+    reader spReader = get_reader(SP,buff);
 	
-    LIRE(method,Smethod);
+   	LIRE(method,Smethod);
+   	CALL_CLOSURE(spReader);
 	LIRE(request_target,Srequest_target);
+	CALL_CLOSURE(spReader);
 	LIRE(HTTP_version,SHTTP_version);
+	CALL_CLOSURE(crlfReader);
+	
 
 	map = init_map(Smethod,Srequest_target,SHTTP_version);
 	
 	
-	reader crlfReader = read(CRLF,buff);
 	while(CALL_CLOSURE(crlfReader).state == FAIL){
 		saveBuffer = *buff;
 		LIRE(field_name,Sfield_name);

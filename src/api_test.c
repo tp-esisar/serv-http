@@ -9,7 +9,7 @@ int parser (char *buf, unsigned int len, char *search, void (*callback)(char* fo
 	int nombre;
 
 	retour = parse_HTTP_message(&buff);
-	if (retour.state == FAIL)
+	if (retour.state == PARSE_FAIL)
 		return retour.buff.s - buf;
 
 	else

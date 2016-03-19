@@ -13,7 +13,7 @@ test_reader: $(BIN)/test_reader.e
 $(BIN)/test_reader.e: $(OBJ)/test_reader.o $(OBJ)/StringL.o $(OBJ)/reader.o
 	gcc -I../gc/include $^ ../gc/libgc.a.ext -o $@
 	
-$(OBJ)/reader.o: reader.c $(INC)/*
+$(OBJ)/reader.o: reader.c $(INC)/* base_readers.c
 	gcc $(CFLAGS) -Igc/include -c reader.c -o $(OBJ)/reader.o
 	
 

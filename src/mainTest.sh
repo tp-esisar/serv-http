@@ -18,5 +18,5 @@ echo "fichiers de test:" ${testfiles[*]}
 
 for testfile in ${testfiles[*]}
 do
-    $TESTBIN $TEST_FOLDER/$testfile "methode"
+    $TESTBIN $TEST_FOLDER/$testfile "method"
 done
