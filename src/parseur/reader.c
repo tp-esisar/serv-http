@@ -80,7 +80,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case authority_form: return symb(authority);
         case asterisk_form: return letter('*');
         case request_target: return or(or( symb(origin_form), symb(absolute_form)), or( symb(authority_form), symb(asterisk_form)));
-        case HTTP_name: return string("HTTP");
+        case HTTP_name: return concat(letter('H'),concat(letter('T'),concat(letter('T'),letter('P'))));
         case HTTP_version: return concat(concat(concat( symb(HTTP_name), letter('/')), symb(DIGIT)),concat( letter('.'), symb(DIGIT)));
         case request_line: return concat(concat(concat( symb(method), symb(SP)), concat( symb(request_target), symb(SP))),concat( symb(HTTP_version), symb(CRLF)));
         case status_code: return nOccurences(symb(DIGIT),3);
