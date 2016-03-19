@@ -1,4 +1,5 @@
-src/parser/*.o
-src/parser/*.e
+bin/*
+obj/*
+
 
 .c9
