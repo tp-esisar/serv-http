@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../inc/api_test.h"
+#include "api_test.h"
 
 void affiche_string (char *found, unsigned len)
 {

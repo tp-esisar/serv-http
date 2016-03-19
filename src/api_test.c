@@ -1,6 +1,6 @@
 
-#include "../inc/api_test.h"
-#include "../inc/parser.h"
+#include "api_test.h"
+#include "parser.h"
 
 int parser (char *buf, unsigned int len, char *search, void (*callback)(char* found, unsigned int len))
 {
@@ -8,7 +8,7 @@ int parser (char *buf, unsigned int len, char *search, void (*callback)(char* fo
 	StringL buff ={buf, len};
 	int nombre;
 
-	retour = parse_HTTP_message (&buff);
+	retour = parse_HTTP_message(&buff);
 	if (retour.state == FAIL)
 		return retour.buff.s - buf;
 
