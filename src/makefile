@@ -15,7 +15,7 @@ objects: parseur map gc StringL $(INC)/* main.c api_test.c
 test: objects $(BIN)/mainTest.e
 	$(MAKE) -C StringL test_stringL
 	$(MAKE) -C parseur test_reader
-	$(BIN)/mainTest.e
+	./mainTest.sh
 
 $(BIN)/mainTest.e: objects
 	gcc -Igc/include -I$(INC) $(OBJ)/StringL.o $(OBJ)/parser.o $(OBJ)/main.o $(OBJ)/map.o $(OBJ)/api_test.o gc/libgc.a.ext -o $(BIN)/mainTest.e
