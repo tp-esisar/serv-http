@@ -160,9 +160,9 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
     return compteur;
 }
 
-/** \brief Fonction qui libère un bloc de la MAP et tout ces précédents (récursivement)
+/** \brief Fonction qui libère un bloc de la MAP et tout ces suivants (récursivement)
  *
- * \param bloc Pointeur sur le bloc à supprimer ainsi que ces précédents
+ * \param bloc Pointeur sur le bloc à supprimer ainsi que ces suivants
  */
 static void free_bloc(field* bloc)
 {
