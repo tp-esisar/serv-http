@@ -17,6 +17,7 @@ function visualTest {
     echo "####fin test \"$1\" avec \"$2\"####"
 }
 
+
 function unitTest {
     RESULT=$($TESTBIN $TEST_FOLDER/$1 $2 "silence")
     if [ "$RESULT" == "$3" ]; then
@@ -33,16 +34,13 @@ testfiles=(`ls $TEST_FOLDER`)
 
 echo "fichiers de test:" ${testfiles[*]}
 echo "-------------debut tests visuels sur fichier de test------------------"
-visualTest "get1" "header-field" #boucle infini
-visualTest "get1" "field-name" #boucle infini
-visualTest "get1" "field-value" #boucle infini
-visualTest "get1" "Host-header"
-visualTest "get1" "Host"
-visualTest "get1" "method" #marche OK
+
 echo "-------------------------fin tests visuels----------------------------"
 echo
 echo "-------------debut tests unitaires sur fichiers de test---------------"
 #fichier de test get1
+
+unitTest "get1" "start-line" "GET / HTTP/1.1"
 unitTest "get1" "method" "GET" 
 unitTest "get1" "request-target" "/"
 unitTest "get1" "HTTP-version" "HTTP/1.1"
@@ -55,10 +53,12 @@ unitTest "get1" "field-name" "Connection
 Host
 Accept
 User-Agent"
-# unitTest "get1" "field-value" #boucle infini
-
-# unitTest "get1" "Host-header"
-# unitTest "get1" "Host"
+unitTest "get1" "field-value" "Keep-Alive
+www.google.com
+*/*
+Wget/1.16 (linux-gnu)"
+unitTest "get1" "Host-header" "Host: www.google.com"
+unitTest "get1" "Host" "www.google.com"
 
 
 echo "-------------------------fin tests unitaires--------------------------"
