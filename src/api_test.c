@@ -21,10 +21,3 @@ int parser (char *buf, unsigned int len, char *search, void (*callback)(char* fo
 
     
 }
-
-void extract_stringL (StringL field, void (*callback)(char* found, unsigned int len))
-{
-    callback(field.s, field.len);
-}
-
-
