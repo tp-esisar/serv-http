@@ -10,15 +10,16 @@ int parser (char *buf, unsigned int len, char *search, void (*callback)(char* fo
 
 	retour = parse_HTTP_message(&buff);
 	if (retour.state == PARSE_FAIL)
-		return retour.buff.s - buf;
+		return retour.ligne;
 
 	else
 	{
 		nombre = search_map(retour.map, search, callback);
-		printf("\n --- %d occurences trouvees ---\n", nombre);
+		//printf("--- %d occurences trouvees ---\n", nombre);
+		return -1;
 	}
 
-    return -1;
+    
 }
 
 void extract_stringL (StringL field, void (*callback)(char* found, unsigned int len))

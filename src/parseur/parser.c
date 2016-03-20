@@ -6,12 +6,16 @@
 	tempReader=get_reader(SYMB,buff);\
 	rr = CALL_CLOSURE(tempReader);\
     if(rr.state==FAIL) {\
-        return (parse_return){PARSE_FAIL,NULL,*buff};\
+        return (parse_return){PARSE_FAIL,NULL,ligne};\
     }\
 	VAR = rr.string;\
 } while(0)
 
-
+void printSL(StringL str) {
+	char* temp = toRegularString(str);
+	printf("%s\n",temp);
+	free(temp);
+}
 
 parse_return parse_HTTP_message(StringL* buff) {
     StringL Smethod;
@@ -25,6 +29,7 @@ parse_return parse_HTTP_message(StringL* buff) {
     mapStruct* map;
     reader crlfReader = get_reader(CRLF,buff);
     reader spReader = get_reader(SP,buff);
+    int ligne = 1;
 	
    	LIRE(method,Smethod);
    	CALL_CLOSURE(spReader);
@@ -33,6 +38,7 @@ parse_return parse_HTTP_message(StringL* buff) {
 	LIRE(HTTP_version,SHTTP_version);
 	CALL_CLOSURE(crlfReader);
 	
+	
 
 	map = init_map(Smethod,Srequest_target,SHTTP_version);
 	
@@ -40,13 +46,15 @@ parse_return parse_HTTP_message(StringL* buff) {
 	while(CALL_CLOSURE(crlfReader).state == FAIL){
 		saveBuffer = *buff;
 		LIRE(field_name,Sfield_name);
+		
 		*buff = saveBuffer;
 		LIRE(header_field,Sheader_field);
 		
 		add_field( map, Sfield_name, Sheader_field);
 		
 		CALL_CLOSURE(crlfReader);
+		ligne++;
 	}
 	
-	return (parse_return){PARSE_SUCC,map, *buff};
+	return (parse_return){PARSE_SUCC,map,ligne};
 }

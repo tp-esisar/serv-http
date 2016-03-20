@@ -15,7 +15,7 @@ typedef enum {
 typedef struct {
     parse_state state;
     mapStruct* map;
-	StringL buff;
+	int ligne;
 } parse_return;
 
 parse_return parse_HTTP_message(StringL* buff);

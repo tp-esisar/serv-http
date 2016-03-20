@@ -7,7 +7,6 @@
 #define symb(X) get_reader(X,wBuff)
 //#define nOccurencesRange(X,n1,n2) nOccurencesMax(nOccurencesMin(X,n1),n2)
 #define nOccurencesRange(X,n1,n2) and(nOccurencesMin(X,n1),nOccurencesMin(X,n2))
-#define string(X) epsilon()
 
 reader get_reader(syntaxe_elem se, StringL* wBuff) {
     
@@ -15,7 +14,8 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case SP: return letter(' ');
         case HTAB: return letter('\t');
         case OWS: return kleene(or(letter(' '),letter('\t')));
-        case CRLF: return concat(letter('\r'),letter('\n'));
+        //case CRLF: return concat(letter('\r'),letter('\n')); //CRLF conforme (ne marche pas pour le debug avec l'encodage linux)
+        case CRLF: return or(letter('\n'),concat(letter('\r'),letter('\n'))); //CRLF non conforme à utiliser pour le debug sur linux
         case DIGIT: return charIn(((StringL){"0123456789",10}));
         case day: return concat(symb(DIGIT),symb(DIGIT));
         case ALPHA: return charIn(((StringL){"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",52}));
@@ -25,14 +25,15 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case token: return nOccurencesMin(symb(tchar),1);
         case field_name: return symb(token);
         case VCHAR: return charBetween(0x21, 0x7E);
-        case obs_text: return charBetween(0x21, 0x7E); 
+        case obs_text: return charBetween(0x80, 0xFF); 
         case field_vchar: return or(symb(VCHAR), symb(obs_text));
-        case field_content: return concat( symb(field_vchar), concat( nOccurencesMin(or(symb(SP), symb(HTAB)), 1), symb(field_vchar)));
+        //case field_content: return concat( symb(field_vchar), concat( nOccurencesMin(or(symb(SP), symb(HTAB)), 1), symb(field_vchar)));
+        case field_content: return concat(symb(field_vchar),optionnal(concat(nOccurencesMin(or(symb(SP),symb(HTAB)),1),symb(field_vchar))));
         case obs_fold: return concat( symb(CRLF), nOccurencesMin(or(symb(SP), symb(HTAB)),1));
         case field_value: return kleene(or(symb(field_content), symb(obs_fold)));
         case header_field: return concat( symb(field_name),concat( letter(':'), concat( symb(OWS), concat( symb(field_value), symb(OWS)))));
         case method: return symb(token);
-        case HEXDIG: return or(symb(DIGIT), charIn(((StringL){"ABCDEF",6})));
+        case HEXDIG: return or(symb(DIGIT), charIn(((StringL){"ABCDEFabcdef",6})));
         case pct_encoded: return concat(letter('%'), concat(symb(HEXDIG), symb(HEXDIG)));
         case sub_delims: return charIn(((StringL){"!$&'()*+,;=",12}));
         case pchar: return or(symb(unreserved), or( symb(pct_encoded), or( symb(sub_delims), or( letter(':') , letter('@')))));

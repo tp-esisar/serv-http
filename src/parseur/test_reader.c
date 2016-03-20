@@ -78,8 +78,12 @@ int main() {
   test("request_target 1",request_target,SUCC,"/ HTTP/1.1","/");
   test("request_target 2",request_target,SUCC,"/niNjA/chuck/maurice/ HTTP/9.1","/niNjA/chuck/maurice/");
   
+  test("origin_form 1",origin_form,SUCC,"/RaSc4asse RRR","/RaSc4asse");
+  test("origin_form 2",origin_form,SUCC,"/RaSc4asse/trololo RRR","/RaSc4asse/trololo");
   
-  
+  test("HTTP_version",HTTP_version,SUCC,"HTTP/9.1\r\nRRR","HTTP/9.1");
+  test("field_name",field_name,SUCC,"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0","User-Agent");
+  test("header_field",header_field,SUCC,"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0\r\n","User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0");
   
   printf("------------fin tests readers------------\n");
   
