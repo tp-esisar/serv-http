@@ -15,6 +15,7 @@ function visualTest {
     echo "####test fichier \"$1\" avec element \"$2\"####"
     $TESTBIN $TEST_FOLDER/$1 $2
     echo "####fin test \"$1\" avec \"$2\"####"
+    echo "_________________________________________________________________________________________"
 }
 
 
