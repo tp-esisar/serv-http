@@ -104,13 +104,17 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
     /**< Tout ce qui concerne les requêtes qui liste des champs  */
     else if(strcmp("header-field", search) == 0)
     {
-        while (bloc != NULL)
+        while (bloc != NULL) {
             extract_stringL(bloc->header_field, callback);
+            bloc = bloc->suivant;
+            compteur ++;
+        }
     }
     else if(strcmp("field-name", search) == 0)
         while (bloc != NULL)
         {
             extract_stringL(bloc->field_name, callback);
+            bloc = bloc->suivant;
             compteur ++;
         }
 
@@ -118,6 +122,7 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
         while (bloc != NULL)
         {
             extract_stringL(extract_fieldValue(bloc->header_field), callback);
+            bloc = bloc->suivant;
             compteur ++;
         }
 
@@ -135,7 +140,7 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
         /**< On cherche les champs correspondants dans la liste chainée */
         while (bloc != NULL)
 		{
-            bloc = bloc->suivant;
+            
 			if (stringLEq(searchS, bloc->field_name)) /**< Si on l'a trouvé et suivant dans quel mode on est, on envoie à callback le StringL contenant le champ recherché */
 			{
 				if (mode == 1)  /**< Si on veut juste le content, il faut l'extraire de la ligne */
@@ -149,6 +154,7 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
 					compteur ++;
 				}
 			}
+			bloc = bloc->suivant;
 		}
     }
     return compteur;
