@@ -51,3 +51,8 @@ StringL extract_fieldValue(StringL field)
 	field.s = &(field.s[i]);
     return field;
 }
+
+void extract_stringL (StringL field, void (*callback)(char* found, unsigned int len))
+{
+    callback(field.s, field.len);
+}
