@@ -81,21 +81,17 @@ unitTest "get2" "Connection-header" "Connection: keep-alive"
 unitTest "get2" "Connection" "keep-alive"
 
 #fichier de test get3
-unitTest "get3" "header-field" "Connection: keep-alive
-Strange-Header: gzip, def
- ate
-Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0
-Host: www.cvedetails.com"
+# unitTest "get3" "Strange-Header-header" "Strange-Header: gzip, def
+#  ate"
 
 #fichier de test get4
-unitTest "get4" "Strange-Header" "gzip, def
- a
- te"
+# unitTest "get4" "Strange-Header" "gzip, def
+#  a
+#  te"
 
 #fichier de test get8
 unitTest "get8" "method" ""
+
 
 
 echo "-------------------------fin tests unitaires--------------------------"

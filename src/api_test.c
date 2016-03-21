@@ -6,18 +6,18 @@ int parser (char *buf, unsigned int len, char *search, void (*callback)(char* fo
 {
 	parse_return retour;
 	StringL buff ={buf, len};
-	int nombre;
 
 	retour = parse_HTTP_message(&buff);
 	if (retour.state == PARSE_FAIL)
-		return retour.ligne;
+		return retour.buff.s - buf;
 
 	else
 	{
-		nombre = search_map(retour.map, search, callback);
-		//printf("--- %d occurences trouvees ---\n", nombre);
+		search_map(retour.map, search, callback);
 		return -1;
 	}
 
     
 }
+
+

@@ -13,7 +13,7 @@ typedef enum {
 typedef struct {
     parse_state state;
     mapStruct* map;
-	int ligne;
+	StringL buff;
 } parse_return;
 
 parse_return parse_HTTP_message(StringL* buff);

@@ -6,7 +6,7 @@
 	tempReader=get_reader(SYMB,buff);\
 	rr = CALL_CLOSURE(tempReader);\
     if(rr.state==FAIL) {\
-        return (parse_return){PARSE_FAIL,NULL,ligne};\
+        return (parse_return){PARSE_FAIL,NULL,*buff};\
     }\
 	VAR = rr.string;\
 } while(0)
@@ -29,7 +29,6 @@ parse_return parse_HTTP_message(StringL* buff) {
     mapStruct* map;
     reader crlfReader = get_reader(CRLF,buff);
     reader spReader = get_reader(SP,buff);
-    int ligne = 1;
 	
    	LIRE(method,Smethod);
    	CALL_CLOSURE(spReader);
@@ -53,8 +52,7 @@ parse_return parse_HTTP_message(StringL* buff) {
 		add_field( map, Sfield_name, Sheader_field);
 		
 		CALL_CLOSURE(crlfReader);
-		ligne++;
 	}
 	
-	return (parse_return){PARSE_SUCC,map,ligne};
+	return (parse_return){PARSE_SUCC,map,*buff};
 }
