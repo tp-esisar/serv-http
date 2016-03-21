@@ -61,5 +61,41 @@ Wget/1.16 (linux-gnu)"
 unitTest "get1" "Host-header" "Host: www.google.com"
 unitTest "get1" "Host" "www.google.com"
 
+#fichier de test get2
+
+unitTest "get2" "start-line" "GET / HTTP/1.1"
+unitTest "get2" "method" "GET" 
+unitTest "get2" "request-target" "/"
+unitTest "get2" "HTTP-version" "HTTP/1.1"
+unitTest "get2" "Host-header" "Host: www.cvedetails.com"
+unitTest "get2" "Host" "www.cvedetails.com"
+unitTest "get2" "User-Agent" "Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0"
+unitTest "get2" "User-Agent-header" "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0"
+unitTest "get2" "Accept-header" "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+unitTest "get2" "Accept" "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+unitTest "get2" "Accept-Language-header" "Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3"
+unitTest "get2" "Accept-Language" "fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3"
+unitTest "get2" "Accept-Encoding-header" "Accept-Encoding: gzip, deflate"
+unitTest "get2" "Accept-Encoding" "gzip, deflate"
+unitTest "get2" "Connection-header" "Connection: keep-alive"
+unitTest "get2" "Connection" "keep-alive"
+
+#fichier de test get3
+unitTest "get3" "header-field" "Connection: keep-alive
+Strange-Header: gzip, def
+ ate
+Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0
+Host: www.cvedetails.com"
+
+#fichier de test get4
+unitTest "get4" "Strange-Header" "gzip, def
+ a
+ te"
+
+#fichier de test get8
+unitTest "get8" "method" ""
+
 
 echo "-------------------------fin tests unitaires--------------------------"
