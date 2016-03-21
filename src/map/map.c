@@ -3,7 +3,7 @@
  * \brief API pour la gestion de la MAP
  *
  */
-#include "../../inc/map.h"
+#include "map.h"
 
 /** \brief Fonction qui initialise la MAP en remplissant les champs de la StartLine
  *

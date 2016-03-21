@@ -1,6 +1,6 @@
 
-#include "../../inc/StringL.h"
-#include "../../inc/map.h"
+#include "StringL.h"
+#include "map.h"
 
 void affiche_string (char *found, unsigned len)
 {

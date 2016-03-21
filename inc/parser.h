@@ -1,5 +1,3 @@
-
-
 #ifndef PARSER_H
 #define PARSER_H
 
@@ -19,8 +17,5 @@ typedef struct {
 } parse_return;
 
 parse_return parse_HTTP_message(StringL* buff);
-
-
-
 
 #endif

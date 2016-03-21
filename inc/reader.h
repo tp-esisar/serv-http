@@ -9,7 +9,6 @@ typedef enum {
     SUCC,
 } read_state;
 
-
 typedef struct {
     read_state state;
     StringL string;
