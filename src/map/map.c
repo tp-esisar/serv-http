@@ -28,6 +28,7 @@ mapStruct* init_map (StringL methode, StringL target, StringL version)
     map->request_target = target;
     map->http_version = version;
     map->field = NULL;
+    map->message_body = (StringL){NULL,0};
     return map;
 }
 
@@ -125,6 +126,12 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
             bloc = bloc->suivant;
             compteur ++;
         }
+        
+    else if(strcmp("message-body", search) == 0)
+    {
+        extract_stringL(map->message_body, callback);
+        compteur ++;
+    }
 
     /**< Pour finir, les formes classique : header-field... */
     else

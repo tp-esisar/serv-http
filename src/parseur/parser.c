@@ -24,6 +24,7 @@ parse_return parse_HTTP_message(StringL* buff) {
 	StringL Sheader_field;
 	StringL Sfield_name;
 	StringL saveBuffer;
+	StringL Smessage_body;
     read_return rr;
     reader tempReader;
     mapStruct* map;
@@ -53,6 +54,9 @@ parse_return parse_HTTP_message(StringL* buff) {
 		
 		CALL_CLOSURE(crlfReader);
 	}
+	LIRE(message_body,Smessage_body);
+	
+	map->message_body = Smessage_body;
 	
 	return (parse_return){PARSE_SUCC,map,*buff};
 }

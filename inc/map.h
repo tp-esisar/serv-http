@@ -34,6 +34,7 @@ struct mapStruct {
     StringL request_target;     /**< Pointeur vers la cible de la requête */
     StringL http_version;       /**< Pointeur vers la version de http de la requête */
     field* field;               /**< Pointeur sur la liste chainée contenant les header-fields */
+    StringL message_body;
 } ;
 
 mapStruct* init_map (StringL methode, StringL target, StringL version);
