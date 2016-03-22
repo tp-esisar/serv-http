@@ -41,7 +41,7 @@ echo
 echo "-------------debut tests unitaires sur fichiers de test---------------"
 #fichier de test get1
 
-unitTest "get1" "start-line" "GET / HTTP/1.1"
+#unitTest "get1" "start-line" "GET / HTTP/1.1\r"
 unitTest "get1" "method" "GET" 
 unitTest "get1" "request-target" "/"
 unitTest "get1" "HTTP-version" "HTTP/1.1"
@@ -63,7 +63,7 @@ unitTest "get1" "Host" "www.google.com"
 
 #fichier de test get2
 
-unitTest "get2" "start-line" "GET / HTTP/1.1"
+#unitTest "get2" "start-line" "GET / HTTP/1.1\r"
 unitTest "get2" "method" "GET" 
 unitTest "get2" "request-target" "/"
 unitTest "get2" "HTTP-version" "HTTP/1.1"

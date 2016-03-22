@@ -81,7 +81,7 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
     if ((strcmp("start-line", search) == 0)||(strcmp("request-line", search) == 0))
     {
         temp = map->methode;
-        temp.len = (map->http_version.s)-(map->methode.s)+(map->http_version.len);
+        temp.len = (map->http_version.s)-(map->methode.s)+(map->http_version.len)+2;
         extract_stringL(temp, callback);
         compteur ++;
     }
@@ -134,7 +134,7 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
             searchS.len -= 7;
             mode =2;
         }
-        else if(!strcmp("cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
+        else if(!strcmp("Cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
             searchS.len = 6;
 
         /**< On cherche les champs correspondants dans la liste chainée */
