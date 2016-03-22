@@ -4,6 +4,7 @@
  *
  */
 #include "map.h"
+#include <ctype.h>
 
 /** \brief Fonction qui initialise la MAP en remplissant les champs de la StartLine
  *
@@ -141,8 +142,15 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
             searchS.len -= 7;
             mode =2;
         }
-        else if(!strcmp("Cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
+        else if(!strcmp("cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
+        {
             searchS.len = 6;
+            searchS.s[0] = toupper(searchS.s[0]);
+        }
+        if(!strstr("cookie", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
+        {
+            searchS.s[0] = toupper(searchS.s[0]);
+        }
 
         /**< On cherche les champs correspondants dans la liste chainée */
         while (bloc != NULL)
