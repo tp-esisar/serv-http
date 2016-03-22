@@ -92,6 +92,8 @@ unitTest "get2" "Connection" "keep-alive"
 #fichier de test get8
 unitTest "get8" "method" ""
 
+unitTest "get11" "message-body" "One ring to rule them all "
 
+visualTest "get5" "message-body"
 
 echo "-------------------------fin tests unitaires--------------------------"
