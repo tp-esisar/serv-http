@@ -86,7 +86,9 @@ typedef enum {
     status_line,
     OCTET,
     colon,
-    message_body
+    message_body,
+    connection_option,
+    Connection
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)

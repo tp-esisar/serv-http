@@ -94,9 +94,9 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case OCTET: return charBetween(0x00, 0xFF);
         case message_body: return kleene(symb(OCTET));
         case colon: return letter(':');//sale
-        case connection_option: return token;
-        case Connection: return concat(concat( kleene(concat(letter(','),OWS)), connection_option), kleene(concat(concat( OWS, letter(',')), optionnal(concat( OWS, connection_option)))));
-        vérif ssh
+        case connection_option: return symb(token);
+        case Connection: return concat(concat( kleene(concat(letter(','), symb(OWS))), symb(connection_option)), kleene(concat(concat( symb(OWS), letter(',')), optionnal(concat( symb(OWS), symb(connection_option))))));
+        
         default: return bad_symbole();
     }
     
