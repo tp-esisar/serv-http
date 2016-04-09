@@ -94,7 +94,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case colon: return letter(':');//sale
         case connection_option: return token;
         case Connection: return concat(concat( kleene(concat(letter(','),OWS)), connection_option), kleene(concat(concat( OWS, letter(',')), optionnal(concat( OWS, connection_option)))));
-        
+        vérif ssh
         default: return bad_symbole();
     }
     
