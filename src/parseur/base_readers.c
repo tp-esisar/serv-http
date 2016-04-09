@@ -410,6 +410,33 @@ reader nOccurencesMax_Builder(StringL* wBuff, reader r, int n) {
 //Reader composé optionnal(reader r)
 #define optionnal(X) or(X,epsilon())
 
-
-
-
+#define word(X) word_Builder(wBuff, X)
+typedef struct {
+    StringL* wBuff;
+    StringL str;
+} word_context;
+read_return word_closure(word_context* ctxt) {
+    StringL str = ctxt->str;
+    StringL *wBuff = ctxt->wBuff;
+    if((wBuff->s == NULL) || (wBuff->len == 0)) {
+        return RET_FAIL;
+    }
+    for(int i=0;i<str.len;i++) {
+            if(wBuff->s[0] != str.s[i]) {
+                wBuff->s -= i;
+                wBuff->len += i;
+                return RET_FAIL;
+            }
+            wBuff->s++; 
+            wBuff->len--;
+        }
+        return (read_return){SUCC,{wBuff->s,str.len}}; 
+    //...
+}
+reader word_Builder(StringL* wBuff, StringL str) {
+    charIn_context* ctxt = GC_MALLOC(sizeof(charIn_context));
+    ctxt->wBuff = wBuff;
+    ctxt->str = str;
+    return make_reader_helper(word);
+}
+//fait par henri => pas sur que ça marche !

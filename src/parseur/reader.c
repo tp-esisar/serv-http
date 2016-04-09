@@ -7,6 +7,8 @@
 #define symb(X) get_reader(X,wBuff)
 //#define nOccurencesRange(X,n1,n2) nOccurencesMax(nOccurencesMin(X,n1),n2)
 #define nOccurencesRange(X,n1,n2) and(nOccurencesMin(X,n1),nOccurencesMin(X,n2))
+//temporaire (le _t pour le remplacer facilement)
+#define word_t(X) epsilon()
 
 reader get_reader(syntaxe_elem se, StringL* wBuff) {
     
