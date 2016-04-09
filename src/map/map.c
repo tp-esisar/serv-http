@@ -19,10 +19,7 @@ mapStruct* init_map (StringL methode, StringL target, StringL version)
     /**< Allocation de la MAP */
     map = malloc(sizeof(mapStruct));
     if (map == NULL)
-    {
-        perror("Erreur d'allocation memoire");
-        exit(1);
-    }
+		return NULL;
 
     /**< Remplissage des champs de StartLine */
     map->methode = methode;
@@ -46,17 +43,16 @@ void add_field (mapStruct* map, StringL field_name, StringL header_field)
 
     /**< On crée un nouveau bloc que l'on rempli avec les informations données en paramètre */
     bloc = malloc(sizeof(field));
-    if (bloc == NULL)
+    if (bloc != NULL)
     {
-        perror("Erreur d'allocation memoire");
-        exit(1);
-    }
-    bloc->field_name = field_name;
-    bloc->header_field = header_field;
-    bloc->suivant = map->field;
+        bloc->field_name = field_name;
+		bloc->header_field = header_field;
+		bloc->suivant = map->field;
 
-    /**< On insére le bloc en tête de la liste (pour plus de performances) */
-    map->field = bloc;
+		/**< On insére le bloc en tête de la liste (pour plus de performances) */
+		map->field = bloc;
+    }
+    
 }
 
 /** \brief Fonction qui recherche un header-field dans la MAP

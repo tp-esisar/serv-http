@@ -41,7 +41,8 @@ parse_return parse_HTTP_message(StringL* buff) {
 	
 
 	map = init_map(Smethod,Srequest_target,SHTTP_version);
-	
+	if (map == NULL)
+		return (parse_return){PARSE_FAIL,map,*buff};
 	
 	while(CALL_CLOSURE(crlfReader).state == FAIL){
 		saveBuffer = *buff;
