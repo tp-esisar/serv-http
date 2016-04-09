@@ -88,7 +88,26 @@ typedef enum {
     colon,
     message_body,
     connection_option,
-    Connection
+    Connection,
+    Connection_header,
+    Content_Length,
+    Content_Length_header,
+    Trailer,
+    Trailer_header,
+    BWS,
+    qdtext,
+    quoted_pair,
+    quoted_string,
+    DQUOTE,
+    transfer_parameter,
+    transfer_extension,
+    transfer_coding,
+    Transfer_Encoding,
+    Transfer_Encoding_header,
+    protocol_name,
+    protocol_version,
+    protocol,
+    Upgrade
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)

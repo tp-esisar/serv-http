@@ -10,6 +10,10 @@
 //temporaire (le _t pour le remplacer facilement)
 #define word_t(X) epsilon()
 
+#define header(X,n,Y) concat(concat( word_s(X,n), symb(OWS)),concat( symb(Y), symb(OWS)))
+#define word_s(X,n) word_t(((StringL){X,n))
+#define list(X) concat( concat( kleene(concat( letter(','), symb(OWS))), symb(X)), kleene(concat( concat( symb(OWS), letter(',')), optionnal(concat( symb(OWS), symb(X))))))
+
 reader get_reader(syntaxe_elem se, StringL* wBuff) {
     
     switch(se) {
@@ -96,9 +100,25 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case colon: return letter(':');//sale
         case connection_option: return symb(token);
         case Connection: return concat(concat( kleene(concat(letter(','), symb(OWS))), symb(connection_option)), kleene(concat(concat( symb(OWS), letter(',')), optionnal(concat( symb(OWS), symb(connection_option))))));
-        
+        case Connection_header: return header("Connection:",11,Connection);
+        case Content_Length: return nOccurencesMin(symb(DIGIT),1);
+        case Content_Length_header: return header("Content-Length:",15,Content_Length);
+        case Trailer: return list(field_name);
+        case Trailer_header: return header("Trailer:",8,Trailer);
+        case BWS: return symb(OWS);
+        case qdtext: return or( or( or( symb(HTAB), symb(SP)), letter('!')), or( or( charBetween(0x23,0x5B), charBetween(0x5D,0x7E)), symb(obs_text)));
+        case quoted_pair: return concat( letter('\\'), or( or( symb(HTAB), symb(SP)), or ( symb(VCHAR), symb(obs_text))));
+        case DQUOTE: return letter('"');
+        case quoted_string: return concat( concat( symb(DQUOTE), kleene(or( symb(qdtext), symb(quoted_pair)))), symb(DQUOTE));
+        case transfer_parameter: return concat(concat(concat( symb(token), symb(BWS)), letter('=')),concat( symb(BWS), or(symb(token), symb(quoted_string))));
+        case transfer_extension: return concat( symb(token), kleene(concat( concat( symb(OWS), letter(';')), concat( symb(OWS), symb(transfer_parameter)))));
+        case transfer_coding: return or( or( or( word_s("chunked",7), word_s("compress",8)), word_s("deflate",7)), or( word_s("gzip",4), symb(transfer_extension)));
+        case Transfer_Encoding: return list(transfer_coding);
+        case Transfer_Encoding_header: return header("Transfer-Encoding", 17, Transfer_Encoding);
+        case protocol_name: return symb(token);
+        case protocol_version: return symb(token);
+        case protocol: return concat( symb(protocol_name), optionnal(concat( letter('/'), symb(protocol_version))));
+        case Upgrade: return list(protocol);
         default: return bad_symbole();
     }
-    
-    
 }
