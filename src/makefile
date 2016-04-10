@@ -14,13 +14,16 @@ objects: parseur map gc StringL $(INC)/* main.c api_test.c
 	$(MAKE) -C StringL objects
 	$(MAKE) -C parseur objects
 	$(MAKE) -C map objects
+	$(MAKE) -C extracteur objects
 	gcc -g -Wall -c main.c -I$(INC) -o $(OBJ)/main.o
 	gcc -g -Wall -c api_test.c -I$(INC) -o $(OBJ)/api_test.o
 	
 
 test: objects $(BIN)/mainTest.e
 	$(MAKE) -C StringL test_stringL
+	$(MAKE) -C extracteur test_mini-map
 	$(MAKE) -C parseur test_reader
+	
 	./mainTest.sh
 
 debug_mainTest: objects $(BIN)/mainTest.e

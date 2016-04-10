@@ -4,7 +4,7 @@
 #include "StringL.h"
 
 int stringLEq(StringL s1, StringL s2) {
-    int i;
+  int i;
   if (s1.len != s2.len)
     return 0;
   else {
@@ -17,7 +17,7 @@ int stringLEq(StringL s1, StringL s2) {
 }
 
 char* toRegularString(StringL s) {
-    int i;
+  int i;
   char* r = NULL;
   r = malloc((s.len+1)*sizeof(char));
   if (r == NULL) return NULL;
@@ -30,7 +30,7 @@ char* toRegularString(StringL s) {
 }
 
 StringL fromRegularString(char* s) {
-    int i;
+  int i;
   int len = strlen(s);
   StringL r = {NULL,len};
   r.s = malloc((len)*sizeof(char));

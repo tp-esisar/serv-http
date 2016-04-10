@@ -3,6 +3,10 @@
 TEST_FOLDER=../tests
 TESTBIN=../bin/mainTest.e
 
+#printf("\x1b[31mThis is red text\x1b[0m\n");
+#printf("\x1b[32mThis is green text\x1b[0m\n");
+
+
 
 if [ ! -e $TESTBIN ]
 then
@@ -22,11 +26,11 @@ function visualTest {
 function unitTest {
     RESULT=$($TESTBIN $TEST_FOLDER/$1 $2 "silence")
     if [ "$RESULT" == "$3" ]; then
-        printf "unitTest file \"$1\" with \"$2\" OK\n"
+        printf "\x1b[32munitTest file \"$1\" with \"$2\" OK\x1b[0m\n"
     else
-        printf "unitTest file \"$1\" with \"$2\" FAILED\n"
-        printf "  got: \"$RESULT\"\n"
-        printf "  expect: \"$3\"\n"
+        printf "\x1b[31munitTest file \"$1\" with \"$2\" FAILED\x1b[0m\n"
+        printf "\x1b[31m  got: \"$RESULT\"\x1b[0m\n"
+        printf "\x1b[31m  expect: \"$3\"\x1b[0m\n"
     fi
 }
 
