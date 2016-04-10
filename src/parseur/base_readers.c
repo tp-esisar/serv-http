@@ -422,7 +422,8 @@ read_return word_closure(word_context* ctxt) {
     if((wBuff->s == NULL) || (wBuff->len < str.len)) {
         return RET_FAIL;
     }
-    for(int i=0;i<str.len;i++) {
+    int i;
+    for(i=0;i<str.len;i++) {
             if(wBuff->s[i] != str.s[i]) {
                 return RET_FAIL;
             }
