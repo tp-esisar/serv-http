@@ -11,7 +11,7 @@
 #define word_t(X) epsilon()
 
 #define header(X,n,Y) concat(concat( word_s(X,n), symb(OWS)),concat( symb(Y), symb(OWS)))
-#define word_s(X,n) word_t(((StringL){X,n))
+#define word_s(X,n) word_t(((StringL){X,n}))
 #define list(X) concat( concat( kleene(concat( letter(','), symb(OWS))), symb(X)), kleene(concat( concat( symb(OWS), letter(',')), optionnal(concat( symb(OWS), symb(X))))))
 
 reader get_reader(syntaxe_elem se, StringL* wBuff) {
@@ -178,7 +178,9 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case Cache_Control: return list(cache_directive);
         case Cache_Control_header: return header("Cache-Control:",14,Cache_Control);
         case Expect: return word_s("100-continue",12);
-        case Expect_header: return header("Expect:",7,Expect); 
+        case Expect_header: return header("Expect:",7,Expect);
+        case Host: return concat(symb(uri_host), optionnal(concat(letter(':'), symb(port))));
+        case Host_header: return header("Host:",5,Host); 
         default: return bad_symbole();
     }
 }
