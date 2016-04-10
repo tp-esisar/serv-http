@@ -418,25 +418,24 @@ typedef struct {
 read_return word_closure(word_context* ctxt) {
     StringL str = ctxt->str;
     StringL *wBuff = ctxt->wBuff;
-    if((wBuff->s == NULL) || (wBuff->len == 0)) {
+    StringL save = *wBuff;
+    if((wBuff->s == NULL) || (wBuff->len < str.len)) {
         return RET_FAIL;
     }
     for(int i=0;i<str.len;i++) {
-            if(wBuff->s[0] != str.s[i]) {
-                wBuff->s -= i;
-                wBuff->len += i;
+            if(wBuff->s[i] != str.s[i]) {
                 return RET_FAIL;
             }
-            wBuff->s++; 
-            wBuff->len--;
-        }
-        return (read_return){SUCC,{wBuff->s,str.len}}; 
-    //...
+    }
+    wBuff->s += i;
+    wBuff->len -= i;
+    return (read_return){SUCC,{save.s,str.len}};
 }
 reader word_Builder(StringL* wBuff, StringL str) {
-    charIn_context* ctxt = GC_MALLOC(sizeof(charIn_context));
+    word_context* ctxt = GC_MALLOC(sizeof(word_context));
     ctxt->wBuff = wBuff;
     ctxt->str = str;
     return make_reader_helper(word);
 }
 //fait par henri => pas sur que ça marche !
+//et revisité par alexis => sur que ça marche !
