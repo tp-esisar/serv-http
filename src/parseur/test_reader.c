@@ -3,6 +3,10 @@
 #include <string.h>
 #include <stdio.h>
 
+//printf("\x1b[31mThis is red text\x1b[0m\n");
+//printf("\x1b[32mThis is green text\x1b[0m\n");
+
+
 
 int test(char* name, syntaxe_elem se,read_state state, char* buffIn, char* expect) {
   StringL buffInSL = fromRegularString(buffIn);
@@ -13,25 +17,25 @@ int test(char* name, syntaxe_elem se,read_state state, char* buffIn, char* expec
   read_return rr = CALL_CLOSURE(r);
   int ok = 0;
   if(rr.state != state) {
-    fprintf(stderr, "test \"%s\" FAIL STATE RETURN\n",name);
+    fprintf(stderr, "\x1b[31mtest \"%s\" FAIL STATE RETURN\x1b[0m\n",name);
     return 1;
   }
   if( (!stringLEq(buffInSL, buffOutSL)) && (state == SUCC) ) {
     char* modifBuffIn = toRegularString(buffInSL);
     char* buffOut = toRegularString(buffOutSL);
-    fprintf(stderr, "test \"%s\" FAIL IN/OUT -> \n\tin: \"%s\" out: \"%s\" instead of \"%s\"\n",name,buffIn,modifBuffIn,buffOut);
+    fprintf(stderr, "\x1b[31mtest \"%s\" FAIL IN/OUT -> \n\tin: \"%s\" out: \"%s\" instead of \"%s\"\x1b[0m\n",name,buffIn,modifBuffIn,buffOut);
     free(modifBuffIn);
     free(buffOut);
     ok+=1;
   }
   if( (!stringLEq(rr.string, expectSL)) && (state == SUCC)) {
     char* strReturn = toRegularString(rr.string);
-    fprintf(stderr, "test \"%s\" FAIL EXPECT RETURN -> \n\tgot: \"%s\" instead of \"%s\"\n",name,strReturn,expect);
+    fprintf(stderr, "\x1b[31mtest \"%s\" FAIL EXPECT RETURN -> \n\tgot: \"%s\" instead of \"%s\"\x1b[0m\n",name,strReturn,expect);
     free(strReturn);
     ok+=1;
   }
   if(ok == 0) {
-    printf("test \"%s\" OK\n",name);
+    printf("\x1b[32mtest \"%s\" OK\x1b[0m\n",name);
   }
   if(buffInSLSave.len != 0) free(buffInSLSave.s);
   if(buffOutSL.len != 0) free(buffOutSL.s);
