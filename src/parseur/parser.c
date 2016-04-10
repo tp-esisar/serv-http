@@ -24,7 +24,7 @@ parse_return parse_HTTP_message(StringL* buff) {
 	StringL Sheader_field;
 	StringL Sfield_name;
 	StringL saveBuffer;
-	StringL Smessage_body;
+//	StringL Smessage_body;
     read_return rr;
     reader tempReader;
     mapStruct* map;

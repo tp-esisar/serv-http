@@ -108,7 +108,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case Trailer: return list(field_name);
         case Trailer_header: return header("Trailer:",8,Trailer);
         case qdtext: return or( or( or( symb(HTAB), symb(SP)), letter('!')), or( or( charBetween(0x23,0x5B), charBetween(0x5D,0x7E)), symb(obs_text)));
-        case quoted_pair: return concat( letter('\\'), or( or( symb(HTAB), symb(SP)), or ( symb(VCHAR), symb(obs_text))));
+        case quoted_pair: return concat( letter('\\'), or( or( symb(HTAB), symb(SP)), or ( symb(VCHAR), symb(obs_text)))); //vaut il mieux mettre le code du "\" ... does it even work ?
         case quoted_string: return concat( concat( symb(DQUOTE), kleene(or( symb(qdtext), symb(quoted_pair)))), symb(DQUOTE));
         case transfer_parameter: return concat(concat(concat( symb(token), symb(BWS)), letter('=')),concat( symb(BWS), or(symb(token), symb(quoted_string))));
         case transfer_extension: return concat( symb(token), kleene(concat( concat( symb(OWS), letter(';')), concat( symb(OWS), symb(transfer_parameter)))));
@@ -151,6 +151,34 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case HTTP_date: return or(symb(IMF_fixdate),symb(obs_date));
         case Expires: return symb(HTTP_date);
         case Expires_header: return header("Expires:",8,Expires);
+        case Date: return symb(HTTP_date);
+        case Date_header: return header("Date:",5,Date);
+        case fragment: return kleene(or(or( symb(pchar), letter('/')), letter('?')));
+        case URI: return  concat(concat(concat( symb(scheme), letter(':')),concat( symb(hier_part), optionnal(concat( letter('?'), symb(query))))), optionnal(concat( letter('#'), symb(fragment))));
+        case segment_nz_nc: return nOccurencesMin(or(or( symb(unreserved), symb(pct_encoded)),or( symb(sub_delims), letter('@'))),1);
+        case path_noscheme: return concat( symb(segment_nz_nc), kleene(concat(letter('/'), symb(segment))));
+        case relative_part: return concat( word_s("//",2), or(or( concat( symb(authority), symb(path_abempty)), symb(path_absolute)),or( symb(path_noscheme), symb(path_empty))));
+        case relative_ref: return concat(concat( symb(relative_part), optionnal(concat( letter('?'), symb(query)))), optionnal(concat( letter('#'), symb(fragment))));
+        case URI_reference: return or(symb(URI), symb(relative_ref));
+        case Location: return symb(URI_reference);
+        case Location_header: return header("Location:",9,Location);
+        case delay_seconds: return nOccurencesMin(symb(DIGIT),1);
+        case Retry_After: return or(symb(HTTP_date), symb(delay_seconds));
+        case Retry_After_header: return header("Retry-After:",12,Retry_After);
+        case Vary: return or(letter('*'), concat(concat(kleene(concat(letter(','), symb(OWS))), symb(field_name)), kleene(concat(concat(symb(OWS), letter(',')), optionnal(concat(symb(OWS), symb(field_name)))))));
+        case Vary_header: return header("Vary:",5,Vary);
+        case warn_code: return nOccurences(symb(DIGIT),3);
+        case warn_agent: return or(concat(symb(uri_host),optionnal(concat(letter(':'),symb(port)))),symb(pseudonym));
+        case warn_text: return symb(quoted_string);
+        case warn_date: return concat(concat(symb(DQUOTE), symb(HTTP_date)), symb(DQUOTE));
+        case warning_value: return concat(concat(concat( symb(warn_code), symb(SP)),concat( symb(warn_agent), symb(SP))),concat( symb(warn_text), optionnal(concat(symb(SP), symb(warn_date)))));
+        case Warning: return list(warning_value);
+        case Warning_header: return header("Warning:",8,Warning);
+        case cache_directive: return concat(symb(token), optionnal(concat(letter('='), or(symb(token), symb(quoted_string)))));
+        case Cache_Control: return list(cache_directive);
+        case Cache_Control_header: return header("Cache-Control:",14,Cache_Control);
+        case Expect: return word_s("100-continue",12);
+        case Expect_header: return header("Expect:",7,Expect); 
         default: return bad_symbole();
     }
 }
