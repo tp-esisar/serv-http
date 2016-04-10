@@ -205,6 +205,24 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case t_codings: return or(word_s("trailers",8), concat(symb(transfer_coding), optionnal(symb(t_ranking))));
         case TE: return optionnal(concat(or(letter(','), symb(t_codings)), kleene(concat(concat(symb(OWS), letter(',')), optionnal(concat(symb(OWS), symb(t_codings)))))));
         case TE_header: return header("TE:",3,TE);
+        case weak: return word_s("W/",2);
+        case etagc: return or(letter('!'), charBetween(0x23,0x7E));
+        case opaque_tag: return concat(concat(symb(DQUOTE), kleene(symb(etagc))), symb(DQUOTE));
+        case entity_tag: return concat(optionnal(symb(weak)), symb(opaque_tag));
+        case If_Match: return or(letter('*'), list(symb(entity_tag)));
+        case If_Match_header: return header("If-Match:",9,If_Match);
+        case If_None_Match: return or(letter('*'), list(symb(entity_tag)));
+        case If_None_Match_header: return header("If-None-Match:",14,If_None_Match);
+        case If_Modified_Since: return symb(HTTP_date);
+        case If_Modified_Since_header: return header_field("If-Modified-Since:",18,If_Modified_Since);
+        case If_Unmodified_Since: return symb(HTTP_date);
+        case If_Unmodified_Since_header: return header("If-Unmodified-Since:",20,If_Unmodified_Since);
+        case If_Range: return or(symb(entity_tag), symb(HTTP_date));
+        case If_Range_header: return header("If-Range:",9,If_Range);
+        case type: return symb(token);
+        case subtype: return symb(token);
+        case parameter: return concat(concat(symb(token), letter('=')), or(symb(token), symb(quoted_string)));
+        case media_range: return concat(or(or(word_s("*/*",3), concat(symb(type), word_s("/*",2))), concat(concat(symb(type), letter('/')), symb(subtype))), kleene(concat(concat(symb(OWS), letter(';')),concat(symb(OWS), symb(parameter)))));
         default: return bad_symbole();
     }
 }

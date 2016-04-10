@@ -194,7 +194,25 @@ typedef enum {
     t_ranking,
     t_codings,
     TE,
-    TE_header
+    TE_header,
+    weak,
+    etagc,
+    opaque_tag,
+    entity_tag,
+    If_Match,
+    If_Match_header,
+    If_None_Match,
+    If_None_Match_header,
+    If_Modified_Since,
+    If_Modified_Since_header,
+    If_Unmodified_Since,
+    If_Unmodified_Since_header,
+    If_Range,
+    If_Range_header,
+    type,
+    subtype,
+    parameter,
+    media_range
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
