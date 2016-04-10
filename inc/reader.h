@@ -167,7 +167,9 @@ typedef enum {
     Cache_Control,
     Cache_Control_header,
     Expect,
-    Expect_header
+    Expect_header,
+    Host,
+    Host_header
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
