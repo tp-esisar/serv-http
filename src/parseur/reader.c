@@ -12,7 +12,7 @@
 
 #define header(X,n,Y) concat(concat( word_s(X,n), symb(OWS)),concat( symb(Y), symb(OWS)))
 #define word_s(X,n) word_t(((StringL){X,n}))
-#define list(X) concat( concat( kleene(concat( letter(','), symb(OWS))), symb(X)), kleene(concat( concat( symb(OWS), letter(',')), optionnal(concat( symb(OWS), symb(X))))))
+#define list(X) concat( concat( kleene(concat( letter(','), symb(OWS))), X), kleene(concat( concat( symb(OWS), letter(',')), optionnal(concat( symb(OWS), X)))))
 
 reader get_reader(syntaxe_elem se, StringL* wBuff) {
     
@@ -105,7 +105,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case Connection_header: return header("Connection:",11,Connection);
         case Content_Length: return nOccurencesMin(symb(DIGIT),1);
         case Content_Length_header: return header("Content-Length:",15,Content_Length);
-        case Trailer: return list(field_name);
+        case Trailer: return list(symb(field_name));
         case Trailer_header: return header("Trailer:",8,Trailer);
         case qdtext: return or( or( or( symb(HTAB), symb(SP)), letter('!')), or( or( charBetween(0x23,0x5B), charBetween(0x5D,0x7E)), symb(obs_text)));
         case quoted_pair: return concat( letter('\\'), or( or( symb(HTAB), symb(SP)), or ( symb(VCHAR), symb(obs_text)))); //vaut il mieux mettre le code du "\" ... does it even work ?
@@ -113,12 +113,12 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case transfer_parameter: return concat(concat(concat( symb(token), symb(BWS)), letter('=')),concat( symb(BWS), or(symb(token), symb(quoted_string))));
         case transfer_extension: return concat( symb(token), kleene(concat( concat( symb(OWS), letter(';')), concat( symb(OWS), symb(transfer_parameter)))));
         case transfer_coding: return or( or( or( word_s("chunked",7), word_s("compress",8)), word_s("deflate",7)), or( word_s("gzip",4), symb(transfer_extension)));
-        case Transfer_Encoding: return list(transfer_coding);
+        case Transfer_Encoding: return list(symb(transfer_coding));
         case Transfer_Encoding_header: return header("Transfer-Encoding:", 18, Transfer_Encoding);
         case protocol_name: return symb(token);
         case protocol_version: return symb(token);
         case protocol: return concat( symb(protocol_name), optionnal(concat( letter('/'), symb(protocol_version))));
-        case Upgrade: return list(protocol);
+        case Upgrade: return list(symb(protocol));
         case Upgrade_header: return header("Upgrade:",8,Upgrade);
         case received_protocol: return concat(optionnal(concat(symb(protocol_name),letter('/'))),symb(protocol_version));
         case pseudonym: return symb(token);
@@ -172,15 +172,39 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case warn_text: return symb(quoted_string);
         case warn_date: return concat(concat(symb(DQUOTE), symb(HTTP_date)), symb(DQUOTE));
         case warning_value: return concat(concat(concat( symb(warn_code), symb(SP)),concat( symb(warn_agent), symb(SP))),concat( symb(warn_text), optionnal(concat(symb(SP), symb(warn_date)))));
-        case Warning: return list(warning_value);
+        case Warning: return list(symb(warning_value));
         case Warning_header: return header("Warning:",8,Warning);
         case cache_directive: return concat(symb(token), optionnal(concat(letter('='), or(symb(token), symb(quoted_string)))));
-        case Cache_Control: return list(cache_directive);
+        case Cache_Control: return list(symb(cache_directive));
         case Cache_Control_header: return header("Cache-Control:",14,Cache_Control);
         case Expect: return word_s("100-continue",12);
         case Expect_header: return header("Expect:",7,Expect);
         case Host: return concat(symb(uri_host), optionnal(concat(letter(':'), symb(port))));
-        case Host_header: return header("Host:",5,Host); 
+        case Host_header: return header("Host:",5,Host);
+        case Max_Forwards: return nOccurencesMin(symb(DIGIT),1);
+        case Max_Forwards_header: return header("Max-Forwards:",13,Max_Forwards);
+        case extension_pragma: return concat(symb(token), optionnal(concat(letter('='), or(symb(token), symb(quoted_string)))));
+        case pragma_directive: return or(word_s("no-cache",8), symb(extension_pragma));
+        case Pragma: return list(symb(Pragma));
+        case Pragma_header: return header("Pragma:",7,Pragma);
+        case bytes_unit: return word_s("bytes",5);
+        case first_byte_pos: return nOccurencesMin(symb(DIGIT),1);
+        case last_byte_pos: return nOccurencesMin(symb(DIGIT),1);
+        case byte_range_spec: return concat(concat(symb(first_byte_pos), letter('-')), optionnal(symb(last_byte_pos)));
+        case suffix_length: return nOccurencesMin(symb(DIGIT),1);
+        case suffix_byte_range_spec: return concat(letter('-'), symb(suffix_length));
+        case byte_range_set: return list(or(symb(byte_range_spec), symb(suffix_byte_range_spec)));
+        case byte_ranges_specifier: return concat(concat(symb(bytes_unit), letter('=')), symb(byte_range_set));
+        case other_range_unit: return symb(token);
+        case other_range_set: return nOccurencesMin(symb(VCHAR),1);
+        case other_ranges_specifier: return concat(concat(symb(other_range_unit), letter('=')), symb(other_range_set));
+        case Range: return or(symb(bytes_unit), symb(other_range_unit));
+        case Range_header: return header("Range:",6,Range);
+        case rank: return or(concat(letter('0'), optionnal(concat(letter('.'), nOccurencesMax(symb(DIGIT),3)))),concat(letter('1'), optionnal(concat(letter('.'), nOccurencesMax(letter('0'),3)))));
+        case t_ranking: return concat(concat(concat(symb(OWS), letter(';')),concat(symb(OWS), word_s("q=",2))), symb(rank));
+        case t_codings: return or(word_s("trailers",8), concat(symb(transfer_coding), optionnal(symb(t_ranking))));
+        case TE: return optionnal(concat(or(letter(','), symb(t_codings)), kleene(concat(concat(symb(OWS), letter(',')), optionnal(concat(symb(OWS), symb(t_codings)))))));
+        case TE_header: return header("TE:",3,TE);
         default: return bad_symbole();
     }
 }

@@ -169,7 +169,32 @@ typedef enum {
     Expect,
     Expect_header,
     Host,
-    Host_header
+    Host_header,
+    Max_Forwards,
+    Max_Forwards_header,
+    extension_pragma,
+    pragma_directive,
+    Pragma,
+    Pragma_header,
+    bytes_unit,
+    first_byte_pos,
+    last_byte_pos,
+    byte_range_spec,
+    suffix_length,
+    suffix_byte_range_spec,
+    byte_range_set,
+    byte_ranges_specifier,
+    other_range_unit,
+    other_range_set,
+    other_ranges_specifier,
+    range_unit,
+    Range,
+    Range_header,
+    rank,
+    t_ranking,
+    t_codings,
+    TE,
+    TE_header
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
