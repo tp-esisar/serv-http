@@ -30,9 +30,9 @@ StringL getValue(Pair* list, StringL key) {
 	return (StringL){NULL,0};
 }
 
-void free_map(Pair* list) {
+void free_mini_map(Pair* list) {
 	if(list != NULL) {
-		free_map(list->next);
+		free_mini_map(list->next);
 		free(list);
 	}
 }

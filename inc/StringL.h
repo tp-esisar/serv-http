@@ -11,5 +11,6 @@ char* toRegularString(StringL s);
 StringL fromRegularString(char* s);
 StringL extract_fieldValue(StringL field);
 void extract_stringL (StringL field, void (*callback)(char* found, unsigned int len));
+long toLong(StringL str);
 
 #endif

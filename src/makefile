@@ -23,6 +23,7 @@ test: objects $(BIN)/mainTest.e
 	$(MAKE) -C StringL test_stringL
 	$(MAKE) -C extracteur test_mini-map
 	$(MAKE) -C parseur test_reader
+	$(MAKE) -C extracteur test_header-getter
 	
 	./mainTest.sh
 

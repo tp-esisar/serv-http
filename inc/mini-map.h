@@ -15,7 +15,7 @@ Pair* addPair(Pair* list, StringL key, StringL value);
 
 StringL getValue(Pair* list, StringL key);
 
-void free_map(Pair* list);
+void free_mini_map(Pair* list);
 
 
 #endif

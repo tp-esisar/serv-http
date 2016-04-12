@@ -54,5 +54,13 @@ StringL extract_fieldValue(StringL field)
 
 void extract_stringL (StringL field, void (*callback)(char* found, unsigned int len))
 {
-    callback(field.s, field.len);
+  callback(field.s, field.len);
+}
+
+long toLong(StringL str) {
+  char* temp = toRegularString(str);
+  char* end;
+  long ret=strtol(temp,&end,10);
+  free(temp);
+  return ret;
 }

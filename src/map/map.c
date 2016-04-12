@@ -142,12 +142,12 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
             searchS.len -= 7;
             mode =2;
         }
-        else if(!strcmp("cookie-string", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
+        else if(strcmp("cookie-string", search) == 0) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
         {
             searchS.len = 6;
             searchS.s[0] = toupper(searchS.s[0]);
         }
-        if(!strstr("cookie", search)) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
+        if(strstr("cookie", search)!=NULL) /**< Cas spécial du Cookie qui n'a pas la même syntaxe que les autres et que l'on normalise */
         {
             searchS.s[0] = toupper(searchS.s[0]);
         }

@@ -20,8 +20,8 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case SP: return letter(' ');
         case HTAB: return letter('\t');
         case OWS: return kleene(or(letter(' '),letter('\t')));
-        case CRLF: return concat(letter('\r'),letter('\n')); //CRLF conforme (ne marche pas pour le debug avec l'encodage linux)
-        //case CRLF: return or(letter('\n'),concat(letter('\r'),letter('\n'))); //CRLF non conforme à utiliser pour le debug sur linux
+        //case CRLF: return concat(letter('\r'),letter('\n')); //CRLF conforme (ne marche pas pour le debug avec l'encodage linux)
+        case CRLF: return or(letter('\n'),concat(letter('\r'),letter('\n'))); //CRLF non conforme à utiliser pour le debug sur linux
         case DIGIT: return charIn(((StringL){"0123456789",10}));
         case ALPHA: return charIn(((StringL){"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",52}));
         case HEXDIG: return or(symb(DIGIT), charIn(((StringL){"ABCDEFabcdef",6})));

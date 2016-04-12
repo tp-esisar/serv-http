@@ -35,7 +35,7 @@ int main()
 	 free(value1.s);
 	 free(value2.s);
 	 free(value3.s);
-	 free_map(map);
+	 free_mini_map(map);
 	 if(ok != 0) {
 	 	fprintf(stderr,"\x1b[31mtest mini-map FAILD\x1b[0m, %d tests failed\n",ok);
 	 	return(1);
