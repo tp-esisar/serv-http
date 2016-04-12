@@ -6,6 +6,9 @@
 #include <string.h>
 #include "request.h"
 #include "StringL.h"
+#include "map.h"
+#include "reponse.h"
+#include "fichier.h"
 
 int processing(mapStruct* map, Sreponse* reponse) ;
 

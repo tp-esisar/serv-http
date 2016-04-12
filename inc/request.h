@@ -1,3 +1,6 @@
+#ifndef REQUEST_H
+#define REQUEST_H
+
 /** 
 \file request.h 
 \author Quentin Giorgi 
@@ -64,5 +67,6 @@ void sendReponse(message *r);
 */
 void requestShutdownSocket(int i); 
 
+#endif
 
 

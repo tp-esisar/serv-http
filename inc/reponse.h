@@ -14,7 +14,7 @@ typedef struct {
 
 Sreponse* init_Sreponse (void);
 char* startline (char* num, char* detail);
-Sreponse* addHeaderfield(Sreponse* reponse, char* ajout);
+void addHeaderfield(Sreponse* reponse, char* ajout);
 message* SreponseToMessage (Sreponse* Sreponse);
 void error (Sreponse* message, char* num, char* detail);
 

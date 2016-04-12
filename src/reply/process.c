@@ -29,4 +29,5 @@ int processing(mapStruct* map, Sreponse* reponse)
 		addHeaderfield(reponse, "Connection: Keep-Alive");
 		return 0;
 	}
+	return 0;
 }

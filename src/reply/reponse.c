@@ -11,13 +11,15 @@ Sreponse* init_Sreponse (void)
 	reponse->startline = NULL;
 	reponse->headerfield = NULL;
 	reponse->messagebody = NULL;
+
+	return reponse;
 }
 
 char* startline (char* num, char* detail)
 {
 	int taille = 8+1+3+1+strlen(detail)+2;
 
-	line = malloc((taille+1)*sizeof(char));
+	char* line = malloc((taille+1)*sizeof(char));
 
 	if (line == NULL)
 	{
@@ -36,19 +38,18 @@ char* startline (char* num, char* detail)
 	return line;
 }
 
-Sreponse* addHeaderfield(Sreponse* reponse, char* ajout)
+void addHeaderfield(Sreponse* reponse, char* ajout)
 {
-	reponse->headerfield = realloc(reponse->headerfield, strlen(reponse)+strlen(ajout)+1);
+	reponse->headerfield = realloc(reponse->headerfield, strlen(reponse->headerfield)+strlen(ajout)+1);
 	if (reponse->headerfield == NULL)
 	{
 		perror ("Erreur d'allocation mémoire");
 		exit(1);
 	}
 	
-	strcpy(&(reponse->headerfield[strlen(reponse)]), ajout);
-	reponse->headerfield[strlen(reponse)+strlen(ajout)] = '\0';
-	
-	return reponse;
+	strcpy(&(reponse->headerfield[strlen(reponse->headerfield)]), ajout);
+	reponse->headerfield[strlen(reponse->headerfield)+strlen(ajout)] = '\0';
+
 }
 
 message* SreponseToMessage (Sreponse* Sreponse)
@@ -67,13 +68,13 @@ message* SreponseToMessage (Sreponse* Sreponse)
 		exit(1);
 	}
 	
-	reponse->taille = strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+strlen(Sreponse->messagebody)+2;
+	reponse->len = strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+strlen(Sreponse->messagebody)+2;
 	
-	memcpy(message->buf,Sreponse->startline, strlen(Sreponse->startline));
-	memcpy(&(message->buf[strlen(Sreponse->startline)]),Sreponse->headerfield, strlen(Sreponse->headerfield));
-	message->buf[strlen(Sreponse->headerfield)]='\r';
-	message->buf[strlen(Sreponse->headerfield)+1]='\n';
-	memcpy(&(message->buf[strlen(Sreponse->headerfield)+2]),Sreponse->messagebody, strlen(Sreponse->messagebody));	
+	memcpy(reponse->buf,Sreponse->startline, strlen(Sreponse->startline));
+	memcpy(&(reponse->buf[strlen(Sreponse->startline)]),Sreponse->headerfield, strlen(Sreponse->headerfield));
+	reponse->buf[strlen(Sreponse->headerfield)]='\r';
+	reponse->buf[strlen(Sreponse->headerfield)+1]='\n';
+	memcpy(&(reponse->buf[strlen(Sreponse->headerfield)+2]),Sreponse->messagebody, strlen(Sreponse->messagebody));	
 	
 	free(Sreponse->startline);
 	free(Sreponse->headerfield);
@@ -86,8 +87,8 @@ message* SreponseToMessage (Sreponse* Sreponse)
 void error (Sreponse* message, char* num, char* detail)
 {
 	message->startline = startline (num, detail);
-	message->headerfield = addHeaderfield(message, "Connection: Close");
-	message->headerfield = addHeaderfield(message, "Content-Type: text/html");
+	addHeaderfield(message, "Connection: Close");
+	addHeaderfield(message, "Content-Type: text/html");
 	message->messagebody = malloc(sizeof(char)*strlen(detail));
 	memcpy(message->messagebody, detail, strlen(detail));
 	//Determiner la taille du paquet
