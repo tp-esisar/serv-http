@@ -32,6 +32,14 @@ free_decl(Cookie_HS)
 Cookie_HS* get_Cookie(mapStruct* map);
 
 
+typedef struct Connection_HS {
+    Pair* connection_option;
+    struct Connection_HS* next;
+} Connection_HS;
+free_decl(Connection_HS)
+Connection_HS* get_Connection(mapStruct* map);
+
+
 
 
 #endif

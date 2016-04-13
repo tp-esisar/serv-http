@@ -115,3 +115,44 @@ Cookie_HS* get_Cookie(mapStruct* map) {
     }
     return headerList;
 }
+
+
+void free_Connection_HS(Connection_HS* obj) {
+    if (obj != NULL) {
+        free_Connection_HS(obj->next);
+        free_mini_map(obj->connection_option);
+        free(obj);
+    }
+}
+Connection_HS* get_Connection(mapStruct* map) {
+    
+    Connection_HS* headerList = NULL;
+    int error = 0;
+    void callback(char* buff, unsigned int len) {
+        Connection_HS* temp = malloc(sizeof(Connection_HS));
+        if (temp == NULL) {
+            error = 1;
+            return;
+        }
+        StringL wBuff = (StringL){buff,len};
+        reader rconnection_option = get_reader(connection_option,&wBuff);
+        while (wBuff.len >= 0) {
+            if(wBuff.s[0]!=',' && wBuff.s[0]!=' ' && wBuff.s[0]!='\t') {
+                read_return rrco_opt = CALL_CLOSURE(rconnection_option);
+                if (rrco_opt.state == FAIL) {
+                    fprintf(stderr,"\x1b[31merreur semantique connection-option\x1b[0m\n");
+                    exit(EXIT_FAILURE);
+                }
+                temp->connection_option = addPair(temp->connection_option,wBuff,wBuff);
+            }
+            wBuff.s++;
+            wBuff.len--;
+        }
+    }
+    search_map (map, "Connection", callback);
+    if (error != 0) {
+        free_Connection_HS(headerList);
+        return NULL;
+    }
+    return headerList;
+}
