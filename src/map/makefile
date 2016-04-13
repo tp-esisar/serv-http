@@ -2,6 +2,7 @@ PROJECT=../..
 OBJ=$(PROJECT)/obj
 BIN=$(PROJECT)/bin
 INC=$(PROJECT)/inc
+LIB=$(PROJECT)/lib
 CFLAGS=-g -Wall -std=c99 -I$(INC)
 
 objects: $(OBJ)/map.o

@@ -3,14 +3,15 @@ PROJECT=..
 OBJ=$(PROJECT)/obj
 BIN=$(PROJECT)/bin
 INC=$(PROJECT)/inc
+LIB=$(PROJECT)/lib
 
 DEBUG_FILE=$(PROJECT)/tests/get1
 DEBUG_ITEM=method
 
 $(BIN)/mainTest.e: objects
-	gcc -g -Wall -Igc/include -I$(INC) $(OBJ)/StringL.o $(OBJ)/reader.o $(OBJ)/parser.o $(OBJ)/main.o $(OBJ)/map.o $(OBJ)/api_test.o $(OBJ)/fichier.o $(OBJ)/process.o $(OBJ)/reponse.o gc/libgc.a.ext -o $(BIN)/mainTest.e library/librequest.so
+	gcc -g -Wall -I$(INC) $(OBJ)/StringL.o $(OBJ)/reader.o $(OBJ)/parser.o $(OBJ)/main.o $(OBJ)/map.o $(OBJ)/api_test.o $(OBJ)/fichier.o $(OBJ)/process.o $(OBJ)/reponse.o $(LIB)/libgc.a.ext -o $(BIN)/mainTest.e $(LIB)/librequest.so
 
-objects: parseur map gc StringL $(INC)/* main.c api_test.c
+objects: parseur map StringL $(INC)/* main.c api_test.c
 	$(MAKE) -C StringL objects
 	$(MAKE) -C parseur objects
 	$(MAKE) -C map objects
