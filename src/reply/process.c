@@ -7,7 +7,7 @@ fichier= ?*/
 
 int processing(mapStruct* map, Sreponse* reponse) 
 {
-	if (map->request_target[5] != 1)
+	if (map->http_version.s[5] != '1')
 		error(reponse, "505", "Version de HTTP non supportée");
 	else {
 		//Normalisation URL
@@ -21,6 +21,11 @@ int processing(mapStruct* map, Sreponse* reponse)
 			error(reponse, "501", "Méthode non supportée");
 	}
 	
+	addHeaderfield(reponse, "Connection: Close");
+	reponse->messagebody = malloc(5*sizeof(char));
+	reponse->messagebody[0]='G';
+	reponse->messagebody[1]='\0';
+
 	/*if (stringLEq (get_Connection(map), (StringL){"Close", 3}) == 1) {
 		addHeaderfield(reponse, "Connection: Close");
 		return 1;
