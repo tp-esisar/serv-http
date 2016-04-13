@@ -22,9 +22,11 @@ int main(int argc, char *argv[])
 		printf("Usage : %s port [d]\n", argv[0]);
 		return (0);
 	}
-	if (argc == 3 && strcmp(argv[2], "d"))
+	if (argc == 3 && argv[2][0]=='d')
 		debug = 1;
-	
+
+	putenv("export LD_LIBRARY_PATH=/lib");
+
 	while ( 1 )
 	{
 		requete = getRequest(atoi(argv[1]));
@@ -33,10 +35,7 @@ int main(int argc, char *argv[])
 		Sreponse = init_Sreponse ();
 
 		if (debug == 1)
-		{
-			printf("Client [%d] [%s:%d]\n",requete->clientId,inet_ntoa(requete->clientAddress->sin_addr),htons(requete->clientAddress->sin_port));
-			printf("Contenu requete %.*s\n\n",requete->len,requete->buf);  
-		}
+			printf("\n\n---Client [%d] [%s:%d]\n%.*s\n",requete->clientId,inet_ntoa(requete->clientAddress->sin_addr),htons(requete->clientAddress->sin_port),requete->len,requete->buf);
 
 		parse = parse_HTTP_message(&wBuff);
 		if (parse.state == PARSE_FAIL)
@@ -53,10 +52,8 @@ int main(int argc, char *argv[])
 		reponse->clientId=requete->clientId; 
 		sendReponse(reponse); 
 		if (debug == 1)
-		{
-			printf("Serveur [%d]\n",reponse->clientId);
-			printf("Contenu reponse %.*s\n\n",reponse->len,reponse->buf);  
-		}
+			printf("\n\n---Serveur [%d]\n%.*s\n",reponse->clientId,reponse->len,reponse->buf);
+
 		free(reponse->buf);
 		free(reponse); 
 		if (close == 1)
