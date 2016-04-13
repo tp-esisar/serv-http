@@ -14,14 +14,11 @@ objects: parseur map gc StringL $(INC)/* main.c api_test.c
 	$(MAKE) -C StringL objects
 	$(MAKE) -C parseur objects
 	$(MAKE) -C map objects
-<<<<<<< HEAD
 	$(MAKE) -C extracteur objects
-	gcc -g -Wall -c main.c -I$(INC) -o $(OBJ)/main.o
+	#gcc -g -Wall -c main.c -I$(INC) -o $(OBJ)/main.o
 	gcc -g -Wall -c api_test.c -I$(INC) -o $(OBJ)/api_test.o
-=======
 	$(MAKE) -C reply objects
 	gcc -g -Wall -c main.c -I$(INC) -o $(OBJ)/main.o -lrequest
->>>>>>> origin/Guillaume
 	
 
 test: objects $(BIN)/mainTest.e
