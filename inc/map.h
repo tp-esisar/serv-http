@@ -43,3 +43,4 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
 void free_map (mapStruct* map);
 
 #endif
+
