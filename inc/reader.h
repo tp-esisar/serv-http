@@ -255,4 +255,7 @@ typedef enum {
 reader get_reader(syntaxe_elem se, StringL* buff);
 
 
+//sortie de cerains base readers pour plus de simplicité
+reader letter_Builder(StringL* wBuff, char c);
+
 #endif

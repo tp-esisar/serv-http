@@ -83,6 +83,26 @@ int main() {
     }
     else printf("\x1b[32mtest Content_Length OK\x1b[0m\n");
     
+    free(temp.s);
+    free_map(map_Content_Length);
+    free_Content_Length_HS(Content_Length_val);
+    free(txt);
+    
+    test_header_helper(Cookie,"test_req1")
+    StringL key1 = fromRegularString("key1");
+    StringL key2 = fromRegularString("key2");
+    StringL value1 = fromRegularString("value1");
+    StringL value2 = fromRegularString("value2"); //segfault magique
+    temp = getValue(Cookie_val->cookie_pair, key1);
+    if(stringLEq(temp,value1)!= 1) {
+        fprintf(stderr,"\x1b[31mtest Cookie bad value1 FAILED\x1b[0m\n");
+    }
+    temp = getValue(Cookie_val->cookie_pair, key2);
+    if(stringLEq(temp,value2)!= 1) {
+        fprintf(stderr,"\x1b[31mtest Cookie bad value2 FAILED\x1b[0m\n");
+    }
+    printf("\x1b[32mtest Cookie OK\x1b[0m\n");
+    
     
     return 0;
 }

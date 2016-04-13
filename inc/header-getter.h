@@ -3,6 +3,8 @@
 
 #include "StringL.h"
 #include "map.h"
+#include "mini-map.h"
+
 //structures des headers
 
 #define free_decl(T) void free_ ## T(T* obj);
@@ -21,6 +23,13 @@ typedef struct Content_Length_HS {
 } Content_Length_HS;
 free_decl(Content_Length_HS)
 Content_Length_HS* get_Content_Length(mapStruct* map);
+
+typedef struct Cookie_HS {
+    Pair* cookie_pair;
+    struct Cookie_HS* next;
+} Cookie_HS;
+free_decl(Cookie_HS)
+Cookie_HS* get_Cookie(mapStruct* map);
 
 
 

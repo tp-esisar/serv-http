@@ -2,4 +2,5 @@ GET / HTTP/1.1
 Host: www.cvedetails.com
 Host: www.hostentrop.com
 Content_Length: 42
+Cookie: key1=value1; key2=value2
 
