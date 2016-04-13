@@ -87,7 +87,7 @@ int main() {
     free_map(map_Content_Length);
     free_Content_Length_HS(Content_Length_val);
     free(txt);
-    
+    /*
     test_header_helper(Cookie,"test_req1")
     StringL key1 = fromRegularString("key1");
     StringL key2 = fromRegularString("key2");
@@ -102,7 +102,7 @@ int main() {
         fprintf(stderr,"\x1b[31mtest Cookie bad value2 FAILED\x1b[0m\n");
     }
     printf("\x1b[32mtest Cookie OK\x1b[0m\n");
-    
+    */
     
     return 0;
 }
