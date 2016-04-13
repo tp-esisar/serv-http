@@ -6,7 +6,7 @@ INC=$(PROJECT)/inc
 LIB=$(PROJECT)/lib
 CFLAGS=-g -Wall -std=c99 -I$(INC)
 
-#objects: $(OBJ)/reader.o $(OBJ)/parser.o
+objects: $(OBJ)/reader.o $(OBJ)/parser.o
 
 test_reader: $(BIN)/test_reader.e
 	$(BIN)/test_reader.e
