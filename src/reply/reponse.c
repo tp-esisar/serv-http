@@ -40,7 +40,10 @@ char* startline (char* num, char* detail)
 
 void addHeaderfield(Sreponse* reponse, char* ajout)
 {
-	reponse->headerfield = realloc(reponse->headerfield, strlen(reponse->headerfield)+strlen(ajout)+1);
+	if (reponse->headerfield == NULL)
+		reponse->headerfield = malloc(sizeof(char)*(strlen(ajout)+1));
+	else
+		reponse->headerfield = realloc(reponse->headerfield, sizeof(char)*(strlen(reponse->headerfield)+strlen(ajout)+1));
 	if (reponse->headerfield == NULL)
 	{
 		perror ("Erreur d'allocation mémoire");
