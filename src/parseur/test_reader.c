@@ -44,12 +44,13 @@ int test(char* name, syntaxe_elem se,read_state state, char* buffIn, char* expec
 }
 
 
-
 int main() {
 
   printf("------------debut tests readers------------\n");
 
-  /*test("SP 1",SP,SUCC," A B   "," ");
+  test("HTTP",HTTP_name,SUCC,"HTTP  ","HTTP");
+
+  test("SP 1",SP,SUCC," A B   "," ");
   test("SP 2",SP,FAIL,"A B   ","");
   test("OWS 1",OWS,SUCC,"RASCASSE","");
   test("OWS 2",OWS,SUCC," RASCASSE"," ");
@@ -87,9 +88,11 @@ int main() {
 
   test("HTTP_version",HTTP_version,SUCC,"HTTP/9.1\r\nRRR","HTTP/9.1");
   test("field_name",field_name,SUCC,"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0","User-Agent");
-  test("header_field",header_field,SUCC,"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0\r\n","User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0");*/
+  test("header_field",header_field,SUCC,"User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0\r\n","User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0");
 
   test("Connection_header",Connection_header,SUCC,"Connection: keep-alive je suis invisiiiible","Connection: keep-alive");
+  test("Connection",Connection,SUCC,"keep-alive je suis invisiiiible","keep-alive");
+
   test("Content_Length_header",Content_Length_header,SUCC,"Content-Length: 348 je suis invisiiiible","Content-Length: 348");
   test("Trailer_header",Trailer_header,SUCC,"Trailer: Max-Forwards je suis invisiiiible","Trailer: Max-Forwards");
   test("Transfer_Encoding_header",Transfer_Encoding_header,SUCC,"Transfer-Encoding: chunked je suis invisiiiible","Transfer-Encoding: chunked");

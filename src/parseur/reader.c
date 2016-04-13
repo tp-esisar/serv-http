@@ -7,11 +7,9 @@
 #define symb(X) get_reader(X,wBuff)
 //#define nOccurencesRange(X,n1,n2) nOccurencesMax(nOccurencesMin(X,n1),n2)
 #define nOccurencesRange(X,n1,n2) and(nOccurencesMin(X,n1),nOccurencesMin(X,n2))
-//temporaire (le _t pour le remplacer facilement)
-#define word_t(X) epsilon()
 
 #define header(X,n,Y) concat(concat( word_s(X,n), symb(OWS)),concat( symb(Y), symb(OWS)))
-#define word_s(X,n) word_t(((StringL){X,n}))
+#define word_s(X,n) word(((StringL){X,n}))
 #define list(X) concat( concat( kleene(concat( letter(','), symb(OWS))), X), kleene(concat( concat( symb(OWS), letter(',')), optionnal(concat( symb(OWS), X)))))
 
 reader get_reader(syntaxe_elem se, StringL* wBuff) {
@@ -91,7 +89,8 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case authority_form: return symb(authority);
         case asterisk_form: return letter('*');
         case request_target: return or(or( symb(origin_form), symb(absolute_form)), or( symb(authority_form), symb(asterisk_form)));
-        case HTTP_name: return concat(letter('H'),concat(letter('T'),concat(letter('T'),letter('P')))); // à remplacer par word_s("HTTP",4)
+        //case HTTP_name: return concat(letter('H'),concat(letter('T'),concat(letter('T'),letter('P')))); // à remplacer par word_s("HTTP",4)
+        case HTTP_name: return word_s("HTTP",4);
         case HTTP_version: return concat(concat(concat( symb(HTTP_name), letter('/')), symb(DIGIT)),concat( letter('.'), symb(DIGIT)));
         case request_line: return concat(concat(concat( symb(method), symb(SP)), concat( symb(request_target), symb(SP))),concat( symb(HTTP_version), symb(CRLF)));
         case status_code: return nOccurences(symb(DIGIT),3);
