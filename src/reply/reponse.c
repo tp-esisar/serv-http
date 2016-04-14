@@ -41,17 +41,20 @@ char* startline (char* num, char* detail)
 void addHeaderfield(Sreponse* reponse, char* ajout)
 {
 	if (reponse->headerfield == NULL)
-		reponse->headerfield = malloc(sizeof(char)*(strlen(ajout)+1));
+		reponse->headerfield = malloc(sizeof(char)*(strlen(ajout)+3));
 	else
-		reponse->headerfield = realloc(reponse->headerfield, sizeof(char)*(strlen(reponse->headerfield)+strlen(ajout)+1));
+		reponse->headerfield = realloc(reponse->headerfield, sizeof(char)*(strlen(reponse->headerfield)+strlen(ajout)+2));
 	if (reponse->headerfield == NULL)
 	{
 		perror ("Erreur d'allocation mémoire");
 		exit(1);
 	}
 	
+	//memcpy(reponse->buf,Sreponse->startline, strlen(Sreponse->startline)); //A faire !!
 	strcpy(&(reponse->headerfield[strlen(reponse->headerfield)]), ajout);
-	reponse->headerfield[strlen(reponse->headerfield)+strlen(ajout)] = '\0';
+	reponse->headerfield[strlen(reponse->headerfield)+strlen(ajout)] = '\r';
+	reponse->headerfield[strlen(reponse->headerfield)+strlen(ajout)+1] = '\n';
+	reponse->headerfield[strlen(reponse->headerfield)+strlen(ajout)+0] = '\0';
 
 }
 
@@ -75,9 +78,9 @@ message* SreponseToMessage (Sreponse* Sreponse)
 	
 	memcpy(reponse->buf,Sreponse->startline, strlen(Sreponse->startline));
 	memcpy(&(reponse->buf[strlen(Sreponse->startline)]),Sreponse->headerfield, strlen(Sreponse->headerfield));
-	reponse->buf[strlen(Sreponse->headerfield)]='\r';
-	reponse->buf[strlen(Sreponse->headerfield)+1]='\n';
-	memcpy(&(reponse->buf[strlen(Sreponse->headerfield)+2]),Sreponse->messagebody, strlen(Sreponse->messagebody));	
+	reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)]='\r';
+	reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+1]='\n';
+	memcpy(&(reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+2]),Sreponse->messagebody, strlen(Sreponse->messagebody));	
 	
 	free(Sreponse->startline);
 	free(Sreponse->headerfield);
