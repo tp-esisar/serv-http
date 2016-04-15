@@ -137,7 +137,7 @@ Connection_HS* get_Connection(mapStruct* map) {
         StringL wBuff = (StringL){buff,len};
         reader rconnection_option = get_reader(connection_option,&wBuff);
         while (wBuff.len >= 0) {
-            if(wBuff.s[0]!=',' && wBuff.s[0]!=' ' && wBuff.s[0]!='\t') {
+            if(wBuff.s[0]!=',' && wBuff.s[0]!=' ' && wBuff.s[0]!='\t' && wBuff.s[0]!='\r' && wBuff.s[0]!='\n') {
                 read_return rrco_opt = CALL_CLOSURE(rconnection_option);
                 if (rrco_opt.state == FAIL) {
                     fprintf(stderr,"\x1b[31merreur semantique connection-option\x1b[0m\n");
