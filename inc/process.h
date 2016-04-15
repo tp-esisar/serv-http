@@ -9,7 +9,12 @@
 #include "map.h"
 #include "reponse.h"
 #include "fichier.h"
+#include "cJSON.h"
 
-int processing(mapStruct* map, Sreponse* reponse) ;
+int processing(mapStruct* map, Sreponse* reponse);
+
+StringL uniformURI(StringL uri);
+StringL extractSiteFromUURI(StringL uuri, cJSON* sites);
+
 
 #endif

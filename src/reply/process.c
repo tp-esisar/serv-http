@@ -1,14 +1,13 @@
 #include "process.h"
 
-/*normaliseURL
 
-fichier= ?*/
+
 
 
 int processing(mapStruct* map, Sreponse* reponse) 
 {
 	if (map->http_version.s[5] != '1')
-		error(reponse, "505", "Version de HTTP non supportée");
+		error(reponse, "505", "Version de HTTP non supportï¿½e");
 	else {
 		//Normalisation URL
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
@@ -16,9 +15,9 @@ int processing(mapStruct* map, Sreponse* reponse)
 			//accessFile(reponse, normaliseURL(getHost(map), get_target(map)));			
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1)
-			printf("On ne répond pas encore au POST ...");
+			printf("On ne rï¿½pond pas encore au POST ...");
 		else	
-			error(reponse, "501", "Méthode non supportée");
+			error(reponse, "501", "Mï¿½thode non supportï¿½e");
 	}
 	
 	addHeaderfield(reponse, "Connection: Close");
