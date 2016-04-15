@@ -9,6 +9,8 @@
 #include "map.h"
 #include "reponse.h"
 #include "fichier.h"
+#include "mini-map.h"
+#include "header-getter.h"
 
 int processing(mapStruct* map, Sreponse* reponse) ;
 
