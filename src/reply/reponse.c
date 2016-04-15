@@ -50,11 +50,10 @@ void addHeaderfield(Sreponse* reponse, char* ajout)
 		exit(1);
 	}
 	
-	//memcpy(reponse->buf,Sreponse->startline, strlen(Sreponse->startline)); //A faire !!
-	strcpy(&(reponse->headerfield[strlen(reponse->headerfield)]), ajout);
-	reponse->headerfield[strlen(reponse->headerfield)+strlen(ajout)] = '\r';
-	reponse->headerfield[strlen(reponse->headerfield)+strlen(ajout)+1] = '\n';
-	reponse->headerfield[strlen(reponse->headerfield)+strlen(ajout)+0] = '\0';
+	memcpy(&(reponse->headerfield[strlen(reponse->headerfield)]), ajout, strlen(ajout));
+	reponse->headerfield[strlen(reponse->headerfield)+1] = '\n';
+	reponse->headerfield[strlen(reponse->headerfield)+2] = '\0';	
+	reponse->headerfield[strlen(reponse->headerfield)] = '\r';
 
 }
 
