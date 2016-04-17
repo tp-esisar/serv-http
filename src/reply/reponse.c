@@ -40,8 +40,12 @@ char* startline (char* num, char* detail)
 
 void addHeaderfield(Sreponse* reponse, char* ajout)
 {
-	if (reponse->headerfield == NULL)
+	int taille = 0;
+
+	if (reponse->headerfield == NULL) {
 		reponse->headerfield = malloc(sizeof(char)*(strlen(ajout)+3));
+		reponse->headerfield[0] = '\0';
+	}
 	else
 		reponse->headerfield = realloc(reponse->headerfield, sizeof(char)*(strlen(reponse->headerfield)+strlen(ajout)+2));
 	if (reponse->headerfield == NULL)
@@ -50,11 +54,11 @@ void addHeaderfield(Sreponse* reponse, char* ajout)
 		exit(1);
 	}
 	
-	memcpy(&(reponse->headerfield[strlen(reponse->headerfield)]), ajout, strlen(ajout));
-	reponse->headerfield[strlen(reponse->headerfield)+1] = '\n';
-	reponse->headerfield[strlen(reponse->headerfield)+2] = '\0';	
-	reponse->headerfield[strlen(reponse->headerfield)] = '\r';
-
+	memcpy(&(reponse->headerfield[strlen(reponse->headerfield)]), ajout, strlen(ajout)+1);
+	taille = strlen(reponse->headerfield);
+	reponse->headerfield[taille] = '\r';
+	reponse->headerfield[taille+1] = '\n';
+	reponse->headerfield[taille+2] = '\0';	
 }
 
 message* SreponseToMessage (Sreponse* Sreponse)
