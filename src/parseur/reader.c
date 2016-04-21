@@ -30,7 +30,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case RWS: return nOccurencesMin(or(symb(SP),symb(HTAB)),1);
         case alphanum: return or(symb(DIGIT), symb(ALPHA));
         case unreserved: return or(symb(alphanum),charIn(((StringL){"-._~",4})));
-        case tchar: return or(symb(alphanum),charIn(((StringL){"!#$\%&'*+-.^_`|~",15})));
+        case tchar: return or(symb(alphanum),charIn(((StringL){"!#$\%&'*+-.^_`|~",16})));
         case token: return nOccurencesMin(symb(tchar),1);
         case field_name: return symb(token);
         case obs_text: return charBetween(0x80, 0xFF); 

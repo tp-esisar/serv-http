@@ -136,17 +136,19 @@ Connection_HS* get_Connection(mapStruct* map) {
         }
         StringL wBuff = (StringL){buff,len};
         reader rconnection_option = get_reader(connection_option,&wBuff);
-        while (wBuff.len >= 0) {
+        while (wBuff.len > 0) {
             if(wBuff.s[0]!=',' && wBuff.s[0]!=' ' && wBuff.s[0]!='\t' && wBuff.s[0]!='\r' && wBuff.s[0]!='\n') {
                 read_return rrco_opt = CALL_CLOSURE(rconnection_option);
                 if (rrco_opt.state == FAIL) {
-                    fprintf(stderr,"\x1b[31merreur semantique connection-option\x1b[0m\n");
+                    fprintf(stderr,"\x1b[31merreur semantique connection-option \"%s\" %d\x1b[0m\n",buff,wBuff.len);
                     exit(EXIT_FAILURE);
                 }
-                temp->connection_option = addPair(temp->connection_option,wBuff,wBuff);
+                temp->connection_option = addPair(temp->connection_option,rrco_opt.string,rrco_opt.string);
             }
-            wBuff.s++;
-            wBuff.len--;
+            else {
+                wBuff.s++;
+                wBuff.len--;
+            }
         }
     }
     search_map (map, "Connection", callback);

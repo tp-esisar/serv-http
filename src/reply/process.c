@@ -2,7 +2,7 @@
 
 int processing(mapStruct* map, Sreponse* reponse) 
 {
-	Connection_HS* connectionType = NULL; //get_Connection(map);
+	Connection_HS* connectionType = get_Connection(map);
 
 	if (map->http_version.s[5] != '1')
 		error(reponse, "505", "Version de HTTP non supportee");
