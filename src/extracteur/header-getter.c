@@ -150,11 +150,15 @@ Connection_HS* get_Connection(mapStruct* map) {
                 wBuff.len--;
             }
         }
+        temp->next = headerList;
+        headerList = temp;
+        
     }
     search_map (map, "Connection", callback);
     if (error != 0) {
         free_Connection_HS(headerList);
         return NULL;
     }
+    
     return headerList;
 }
