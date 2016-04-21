@@ -134,6 +134,7 @@ Connection_HS* get_Connection(mapStruct* map) {
             error = 1;
             return;
         }
+        temp->connection_option = NULL;
         StringL wBuff = (StringL){buff,len};
         reader rconnection_option = get_reader(connection_option,&wBuff);
         while (wBuff.len > 0) {
