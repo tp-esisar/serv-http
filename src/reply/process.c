@@ -2,6 +2,7 @@
 
 int processing(parse_state state, mapStruct* map, Sreponse* reponse) 
 {
+	int retour;	
 	Connection_HS* connectionType = get_Connection(map);
 
 	if (state == PARSE_FAIL)
@@ -35,12 +36,13 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 	
 	if (connectionType == NULL || getValue(connectionType->connection_option, (StringL){"Close", 5}).s != NULL ) {
 		addHeaderfield(reponse, "Connection: Close");
-		return 1;
+		retour = 1;
 	}
 	else {
 		addHeaderfield(reponse, "Connection: Keep-Alive");
-		return 0;
+		retour = 0;
 	}
+	free_Connection_HS(connectionType);
 
-	return 1;
+	return retour;
 }
