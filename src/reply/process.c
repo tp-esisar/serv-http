@@ -2,7 +2,7 @@
 
 int processing(parse_state state, mapStruct* map, Sreponse* reponse) 
 {
-	Connection_HS* connectionType = NULL; //get_Connection(map);
+	Connection_HS* connectionType = get_Connection(map);
 
 	if (state == PARSE_FAIL)
 	{
