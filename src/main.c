@@ -38,15 +38,7 @@ int main(int argc, char *argv[])
 			printf("\n\n---Client [%d] [%s:%d]\n%.*s\n",requete->clientId,inet_ntoa(requete->clientAddress->sin_addr),htons(requete->clientAddress->sin_port),requete->len,requete->buf);
 
 		parse = parse_HTTP_message(&wBuff);
-		if (parse.state == PARSE_FAIL)
-		{
-			if (parse.map == NULL )	
-				error(Sreponse, "500", "Erreur de mémoire");
-			else 
-				error(Sreponse, "400", "Erreur de syntaxe");
-		}
-		else 
-			close = processing(parse.map, Sreponse);
+		close = processing(parse.state, parse.map, Sreponse);
 
 		reponse = SreponseToMessage(Sreponse);
 		reponse->clientId=requete->clientId; 
@@ -56,6 +48,9 @@ int main(int argc, char *argv[])
 
 		free(reponse->buf);
 		free(reponse); 
+		if (parse.map != NULL)	
+			free_map(parse.map);
+
 		if (close == 1)
 			requestShutdownSocket(reponse->clientId);
 		freeRequest(requete);

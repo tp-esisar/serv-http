@@ -6,7 +6,7 @@
 	tempReader=get_reader(SYMB,buff);\
 	rr = CALL_CLOSURE(tempReader);\
     if(rr.state==FAIL) {\
-        return (parse_return){PARSE_FAIL,NULL,*buff};\
+        return (parse_return){PARSE_FAIL,map,*buff};\
     }\
 	VAR = rr.string;\
 } while(0)
@@ -27,7 +27,7 @@ parse_return parse_HTTP_message(StringL* buff) {
 //	StringL Smessage_body;
     read_return rr;
     reader tempReader;
-    mapStruct* map;
+    mapStruct* map = NULL;
     reader crlfReader = get_reader(CRLF,buff);
     reader spReader = get_reader(SP,buff);
 	

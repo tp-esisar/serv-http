@@ -96,11 +96,12 @@ message* SreponseToMessage (Sreponse* Sreponse)
 void error (Sreponse* message, char* num, char* detail)
 {
 	message->startline = startline (num, detail);
-	addHeaderfield(message, "Connection: Close");
-	addHeaderfield(message, "Content-Type: text/html");
-	message->messagebody = malloc(sizeof(char)*strlen(detail));
-	memcpy(message->messagebody, detail, strlen(detail));
-	//Determiner la taille du paquet
-
+	message->messagebody = malloc(sizeof(char));
+	if (message->messagebody == NULL)
+	{
+		perror ("Erreur d'allocation mémoire");
+		exit(1);
+	}
+	message->messagebody[0]='\0';
 }
 	
