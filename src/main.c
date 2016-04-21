@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 	if (argc == 3 && argv[2][0]=='d')
 		debug = 1;
 
-	putenv("export LD_LIBRARY_PATH=/lib");
+	putenv("export LD_LIBRARY_PATH=../lib");
 
 	while ( 1 )
 	{

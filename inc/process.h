@@ -14,7 +14,7 @@
 #include "mini-map.h"
 #include "header-getter.h"
 
-int processing(parse_state state, mapStruct* map, Sreponse* reponse)  ;
+int processing(parse_state state, mapStruct* map, Sreponse* reponse);
 
 StringL uniformURI(StringL uri);
 StringL extractSiteFromUURI(StringL uuri, cJSON* sites);

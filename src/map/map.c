@@ -69,6 +69,9 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
     field* bloc = map->field;
     StringL temp, searchS;
 
+	if (map == NULL)
+		return 0;
+
     /**< Conversion de la chaine de caractère en StringL pour pouvoir faire les comparaisons */
     searchS.s = search;
     searchS.len = strlen(search);
