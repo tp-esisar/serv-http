@@ -2,36 +2,42 @@
 
 void accessFile (Sreponse* reponse, char *chemin)
 {
-    FILE* file = NULL;
-    int i=0, j=0;
+	FILE* file = NULL;
+	char header_size[30];
+	int i=0, j=0, size=0;
 	char ext[6];
 
-    file = fopen(chemin, "r");
-    if(file == NULL) {
+	file = fopen(chemin, "rb");
+	if(file == NULL) {
 		error(reponse, "404", "Page inexistante");
 		return;
 	}
+	
+	fseek (file , 0 , SEEK_END);
+	size = ftell (file);
+	rewind (file);
 
-	while (fgetc(file) != EOF)
-        i++;
-    reponse->messagebody = malloc(i*sizeof(char));
-    if(reponse->messagebody == NULL) {
-        error(reponse, "500", "Erreur interne");
+	reponse->messagebody = malloc (sizeof(char)*(size+1));
+	if(reponse->messagebody == NULL) {
+		error(reponse, "500", "Erreur interne");
 		return;
 	}
 
-    i=0; rewind(file);
-    do
-    {
-        reponse->messagebody[i]=fgetc(file);
-    } while (reponse->messagebody[i++] != EOF);
+	if (fread (reponse->messagebody,1,size,file) != size) {
+		error(reponse, "500", "Erreur interne");
+		return;
+	}
+	reponse->messagebody[size]='\0';
 
-    fclose (file);
+	fclose (file);
 	
-	//Ajouter la taille du contenu
+	snprintf (header_size, 30, "Content-Length: %d", size);
+	addHeaderfield(reponse, header_size);
 	
-	i--;
-	while(j<6 && chemin[i] != '.')
+	i=0;
+	while(chemin[i++] != '.');
+	i++;
+	while(j<6 && chemin[i] != '\0')
 		ext[j++]= chemin[i--];
 	ext[j] = '\0';
 	
