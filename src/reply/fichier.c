@@ -34,11 +34,11 @@ void accessFile (Sreponse* reponse, char *chemin)
 	snprintf (header_size, 30, "Content-Length: %d", size);
 	addHeaderfield(reponse, header_size);
 	
-	i=0;
-	while(chemin[i++] != '.');
-	i++;
+	i=strlen(chemin)-1;
+	while(chemin[i--] != '.');
+	i+=2;
 	while(j<6 && chemin[i] != '\0')
-		ext[j++]= chemin[i--];
+		ext[j++]= chemin[i++];
 	ext[j] = '\0';
 	
 	if (strcmp(ext, "js") == 0)
