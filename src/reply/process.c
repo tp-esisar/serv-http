@@ -26,7 +26,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 			//accessFile(reponse, normaliseURL(getHost(map), get_target(map)));			
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
-			//Vérifier la taille
+			//Vérifier la taille : map->message_body.len
 			error(reponse, "201", "Accepted");
 		}
 		else	
@@ -34,7 +34,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 	}
 
 	
-	if (connectionType == NULL || getValue(connectionType->connection_option, (StringL){"Close", 5}).s != NULL ) {
+	if (connectionType != NULL && getValue(connectionType->connection_option, (StringL){"Close", 5}).s != NULL ) {
 		addHeaderfield(reponse, "Connection: Close");
 		retour = 1;
 	}
