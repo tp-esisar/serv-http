@@ -10,14 +10,23 @@
 #include "map.h"
 #include "reponse.h"
 #include "fichier.h"
-#include "cJSON.h"
+//#include "cJSON.h"
 #include "mini-map.h"
 #include "header-getter.h"
+#include "reader.h"
+
+typedef struct {
+    StringL scheme;
+    StringL host;
+    StringL query;
+    StringL path;
+    StringL userinfo;
+    StringL port;
+} URI_Info;
 
 int processing(parse_state state, mapStruct* map, Sreponse* reponse);
 
-StringL uniformURI(StringL uri);
-StringL extractSiteFromUURI(StringL uuri, cJSON* sites);
+URI_Info extractInfoFromURI(StringL uri);
 
 
 #endif

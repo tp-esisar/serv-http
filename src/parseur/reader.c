@@ -6,7 +6,7 @@
 
 #define symb(X) get_reader(X,wBuff)
 //#define nOccurencesRange(X,n1,n2) nOccurencesMax(nOccurencesMin(X,n1),n2)
-#define nOccurencesRange(X,n1,n2) and(nOccurencesMin(X,n1),nOccurencesMin(X,n2))
+#define nOccurencesRange(X,n1,n2) and(nOccurencesMin(X,n1),nOccurencesMax(X,n2))
 
 #define header(X,n,Y) concat(concat( word_s(X,n), symb(OWS)),concat( symb(Y), symb(OWS)))
 #define word_s(X,n) word(((StringL){X,n}))
@@ -49,7 +49,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case absolute_path: return nOccurencesMin(concat(letter('/'),symb(segment)),1);
         case query: return kleene(or( symb(pchar), or( letter('/'), letter('?'))));
         case origin_form: return concat(symb(absolute_path), optionnal(concat(letter('?'),symb(query))));
-        case scheme: return concat(symb(ALPHA), or(or(symb(ALPHA), symb(DIGIT)), or(letter('+'), or(letter('-'), letter('.')))));
+        case scheme: return concat(symb(ALPHA), kleene(or(or(symb(ALPHA), symb(DIGIT)), or(letter('+'), or(letter('-'), letter('.'))))));
         case userinfo: return kleene(or(or(symb(unreserved), symb(pct_encoded)), or(symb(sub_delims),letter(':'))));
         case h16: return nOccurencesRange(symb(HEXDIG),1,4);
         case dec_octet: return or(or(symb(DIGIT),concat(charBetween(0x31,0x39),symb(DIGIT))), or(concat(letter('1'),concat(symb(DIGIT),symb(DIGIT))), or(concat(letter('2'),concat(charBetween(0x30,0x34),symb(DIGIT))),concat(letter('2'),concat(letter('5'),charBetween(0x30,0x35))))));
@@ -83,7 +83,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case path_absolute: return concat(letter('/'),optionnal(concat(symb(segment_nz),kleene(concat(letter('/'),symb(segment_nz))))));
         case path_rootless: return concat( symb(segment_nz), kleene(concat(letter('/'),symb(segment))));
         case path_empty: return epsilon(); //pas sur le la signification du 0!
-        case hier_part: return concat( concat(letter('/'),letter('/')), or(or( concat( symb(authority), symb(path_abempty)), symb(path_absolute)),or( symb(path_rootless), symb(path_empty))));
+        case hier_part: return concat( symb(double_slash), or(or( concat( symb(authority), symb(path_abempty)), symb(path_absolute)),or( symb(path_rootless), symb(path_empty))));
         case absolute_URI: return concat(concat( symb(scheme), letter(':')), concat( symb(hier_part), optionnal(concat(letter('?'),symb(query)))));
         case absolute_form: return symb(absolute_URI);
         case authority_form: return symb(authority);
@@ -125,7 +125,8 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case received_by: return or(concat(symb(uri_host),optionnal(concat(letter(':'),symb(port)))),symb(pseudonym));
         case ctext: return or(or(or( symb(HTAB), symb(SP)), charBetween(0x21,0x27)), or(or( charBetween(0x2A,0x5B), charBetween(0x5D,0x7E)), symb(obs_text)));
         case comment: return concat(concat( letter('('), kleene(or(or( symb(ctext), symb(quoted_pair)), symb(comment)))), letter(')'));
-        case Via: concat(concat( kleene(concat(letter(','), symb(OWS))), concat(concat( symb(received_protocol), symb(RWS)), concat( symb(received_by), optionnal(concat(symb(RWS), symb(comment)))))), kleene(concat(concat( symb(OWS), letter(',')), optionnal(concat(concat( symb(received_protocol), symb(RWS)), concat( symb(received_by), optionnal(concat(symb(RWS), symb(comment)))))))));
+        //case Via: concat(concat( kleene(concat(letter(','), symb(OWS))), concat(concat( symb(received_protocol), symb(RWS)), concat( symb(received_by), optionnal(concat(symb(RWS), symb(comment)))))), kleene(concat(concat( symb(OWS), letter(',')), optionnal(concat(concat( symb(received_protocol), symb(RWS)), concat( symb(received_by), optionnal(concat(symb(RWS), symb(comment)))))))));
+        case Via: concat(concat( symb(received_protocol), symb(RWS)), symb(received_by));
         case Via_header: return header("Via:",4,Via);
         case delta_seconds: return nOccurencesMin(symb(DIGIT),1);
         case Age: return symb(delta_seconds);
@@ -154,6 +155,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case Date_header: return header("Date:",5,Date);
         case fragment: return kleene(or(or( symb(pchar), letter('/')), letter('?')));
         case URI: return  concat(concat(concat( symb(scheme), letter(':')),concat( symb(hier_part), optionnal(concat( letter('?'), symb(query))))), optionnal(concat( letter('#'), symb(fragment))));
+        //case URI: return  concat(concat( symb(scheme), letter(':')),symb(hier_part)); //URI simplifié pour les tests
         case segment_nz_nc: return nOccurencesMin(or(or( symb(unreserved), symb(pct_encoded)),or( symb(sub_delims), letter('@'))),1);
         case path_noscheme: return concat( symb(segment_nz_nc), kleene(concat(letter('/'), symb(segment))));
         case relative_part: return concat( word_s("//",2), or(or( concat( symb(authority), symb(path_abempty)), symb(path_absolute)),or( symb(path_noscheme), symb(path_empty))));
@@ -184,7 +186,8 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case Max_Forwards_header: return header("Max-Forwards:",13,Max_Forwards);
         case extension_pragma: return concat(symb(token), optionnal(concat(letter('='), or(symb(token), symb(quoted_string)))));
         case pragma_directive: return or(word_s("no-cache",8), symb(extension_pragma));
-        case Pragma: return list(symb(Pragma));
+        //case pragma_directive: return word_s("no-cache",8);//simplifié pour les tests
+        case Pragma: return list(symb(pragma_directive));
         case Pragma_header: return header("Pragma:",7,Pragma);
         case bytes_unit: return word_s("bytes",5);
         case first_byte_pos: return nOccurencesMin(symb(DIGIT),1);
@@ -197,7 +200,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case other_range_unit: return symb(token);
         case other_range_set: return nOccurencesMin(symb(VCHAR),1);
         case other_ranges_specifier: return concat(concat(symb(other_range_unit), letter('=')), symb(other_range_set));
-        case Range: return or(symb(bytes_unit), symb(other_range_unit));
+        case Range: return or(symb(byte_ranges_specifier), symb(other_range_unit));
         case Range_header: return header("Range:",6,Range);
         case rank: return or(concat(letter('0'), optionnal(concat(letter('.'), nOccurencesMax(symb(DIGIT),3)))),concat(letter('1'), optionnal(concat(letter('.'), nOccurencesMax(letter('0'),3)))));
         case t_ranking: return concat(concat(concat(symb(OWS), letter(';')),concat(symb(OWS), word_s("q=",2))), symb(rank));
@@ -233,7 +236,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case Accept_Charset_header: return header("Accept-Charset:",15,Accept_Charset);
         case content_coding: return symb(token);
         case codings: return or(or(symb(content_coding), word_s("identity",8)), letter('*'));
-        case Accept_Encoding: return optionnal(concat(or(letter(','), concat(symb(codings), optionnal(symb(weight)))), kleene(concat(concat(symb(OWS), letter(',')), optionnal(concat(symb(OWS), concat(symb(OWS), optionnal(symb(weight)))))))));
+        case Accept_Encoding: return optionnal(concat(or(letter(','), concat(symb(codings), optionnal(symb(weight)))), kleene(concat(concat(symb(OWS), letter(',')), optionnal(concat(symb(OWS), concat(symb(codings), optionnal(symb(weight)))))))));
         case Accept_Encoding_header: return header("Accept-Encoding:",16,Accept_Encoding);
         case language_range: return or(concat(nOccurencesRange(symb(ALPHA),1,8), kleene(concat(letter('-'), nOccurencesRange(symb(alphanum),1,8)))), letter('*'));
         case Accept_Language: return list(concat(symb(language_range), optionnal(symb(weight))));
@@ -258,6 +261,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case cookie_pair: return concat(concat(symb(cookie_name), letter('=')), symb(cookie_value));
         case cookie_string: return concat(symb(cookie_pair),kleene(concat(concat(letter(';'), symb(SP)), symb(cookie_pair))));
         case cookie_header: return header("Cookie:",7,cookie_string);
+        case double_slash: return concat(letter('/'),letter('/'));
         default: return bad_symbole();
     }
 }
