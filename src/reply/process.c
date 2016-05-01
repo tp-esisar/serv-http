@@ -46,3 +46,15 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 
 	return retour;
 }
+
+URI_Info extractInfoFromURI(StringL uri) {
+	StringL wBuff = uri;
+	URI_Info uri_info = {{NULL,0},{NULL,0},{NULL,0},{NULL,0}};
+	reader scheme_r = get_reader(scheme, &wBuff);
+	reader colon_r = letter_builder(&wBuff,':');
+	reader hier_part_r = get_reader(hier_part, &wBuff);
+	reader qmark_r = letter_builder(&wBuff,'?');
+	reader query_r = get_reader(query, &wBuff);
+	reader hashtag_r = letter_builder(&wBuff,'#');
+	reader fragment_r = get_reader(fragment,&wBuff);	
+}
