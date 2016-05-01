@@ -61,7 +61,6 @@ int main() {
   test("CRLF 2",CRLF,FAIL,"\rRRR","");
   test("token 1",token,SUCC,"jesuisUnsup333r-token* tokenSuivant","jesuisUnsup333r-token*");
   test("token 2",token,FAIL," ","");
-  test("RWS",RWS,SUCC," "," ");
   test("method 1", method, SUCC, "GET / HTTP/1.1", "GET");
 
   test("dec_octet 1",dec_octet,SUCC,"1RRR","1");
@@ -95,24 +94,26 @@ int main() {
   test("Trailer_header",Trailer_header,SUCC,"Trailer: Max-Forwards je suis invisiiiible","Trailer: Max-Forwards ");
   test("Transfer_Encoding_header",Transfer_Encoding_header,SUCC,"Transfer-Encoding: chunked je suis invisiiiible","Transfer-Encoding: chunked ");
   test("Upgrade_header",Upgrade_header,SUCC,"Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11 je suis invisiiiible","Upgrade: HTTP/2.0, SHTTP/1.3, IRC/6.9, RTA/x11 ");
-//  test("Via_header",Via_header,SUCC,"Via: 1.0 fred, 1.1 example.com (Apache/1.1) je suis invisiiiible","Via: 1.0 fred, 1.1 example.com (Apache/1.1) ");
+
+  printf("\n");
+//  test("Via_header",Via_header,SUCC,"Via: 1.0 fred, 1.1 example.com (Apache/1.1) je suis invisiiiible","Via: 1.0 fred, 1.1 example.com (Apache/1.1) "); //segfault
+//  test("Via",Via,SUCC,"1.0 fred","Via: 1.0 fred, 1.1 example.com (Apache/1.1) ");
+  test("RWS",RWS,SUCC," "," ");
+  test("received_by",received_by,SUCC,"fred","fred");
+  test("received_protocol",received_protocol,SUCC,"1.0","1.0");
+  printf("\n");
+
   test("Age_header",Age_header,SUCC,"Age: 12 je suis invisiiiible","Age: 12 ");
   test("Expires_header",Expires_header,SUCC,"Expires: Thu, 01 Dec 1994 16:00:00 GMT je suis invisiiiible","Expires: Thu, 01 Dec 1994 16:00:00 GMT ");
   test("Date_header",Date_header,SUCC,"Date: Tue, 15 Nov 1994 08:12:31 GMT je suis invisiiiible","Date: Tue, 15 Nov 1994 08:12:31 GMT ");
-
-  printf("\n");
   test("Location_header",Location_header,SUCC,"Location: http://www.w3.org/pub/WWW/People.html je suis invisiiiible","Location: http://www.w3.org/pub/WWW/People.html ");
-  test("Location",Location,SUCC,"http://www.w3.org/pub/WWW/People.html je suis invisiiiible","http://www.w3.org/pub/WWW/People.html");
-  test("URI",URI,SUCC,"http://www.w3.org/pub/WWW/People.html je suis invisiiiible","http://www.w3.org/pub/WWW/People.html");
-  printf("\n");
-
-  test("Retry_After_header",Retry_After_header,SUCC," je suis invisiiiible","Retry-After: 120 ");
+  test("Retry_After_header",Retry_After_header,SUCC,"Retry-After: 120 je suis invisiiiible","Retry-After: 120 ");
   test("Vary_header",Vary_header,SUCC,"Vary: Accept-Language je suis invisiiiible","Vary: Accept-Language ");
-  test("Warning_header",Warning_header,SUCC,"Warning: 199 Miscellaneous warning je suis invisiiiible","Warning: 199 Miscellaneous warning ");
+  test("Warning_header",Warning_header,SUCC,"Warning: 199 Miscellaneous \"warning\" je suis invisiiiible","Warning: 199 Miscellaneous \"warning\" ");
   test("Expect_header",Expect_header,SUCC,"Expect: 100-continue je suis invisiiiible","Expect: 100-continue ");
   test("Host_header",Host_header,SUCC,"Host: en.wikipedia.org:80 je suis invisiiiible","Host: en.wikipedia.org:80 ");
   test("Max_Forwards_header",Max_Forwards_header,SUCC,"Max-Forwards: 10 je suis invisiiiible","Max-Forwards: 10 ");
-//  test("Pragma_header",Pragma_header,SUCC,"Pragma: no-cache je suis invisiiiible","Pragma: no-cache ");
+  test("Pragma_header",Pragma_header,SUCC,"Pragma: no-cache je suis invisiiiible","Pragma: no-cache ");
   test("Range_header",Range_header,SUCC,"Range: bytes=500-999 je suis invisiiiible","Range: bytes=500-999 ");
   test("TE_header",TE_header,SUCC,"TE: trailers, deflate je suis invisiiiible","TE: trailers, deflate ");
   test("If_Match_header",If_Match_header,SUCC,"If-Match: \"737060cd8c284d8af7ad3082f209582d\" je suis invisiiiible","If-Match: \"737060cd8c284d8af7ad3082f209582d\" ");
