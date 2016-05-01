@@ -83,7 +83,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case path_absolute: return concat(letter('/'),optionnal(concat(symb(segment_nz),kleene(concat(letter('/'),symb(segment_nz))))));
         case path_rootless: return concat( symb(segment_nz), kleene(concat(letter('/'),symb(segment))));
         case path_empty: return epsilon(); //pas sur le la signification du 0!
-        case hier_part: return concat( concat(letter('/'),letter('/')), or(or( concat( symb(authority), symb(path_abempty)), symb(path_absolute)),or( symb(path_rootless), symb(path_empty))));
+        case hier_part: return concat( symb(double_slash), or(or( concat( symb(authority), symb(path_abempty)), symb(path_absolute)),or( symb(path_rootless), symb(path_empty))));
         case absolute_URI: return concat(concat( symb(scheme), letter(':')), concat( symb(hier_part), optionnal(concat(letter('?'),symb(query)))));
         case absolute_form: return symb(absolute_URI);
         case authority_form: return symb(authority);
@@ -258,6 +258,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case cookie_pair: return concat(concat(symb(cookie_name), letter('=')), symb(cookie_value));
         case cookie_string: return concat(symb(cookie_pair),kleene(concat(concat(letter(';'), symb(SP)), symb(cookie_pair))));
         case cookie_header: return header("Cookie:",7,cookie_string);
+        case double_slash: return concat(letter('/'),letter('/'));
         default: return bad_symbole();
     }
 }

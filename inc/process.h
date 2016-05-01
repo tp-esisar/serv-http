@@ -16,10 +16,12 @@
 #include "reader.h"
 
 typedef struct {
-    StringL protocol;
+    StringL scheme;
     StringL host;
     StringL query;
-    StringL fragment;
+    StringL normalized_path;
+    StringL userinfo;
+    StringL port;
 } URI_Info;
 
 int processing(parse_state state, mapStruct* map, Sreponse* reponse);

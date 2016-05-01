@@ -248,7 +248,8 @@ typedef enum {
     cookie_value,
     cookie_pair,
     cookie_string,
-    cookie_header
+    cookie_header,
+    double_slash
 } syntaxe_elem;
 
 //foncteur de lecture conditionnel (retourne une fonction qui lit un segment)
