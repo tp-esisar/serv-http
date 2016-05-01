@@ -20,13 +20,10 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 		//Normalisation URL
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
-			reponse->messagebody = malloc(5*sizeof(char));
-			reponse->messagebody[0]='G';
-			reponse->messagebody[1]='\0';
-			//accessFile(reponse, normaliseURL(getHost(map), get_target(map)));			
+			accessFile(reponse, "../www/site1/index.html");		
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
-			//Vérifier la taille
+			//Vérifier la taille : map->message_body.len
 			error(reponse, "201", "Accepted");
 		}
 		else	
@@ -34,7 +31,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 	}
 
 	
-	if (connectionType == NULL || getValue(connectionType->connection_option, (StringL){"Close", 5}).s != NULL ) {
+	if (connectionType != NULL && getValue(connectionType->connection_option, (StringL){"Close", 5}).s != NULL ) {
 		addHeaderfield(reponse, "Connection: Close");
 		retour = 1;
 	}
