@@ -99,7 +99,13 @@ int main() {
   test("Age_header",Age_header,SUCC,"Age: 12 je suis invisiiiible","Age: 12 ");
   test("Expires_header",Expires_header,SUCC,"Expires: Thu, 01 Dec 1994 16:00:00 GMT je suis invisiiiible","Expires: Thu, 01 Dec 1994 16:00:00 GMT ");
   test("Date_header",Date_header,SUCC,"Date: Tue, 15 Nov 1994 08:12:31 GMT je suis invisiiiible","Date: Tue, 15 Nov 1994 08:12:31 GMT ");
+
+  printf("\n");
   test("Location_header",Location_header,SUCC,"Location: http://www.w3.org/pub/WWW/People.html je suis invisiiiible","Location: http://www.w3.org/pub/WWW/People.html ");
+  test("Location",Location,SUCC,"http://www.w3.org/pub/WWW/People.html je suis invisiiiible","http://www.w3.org/pub/WWW/People.html");
+  test("URI",URI,SUCC,"http://www.w3.org/pub/WWW/People.html je suis invisiiiible","http://www.w3.org/pub/WWW/People.html");
+  printf("\n");
+
   test("Retry_After_header",Retry_After_header,SUCC," je suis invisiiiible","Retry-After: 120 ");
   test("Vary_header",Vary_header,SUCC,"Vary: Accept-Language je suis invisiiiible","Vary: Accept-Language ");
   test("Warning_header",Warning_header,SUCC,"Warning: 199 Miscellaneous warning je suis invisiiiible","Warning: 199 Miscellaneous warning ");
