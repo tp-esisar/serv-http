@@ -197,7 +197,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case other_range_unit: return symb(token);
         case other_range_set: return nOccurencesMin(symb(VCHAR),1);
         case other_ranges_specifier: return concat(concat(symb(other_range_unit), letter('=')), symb(other_range_set));
-        case Range: return or(symb(bytes_unit), symb(other_range_unit));
+        case Range: return or(symb(byte_ranges_specifier), symb(other_range_unit));
         case Range_header: return header("Range:",6,Range);
         case rank: return or(concat(letter('0'), optionnal(concat(letter('.'), nOccurencesMax(symb(DIGIT),3)))),concat(letter('1'), optionnal(concat(letter('.'), nOccurencesMax(letter('0'),3)))));
         case t_ranking: return concat(concat(concat(symb(OWS), letter(';')),concat(symb(OWS), word_s("q=",2))), symb(rank));
@@ -233,7 +233,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case Accept_Charset_header: return header("Accept-Charset:",15,Accept_Charset);
         case content_coding: return symb(token);
         case codings: return or(or(symb(content_coding), word_s("identity",8)), letter('*'));
-        case Accept_Encoding: return optionnal(concat(or(letter(','), concat(symb(codings), optionnal(symb(weight)))), kleene(concat(concat(symb(OWS), letter(',')), optionnal(concat(symb(OWS), concat(symb(OWS), optionnal(symb(weight)))))))));
+        case Accept_Encoding: return optionnal(concat(or(letter(','), concat(symb(codings), optionnal(symb(weight)))), kleene(concat(concat(symb(OWS), letter(',')), optionnal(concat(symb(OWS), concat(symb(codings), optionnal(symb(weight)))))))));
         case Accept_Encoding_header: return header("Accept-Encoding:",16,Accept_Encoding);
         case language_range: return or(concat(nOccurencesRange(symb(ALPHA),1,8), kleene(concat(letter('-'), nOccurencesRange(symb(alphanum),1,8)))), letter('*'));
         case Accept_Language: return list(concat(symb(language_range), optionnal(symb(weight))));
