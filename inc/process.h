@@ -19,7 +19,7 @@ typedef struct {
     StringL scheme;
     StringL host;
     StringL query;
-    StringL normalized_path;
+    StringL path;
     StringL userinfo;
     StringL port;
 } URI_Info;
