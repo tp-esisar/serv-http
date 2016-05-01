@@ -49,7 +49,7 @@ Content_Length_HS* get_Content_Length(mapStruct* map) {
         temp->next = headerList;
         headerList = temp;
     }
-    search_map (map, "Content_Length", callback);
+    search_map (map, "Content-Length", callback);
     if (error != 0) {
         free_Content_Length_HS(headerList);
         return NULL;
