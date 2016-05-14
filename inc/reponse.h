@@ -5,11 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "request.h"
+#include "StringL.h"
 
 typedef struct {
     char* startline;
     char* headerfield;
-	char* messagebody;
+    StringL messagebody;
 } Sreponse;
 
 Sreponse* init_Sreponse (void);

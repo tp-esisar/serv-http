@@ -10,7 +10,8 @@ Sreponse* init_Sreponse (void)
 	}
 	reponse->startline = NULL;
 	reponse->headerfield = NULL;
-	reponse->messagebody = NULL;
+	reponse->messagebody.s = NULL;
+	reponse->messagebody.len = 0;
 
 	return reponse;
 }
@@ -70,24 +71,24 @@ message* SreponseToMessage (Sreponse* Sreponse)
 		exit(1);
 	}
 	
-	reponse->buf = malloc(sizeof(char)*(strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+strlen(Sreponse->messagebody)+2));
+	reponse->buf = malloc(sizeof(char)*(strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+Sreponse->messagebody.len+2));
 	if (reponse->buf == NULL)
 	{
 		perror ("Erreur d'allocation mémoire");
 		exit(1);
 	}
 	
-	reponse->len = strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+strlen(Sreponse->messagebody)+2;
+	reponse->len = strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+Sreponse->messagebody.len+2;
 	
 	memcpy(reponse->buf,Sreponse->startline, strlen(Sreponse->startline));
 	memcpy(&(reponse->buf[strlen(Sreponse->startline)]),Sreponse->headerfield, strlen(Sreponse->headerfield));
 	reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)]='\r';
 	reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+1]='\n';
-	memcpy(&(reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+2]),Sreponse->messagebody, strlen(Sreponse->messagebody));	
+	memcpy(&(reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+2]),Sreponse->messagebody.s, Sreponse->messagebody.len);	
 	
 	free(Sreponse->startline);
 	free(Sreponse->headerfield);
-	free(Sreponse->messagebody);
+	free(Sreponse->messagebody.s);
 	free(Sreponse);
 	
 	return reponse;
@@ -95,13 +96,19 @@ message* SreponseToMessage (Sreponse* Sreponse)
 
 void error (Sreponse* message, char* num, char* detail)
 {
+	char header_size[30];
 	message->startline = startline (num, detail);
-	message->messagebody = malloc(sizeof(char));
-	if (message->messagebody == NULL)
-	{
-		perror ("Erreur d'allocation mémoire");
-		exit(1);
+	if (strcmp(num, "200") != 0) {
+		message->messagebody.s = malloc(strlen(detail)*sizeof(char)+1);
+		message->messagebody.len = strlen(detail);
+		if (message->messagebody.s == NULL)
+		{
+			perror ("Erreur d'allocation mémoire");
+			exit(1);
+		}
+		strcpy(message->messagebody.s, detail);
+		snprintf (header_size, 30, "Content-Length: %ld", strlen(detail));
+		addHeaderfield(message, header_size);
 	}
-	message->messagebody[0]='\0';
 }
 	

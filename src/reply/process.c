@@ -22,7 +22,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 		//Normalisation URL
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
-			accessFile(reponse, "../www/site1/index.html");		
+			accessFile(reponse, "../www/site1/images/rascasse.jpg");		
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 			/*if (TransfertEncoding != NULL)
