@@ -6,7 +6,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 	Connection_HS* connectionType = get_Connection(map);
 	Content_Length_HS* Content_length = get_Content_Length(map);
 	//TranfertEncoding_HS* TranfertEncoding = get_TranfertEncoding(map);
-	//Authorization_HS* Authorization = get_Authorization(map);
+	Authorization_HS* Authorization = get_Authorization(map);
 
 	if (state == PARSE_FAIL)
 	{
@@ -23,7 +23,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 		//Normalisation URL
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
-			accessFile(reponse, "../www/site1/images/rascasse.jpg", Authorization);		
+			accessFile(reponse, "../www/site1/index.html", Authorization);		
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 			/*if (TransfertEncoding != NULL)

@@ -258,7 +258,7 @@ Authorization_HS* get_Authorization(mapStruct* map) {
         headerList = temp;
         
     }
-    search_map (map, "Connection", callback);
+    search_map (map, "Authorization", callback);
     if (error != 0) {
         free_Authorization_HS(headerList);
         return NULL;
