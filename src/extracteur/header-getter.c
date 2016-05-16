@@ -220,7 +220,7 @@ void free_Authorization_HS(Authorization_HS* obj) {
         free(obj);
     }
 }
-Authorization_HS* get_Connection(mapStruct* map) {
+Authorization_HS* get_Authorization(mapStruct* map) {
     
     Authorization_HS* headerList = NULL;
     int error = 0;
@@ -247,7 +247,7 @@ Authorization_HS* get_Connection(mapStruct* map) {
             error = 1;
             return;
         }
-        if((rrtemp = CALL_CLOSURE(token68)).state == FAIL) {
+        if((rrtemp = CALL_CLOSURE(rtoken68)).state == FAIL) {
             error = 1;
             return;
         }
