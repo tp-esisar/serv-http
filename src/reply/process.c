@@ -102,7 +102,6 @@ URI_Info extractInfoFromURI(StringL uri) {
 	//les recettes de absolute_form
 	reader scheme_r = get_reader(scheme, &wBuff);
 	reader colon_r = letter_Builder(&wBuff,':');
-	reader hier_part_r = get_reader(hier_part, &wBuff);
 	//les recettes de hier_part
 	reader double_slash_r = get_reader(double_slash, &wBuff);
 	reader authority_r = get_reader(authority, &wBuff);
@@ -118,17 +117,45 @@ URI_Info extractInfoFromURI(StringL uri) {
 	
 	StringL wBuff_backup = wBuff;
 	read_return temp_rr;
+	read_return temp_2_rr;
 	//identification du type de request_target
 	if( (temp_rr = CALL_CLOSURE(origin_form_r)).state == SUCC ) {
 		wBuff = wBuff_backup;
-		uri_info.path = CALL_CLOSURE(absolute_form_r).string;
-		if( (CALL_CLOSURE(origin_form_r)).state == SUCC ) {
+		uri_info.path = CALL_CLOSURE(absolute_path_r).string;
+		if( (CALL_CLOSURE(qmark_r)).state == SUCC ) {
 			uri_info.query = CALL_CLOSURE(query_r).string;
 		}
 	}
 	else if( (temp_rr = CALL_CLOSURE(absolute_form_r)).state == SUCC ) {
 		wBuff = wBuff_backup;
 		uri_info.scheme = CALL_CLOSURE(scheme_r).string;
+		CALL_CLOSURE(colon_r);
+		CALL_CLOSURE(double_slash_r);
+		if( (temp_rr = CALL_CLOSURE(authority_r)).state == SUCC && (temp_2_rr = CALL_CLOSURE(path_abempty_r)).state == SUCC) {
+			uri_info.path = temp_2_rr.string;
+			wBuff = wBuff_backup;
+			if( (temp_rr = CALL_CLOSURE(userinfo_r)).state == SUCC && CALL_CLOSURE(arobase_r).state == SUCC) {
+				uri_info.userinfo = temp_rr.string;
+			}
+			wBuff = wBuff_backup;
+			uri_info.host = CALL_CLOSURE(host_r).string;
+			
+			if( CALL_CLOSURE(colon_r).state == SUCC && (temp_rr = CALL_CLOSURE(port_r)).state == SUCC) {
+				uri_info.port = temp_rr.string;
+			}
+		}
+		else {
+			wBuff = wBuff_backup;
+			if( (temp_rr = CALL_CLOSURE(path_absolute_r)).state == SUCC ) {
+				uri_info.path = temp_rr.string;
+			}
+			else if( (temp_rr = CALL_CLOSURE(path_rootless_r)).state == SUCC ) {
+				uri_info.path = temp_rr.string;
+			}
+			else if( (temp_rr = CALL_CLOSURE(path_empty_r)).state == SUCC ) {
+				uri_info.path = temp_rr.string;
+			}
+		}
 		
 	}
 	else if( (temp_rr = CALL_CLOSURE(authority_form_r)).state == SUCC ) {
@@ -136,7 +163,7 @@ URI_Info extractInfoFromURI(StringL uri) {
 		if( (temp_rr = CALL_CLOSURE(userinfo_r)).state == SUCC && CALL_CLOSURE(arobase_r).state == SUCC) {
 			uri_info.userinfo = temp_rr.string;
 		}
-		
+		wBuff = wBuff_backup;
 		uri_info.host = CALL_CLOSURE(host_r).string;
 		
 		if( CALL_CLOSURE(colon_r).state == SUCC && (temp_rr = CALL_CLOSURE(port_r)).state == SUCC) {

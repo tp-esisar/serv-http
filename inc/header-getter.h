@@ -40,6 +40,23 @@ free_decl(Connection_HS)
 Connection_HS* get_Connection(mapStruct* map);
 
 
+typedef struct Transfer_Encoding_HS {
+    Pair* transfer_coding;
+    struct Transfer_Encoding_HS* next;
+} Transfer_Encoding_HS;
+free_decl(Transfer_Encoding_HS)
+Transfer_Encoding_HS* get_Transfer_Encoding(mapStruct* map);
+
+
+typedef struct Authorization_HS {
+    StringL auth_scheme;
+    StringL token68;
+    struct Authorization_HS* next;
+} Authorization_HS;
+free_decl(Authorization_HS)
+Authorization_HS* get_Authorization(mapStruct* map);
+
+
 
 
 #endif
