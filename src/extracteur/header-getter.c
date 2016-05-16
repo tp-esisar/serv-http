@@ -163,3 +163,106 @@ Connection_HS* get_Connection(mapStruct* map) {
     
     return headerList;
 }
+
+
+void free_Transfer_Encoding_HS(Transfer_Encoding_HS* obj) {
+    if (obj != NULL) {
+        free_Transfer_Encoding_HS(obj->next);
+        free_mini_map(obj->transfer_coding);
+        free(obj);
+    }
+}
+Transfer_Encoding_HS* get_Transfer_Encoding(mapStruct* map) {
+    
+    Transfer_Encoding_HS* headerList = NULL;
+    int error = 0;
+    void callback(char* buff, unsigned int len) {
+        Transfer_Encoding_HS* temp = malloc(sizeof(Transfer_Encoding_HS));
+        if (temp == NULL) {
+            error = 1;
+            return;
+        }
+        temp->transfer_coding = NULL;
+        StringL wBuff = (StringL){buff,len};
+        reader rtransfer_coding = get_reader(transfer_coding,&wBuff);
+        while (wBuff.len > 0) {
+            if(wBuff.s[0]!=',' && wBuff.s[0]!=' ' && wBuff.s[0]!='\t' && wBuff.s[0]!='\r' && wBuff.s[0]!='\n') {
+                read_return rrco_opt = CALL_CLOSURE(rtransfer_coding);
+                if (rrco_opt.state == FAIL) {
+                    fprintf(stderr,"\x1b[31merreur semantique transfer_coding \"%s\" %d\x1b[0m\n",buff,wBuff.len);
+                    exit(EXIT_FAILURE);
+                }
+                temp->transfer_coding = addPair(temp->transfer_coding,rrco_opt.string,rrco_opt.string);
+            }
+            else {
+                wBuff.s++;
+                wBuff.len--;
+            }
+        }
+        temp->next = headerList;
+        headerList = temp;
+        
+    }
+    search_map (map, "Transfer_Encoding", callback);
+    if (error != 0) {
+        free_Transfer_Encoding_HS(headerList);
+        return NULL;
+    }
+    
+    return headerList;
+}
+
+
+
+void free_Authorization_HS(Authorization_HS* obj) {
+    if (obj != NULL) {
+        free_Authorization_HS(obj->next);
+        free(obj);
+    }
+}
+Authorization_HS* get_Connection(mapStruct* map) {
+    
+    Authorization_HS* headerList = NULL;
+    int error = 0;
+    void callback(char* buff, unsigned int len) {
+        Authorization_HS* temp = malloc(sizeof(Authorization_HS));
+        if (temp == NULL) {
+            error = 1;
+            return;
+        }
+        temp->auth_scheme = (StringL){NULL,0};
+        temp->token68 = (StringL){NULL,0};
+        
+        StringL wBuff = (StringL){buff,len};
+        reader rauth_scheme = get_reader(auth_scheme,&wBuff);
+        reader rtoken68 = get_reader(token68,&wBuff);
+        reader rRWS = get_reader(RWS,&wBuff);
+        read_return rrtemp;
+        if((rrtemp = CALL_CLOSURE(rauth_scheme)).state == FAIL) {
+            error = 1;
+            return;
+        }
+        temp->auth_scheme = rrtemp.string;
+        if((rrtemp = CALL_CLOSURE(rRWS)).state == FAIL) {
+            error = 1;
+            return;
+        }
+        if((rrtemp = CALL_CLOSURE(token68)).state == FAIL) {
+            error = 1;
+            return;
+        }
+        temp->token68 = rrtemp.string;
+        
+        
+        temp->next = headerList;
+        headerList = temp;
+        
+    }
+    search_map (map, "Connection", callback);
+    if (error != 0) {
+        free_Authorization_HS(headerList);
+        return NULL;
+    }
+    
+    return headerList;
+}
