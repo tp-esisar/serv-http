@@ -4,7 +4,8 @@ void accessFile (Sreponse* reponse, char *chemin)
 {
 	FILE* file = NULL;
 	char header_size[30];
-	int i=0, j=0, size=0;
+	int i=0, j=0;
+	unsigned long int size=0;
 	char ext[6];
 
 	file = fopen(chemin, "rb");
@@ -17,21 +18,21 @@ void accessFile (Sreponse* reponse, char *chemin)
 	size = ftell (file);
 	rewind (file);
 
-	reponse->messagebody = malloc (sizeof(char)*(size+1));
-	if(reponse->messagebody == NULL) {
+	reponse->messagebody.s = malloc (size*sizeof(char));
+	reponse->messagebody.len = size;
+	if(reponse->messagebody.s == NULL) {
 		error(reponse, "500", "Erreur interne");
 		return;
 	}
 
-	if (fread (reponse->messagebody,1,size,file) != size) {
+	if (fread (reponse->messagebody.s,1,size,file) != size) {
 		error(reponse, "500", "Erreur interne");
 		return;
 	}
-	reponse->messagebody[size]='\0';
 
 	fclose (file);
 	
-	snprintf (header_size, 30, "Content-Length: %d", size);
+	snprintf (header_size, 30, "Content-Length: %ld", size);
 	addHeaderfield(reponse, header_size);
 	
 	i=strlen(chemin)-1;
@@ -57,5 +58,6 @@ void accessFile (Sreponse* reponse, char *chemin)
 		addHeaderfield(reponse, "Content-Type: text/html");
 	else 
 		addHeaderfield(reponse, "Content-Type: application/octet-stream");
+	
 		
 }

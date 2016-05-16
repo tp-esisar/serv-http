@@ -4,6 +4,8 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 {
 	int retour;	
 	Connection_HS* connectionType = get_Connection(map);
+	Content_Length_HS* Content_length = get_Content_Length(map);
+	//TranfertEncoding_HS* TranfertEncoding = get_TranfertEncoding(map);
 
 	if (state == PARSE_FAIL)
 	{
@@ -20,11 +22,17 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 		//Normalisation URL
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
-			accessFile(reponse, "../www/site1/index.html");		
+			accessFile(reponse, "../www/site1/images/rascasse.jpg");		
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
-			//Vérifier la taille : map->message_body.len
-			error(reponse, "201", "Accepted");
+			/*if (TransfertEncoding != NULL)
+				error(reponse, "501", "Non implémenté");
+			else*/ if (Content_length == NULL)
+				error(reponse, "411", "Content-length requis");
+			else if(Content_length->next != NULL || map->message_body.len != Content_length->Content_Length) 
+				error(reponse, "400", "Erreur de Content_length");
+			else
+				error(reponse, "201", "Accepted");
 		}
 		else	
 			error(reponse, "501", "Methode non supportee");
