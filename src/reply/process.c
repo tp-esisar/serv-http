@@ -1,12 +1,14 @@
 #include "process.h"
 
-int processing(parse_state state, mapStruct* map, Sreponse* reponse) 
+int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* config) 
 {
 	int retour;	
+	char* file;
 	Connection_HS* connectionType = get_Connection(map);
 	Content_Length_HS* Content_length = get_Content_Length(map);
 	//TranfertEncoding_HS* TranfertEncoding = get_TranfertEncoding(map);
 	Authorization_HS* Authorization = get_Authorization(map);
+	Host_HS* Host = get_Host(map);
 
 	if (state == PARSE_FAIL)
 	{
@@ -19,11 +21,15 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 	else if (map->http_version.s[5] != '1')
 		error(reponse, "505", "Version de HTTP non supportee");
 
+	else if (Host == NULL) 
+		error(reponse, "400", "Erreur de syntaxe");
+
 	else {
-		//Normalisation URL
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
-			accessFile(reponse, "../www/site1/index.html", Authorization);		
+			map->request_target = normalisation(map->request_target);
+			file = get_final_file_path(extractInfoFromURI(map->request_target), Host->Host, config);
+			accessFile(reponse, file, Authorization);		
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 			/*if (TransfertEncoding != NULL)
@@ -49,6 +55,9 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 		retour = 0;
 	}
 	free_Connection_HS(connectionType);
+	free_Content_Length_HS(Content_length);
+	free_Authorization_HS(Authorization);
+	free_Host_HS(Host);
 
 	return retour;
 }
@@ -180,7 +189,7 @@ URI_Info extractInfoFromURI(StringL uri) {
 }
 
 
-StringL get_final_file_path(URI_Info info, cJSON* jsonDB) {
+char* get_final_file_path(URI_Info info, StringL host, cJSON* jsonDB) {
 	StringL ret = (StringL){NULL,0};
 	cJSON* jsonPath;
 	if(info.host.s == NULL) {
@@ -189,7 +198,7 @@ StringL get_final_file_path(URI_Info info, cJSON* jsonDB) {
 		}
 		else {
 			fprintf(stderr,"erreur pas de site par defaut");
-			return ret;
+			return ret.s;
 		}
 	}
 	else {
@@ -199,7 +208,7 @@ StringL get_final_file_path(URI_Info info, cJSON* jsonDB) {
 		}
 		else {
 			fprintf(stderr,"erreur pas de site \"%s\"",temp);
-			return ret;
+			return ret.s;
 		}
 		free(temp);
 	}
@@ -213,5 +222,5 @@ StringL get_final_file_path(URI_Info info, cJSON* jsonDB) {
 	
 	char* absolute = cJSON_Print(jsonPath);
 	printf("json abs path : %s",absolute);
-	return info.path;
+	return info.path.s;
 }

@@ -1,24 +1,24 @@
 #include "fichier.h"
 
 
-StringL loadFile(FILE* file) {
-	StringL ret;
+char* loadFile(FILE* file) {
+	char* chaine;
 	unsigned long int size=0;
 	fseek (file , 0 , SEEK_END);
 	size = ftell (file);
 	rewind (file);
-	ret.s = malloc (size*sizeof(char));
-	ret.len = size;
-	if(ret.s == NULL) {
+	chaine = malloc ((size+1)*sizeof(char));
+	if(chaine == NULL) {
 		fprintf(stderr, "erreur malloc loadFile");
 		exit(EXIT_FAILURE);
 	}
 
-	if (fread (ret.s,1,size,file) != size) {
+	if (fread (chaine,1,size,file) != size) {
 		fprintf(stderr, "erreur fread loadFile");
 		exit(EXIT_FAILURE);
 	}
-	return ret;
+	chaine[size] = '\0';
+	return chaine;
 }
 
 #define TAILLE_MAX 100
@@ -100,6 +100,12 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	int i=0, j=0;
 	unsigned long int size=0;
 	char ext[6];
+
+	if (chemin == NULL){
+		error(reponse, "400", "Erreur de syntaxe");
+		return;
+	}
+		
 	
 	if (droit_acces(chemin, Authorization) == -1) {
 		error(reponse, "401", "Non autorisé");

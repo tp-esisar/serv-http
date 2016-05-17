@@ -7,6 +7,7 @@
 #include "process.h"
 #include "reponse.h"
 #include "request.h"
+#include "cJSON.h"
 
 int main(int argc, char *argv[])
 {
@@ -25,7 +26,13 @@ int main(int argc, char *argv[])
 	if (argc == 3 && argv[2][0]=='d')
 		debug = 1;
 
-	putenv("export LD_LIBRARY_PATH=../lib");
+	FILE* file_config = fopen("../www/config.json", "r");
+	if(file_config == NULL) {
+		perror("Impossible de charger le fichier de configuration");
+		exit(-1);
+	}
+	cJSON* config = cJSON_Parse(loadFile(file_config));
+	fclose(file_config);
 
 	while ( 1 )
 	{
@@ -38,7 +45,7 @@ int main(int argc, char *argv[])
 			printf("\n\n---Client [%d] [%s:%d]\n%.*s\n",requete->clientId,inet_ntoa(requete->clientAddress->sin_addr),htons(requete->clientAddress->sin_port),requete->len,requete->buf);
 
 		parse = parse_HTTP_message(&wBuff);
-		close = processing(parse.state, parse.map, Sreponse);
+		close = processing(parse.state, parse.map, Sreponse, config);
 
 		reponse = SreponseToMessage(Sreponse);
 		reponse->clientId=requete->clientId; 

@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdint.h>
 
+char* loadFile(FILE* file);
 void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization);
 
 #endif // FICHIER_H
