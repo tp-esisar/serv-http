@@ -143,3 +143,40 @@ URI_Info extractInfoFromURI(StringL uri) {
 	
 	return uri_info;
 }
+
+
+StringL get_final_file_path(URI_Info info, cJSON* jsonDB) {
+	StringL ret = (StringL){NULL,0};
+	cJSON* jsonPath;
+	if(info.host.s == NULL) {
+		if (cJSON_HasObjectItem(jsonDB,"default")) {
+			jsonPath = cJSON_GetObjectItem(jsonDB,"default");
+		}
+		else {
+			fprintf(stderr,"erreur pas de site par defaut");
+			return ret;
+		}
+	}
+	else {
+		char* temp = toRegularString(info.host);
+		if (cJSON_HasObjectItem(jsonDB,temp)) {
+			jsonPath = cJSON_GetObjectItem(jsonDB,temp);
+		}
+		else {
+			fprintf(stderr,"erreur pas de site \"%s\"",temp);
+			return ret;
+		}
+		free(temp);
+	}
+	char* relative;
+	if(info.path.s != NULL) {
+		relative = toRegularString(info.path);
+	}
+	else {
+		relative = toRegularString((StringL){"/index.html",11});
+	}
+	
+	char* absolute = cJSON_Print(jsonPath);
+	printf("json abs path : %s",absolute);
+	return info.path;
+}

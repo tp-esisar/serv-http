@@ -1,5 +1,26 @@
 #include "fichier.h"
 
+
+StringL loadFile(FILE* file) {
+	StringL ret;
+	unsigned long int size=0;
+	fseek (file , 0 , SEEK_END);
+	size = ftell (file);
+	rewind (file);
+	ret.s = malloc (size*sizeof(char));
+	ret.len = size;
+	if(ret.s == NULL) {
+		fprintf(stderr, "erreur malloc loadFile");
+		exit(EXIT_FAILURE);
+	}
+
+	if (fread (ret.s,1,size,file) != size) {
+		fprintf(stderr, "erreur fread loadFile");
+		exit(EXIT_FAILURE);
+	}
+	return ret;
+}
+
 void accessFile (Sreponse* reponse, char *chemin)
 {
 	FILE* file = NULL;
