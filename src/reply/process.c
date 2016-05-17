@@ -6,6 +6,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 	Connection_HS* connectionType = get_Connection(map);
 	Content_Length_HS* Content_length = get_Content_Length(map);
 	//TranfertEncoding_HS* TranfertEncoding = get_TranfertEncoding(map);
+	Authorization_HS* Authorization = get_Authorization(map);
 
 	if (state == PARSE_FAIL)
 	{
@@ -22,7 +23,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 		//Normalisation URL
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
-			accessFile(reponse, "../www/site1/images/rascasse.jpg");		
+			accessFile(reponse, "../www/site1/index.html", Authorization);		
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 			/*if (TransfertEncoding != NULL)
@@ -51,6 +52,40 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse)
 
 	return retour;
 }
+
+StringL normalisation (StringL url)
+{
+    int i, j=0;
+    char temp[]="  ";
+
+    for (i=0; i<url.len; i++)
+    {
+        if (url.s[i] == '%') {
+            temp[0]=url.s[i+1];
+            temp[1]=url.s[i+2];
+            url.s[j++] = (char)strtol(temp, NULL, 16);
+            i +=2;
+        }
+        else if (url.s[i] == '.') {
+            if (i == url.len-1 || url.s[i+1] == '/')
+                i++;
+            else if (url.s[i+1] == '.')
+                if (i == url.len-2 || url.s[i+2] == '/')
+                    i+=2;
+                else
+                    url.s[j++] = url.s[i];
+            else
+                url.s[j++] = url.s[i];
+
+        }
+        else
+            url.s[j++] = url.s[i];
+    }
+
+    url.len = j;
+    return url;
+}
+
 
 URI_Info extractInfoFromURI(StringL uri) {
 	StringL wBuff = uri;

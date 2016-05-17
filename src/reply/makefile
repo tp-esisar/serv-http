@@ -5,7 +5,7 @@ INC=$(PROJECT)/inc
 LIB=$(PROJECT)/lib
 CFLAGS=-g -Wall -std=c99 -I$(INC)
 
-objects: $(OBJ)/fichier.o $(OBJ)/reponse.o $(OBJ)/process.o $(OBJ)/test_process.o
+objects: $(OBJ)/fichier.o $(OBJ)/reponse.o $(OBJ)/process.o
 
 $(OBJ)/reponse.o: reponse.c $(INC)/*
 	gcc $(CFLAGS) -c reponse.c -o $(OBJ)/reponse.o -lrequest

@@ -21,13 +21,91 @@ StringL loadFile(FILE* file) {
 	return ret;
 }
 
-void accessFile (Sreponse* reponse, char *chemin)
+#define TAILLE_MAX 100
+
+
+static char encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+                                'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+                                'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                                'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+                                'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+                                'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                                'w', 'x', 'y', 'z', '0', '1', '2', '3',
+                                '4', '5', '6', '7', '8', '9', '+', '/'};
+static int mod_table[] = {0, 2, 1};
+
+char *base64_encode(const unsigned char *data, size_t input_length, size_t *output_length) {
+    int i,j;
+    *output_length = 4 * ((input_length + 2) / 3);
+
+    char *encoded_data = malloc(*output_length);
+    if (encoded_data == NULL) return NULL;
+
+    for (i = 0, j = 0; i < input_length;) {
+
+        uint32_t octet_a = i < input_length ? (unsigned char)data[i++] : 0;
+        uint32_t octet_b = i < input_length ? (unsigned char)data[i++] : 0;
+        uint32_t octet_c = i < input_length ? (unsigned char)data[i++] : 0;
+
+        uint32_t triple = (octet_a << 0x10) + (octet_b << 0x08) + octet_c;
+
+        encoded_data[j++] = encoding_table[(triple >> 3 * 6) & 0x3F];
+        encoded_data[j++] = encoding_table[(triple >> 2 * 6) & 0x3F];
+        encoded_data[j++] = encoding_table[(triple >> 1 * 6) & 0x3F];
+        encoded_data[j++] = encoding_table[(triple >> 0 * 6) & 0x3F];
+    }
+
+    for (i = 0; i < mod_table[input_length % 3]; i++)
+        encoded_data[*output_length - 1 - i] = '=';
+
+    return encoded_data;
+}
+
+int droit_acces (char *chemin, Authorization_HS* Authorization) {	
+	FILE* file = NULL;
+	char chaine[TAILLE_MAX];
+	char* chemin_lock;
+	StringL login;
+	
+	int i = strlen(chemin);
+	while (chemin[i-1] != '/')
+		i--;
+	
+	chemin_lock = malloc(sizeof(char)*(i+6));
+	memcpy (chemin_lock, chemin, i);
+	strcpy(&(chemin_lock[i]), ".lock");
+
+	file = fopen(chemin_lock, "r");
+	if(file == NULL)
+		return 0;
+	
+	fgets(chaine, TAILLE_MAX, file);
+	fclose(file);
+	free(chemin_lock);
+
+	login.s = base64_encode((unsigned char*)chaine, (size_t)strlen(chaine)-1, (size_t*)&(login.len));
+
+	if (Authorization != NULL && stringLEq(Authorization->auth_scheme, (StringL){"Basic", 5}) == 1 && stringLEq(Authorization->token68, login) == 1) {
+		free(login.s);
+		return 0;
+	}
+	free(login.s);
+	return -1;
+}
+
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization)
 {
 	FILE* file = NULL;
 	char header_size[30];
 	int i=0, j=0;
 	unsigned long int size=0;
 	char ext[6];
+	
+	if (droit_acces(chemin, Authorization) == -1) {
+		error(reponse, "401", "Non autorisé");
+		addHeaderfield(reponse, "WWW-Authenticate: Basic realm=\"Espace privé\"");
+		return;
+	}
 
 	file = fopen(chemin, "rb");
 	if(file == NULL) {
@@ -78,7 +156,5 @@ void accessFile (Sreponse* reponse, char *chemin)
 	else if (strcmp(ext, "html") == 0)
 		addHeaderfield(reponse, "Content-Type: text/html");
 	else 
-		addHeaderfield(reponse, "Content-Type: application/octet-stream");
-	
-		
+		addHeaderfield(reponse, "Content-Type: application/octet-stream");		
 }
