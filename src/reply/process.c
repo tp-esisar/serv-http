@@ -28,8 +28,9 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
 			map->request_target = normalisation(map->request_target);
-			file = get_final_file_path(extractInfoFromURI(map->request_target), Host->Host, config);
-			accessFile(reponse, file, Authorization);		
+			file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
+			accessFile(reponse, file, Authorization);
+			free(file);		
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 			/*if (TransfertEncoding != NULL)
@@ -189,26 +190,38 @@ URI_Info extractInfoFromURI(StringL uri) {
 }
 
 
-char* get_final_file_path(URI_Info info, StringL host, cJSON* jsonDB) {
-	StringL ret = (StringL){NULL,0};
+char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 	cJSON* jsonPath;
-	if(info.host.s == NULL) {
-		if (cJSON_HasObjectItem(jsonDB,"default")) {
-			jsonPath = cJSON_GetObjectItem(jsonDB,"default");
+	if(headerHost.s == NULL) {
+		if(info.host.s == NULL) {
+			if (cJSON_HasObjectItem(jsonDB,"default")) {
+				jsonPath = cJSON_GetObjectItem(jsonDB,"default");
+			}
+			else {
+				fprintf(stderr,"erreur pas de site par defaut");
+				return NULL;
+			}
 		}
 		else {
-			fprintf(stderr,"erreur pas de site par defaut");
-			return ret.s;
+			char* temp = toRegularString(info.host);
+			if (cJSON_HasObjectItem(jsonDB,temp)) {
+				jsonPath = cJSON_GetObjectItem(jsonDB,temp);
+			}
+			else {
+				fprintf(stderr,"erreur pas de site \"%s\"",temp);
+				return NULL;
+			}
+			free(temp);
 		}
 	}
 	else {
-		char* temp = toRegularString(info.host);
+		char* temp = toRegularString(headerHost);
 		if (cJSON_HasObjectItem(jsonDB,temp)) {
 			jsonPath = cJSON_GetObjectItem(jsonDB,temp);
 		}
 		else {
 			fprintf(stderr,"erreur pas de site \"%s\"",temp);
-			return ret.s;
+			return NULL;
 		}
 		free(temp);
 	}
@@ -217,10 +230,37 @@ char* get_final_file_path(URI_Info info, StringL host, cJSON* jsonDB) {
 		relative = toRegularString(info.path);
 	}
 	else {
-		relative = toRegularString((StringL){"/index.html",11});
+		relative = toRegularString((StringL){"/",1});
 	}
 	
-	char* absolute = cJSON_Print(jsonPath);
-	printf("json abs path : %s",absolute);
-	return info.path.s;
+	char* absolute = cJSON_PrintUnformatted(jsonPath);
+	int absoluteLen = strlen(absolute);
+	int relativeLen = strlen(relative);
+	int totalLen = absoluteLen+relativeLen;
+	char* finalPath = malloc((totalLen+1)*sizeof(char));
+	int i;
+	for(i=0;i<absoluteLen;i++) {
+		finalPath[i] = absolute[i];
+	}
+	int k;
+	for(k=0;k<relativeLen-1;k++) {
+		if(relative[0] == '/')
+			finalPath[i+k]=relative[k+1];
+		else
+			finalPath[i+k]=relative[k];
+	}
+	if(relative[0]=='/') {
+		finalPath[i+k]='\0';
+	}
+	else {
+		finalPath[i+k]=relative[k];
+		finalPath[i+k+1]='\0';
+	}
+	
+	
+	
+	printf("path : %s\n",finalPath);
+	free(relative);
+	free(absolute);
+	return finalPath;
 }

@@ -27,7 +27,7 @@ typedef struct {
 int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* config);
 StringL normalisation (StringL url);
 URI_Info extractInfoFromURI(StringL uri);
-char* get_final_file_path(URI_Info info, StringL host, cJSON* jsonDB);
+char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost);
 
 
 #endif
