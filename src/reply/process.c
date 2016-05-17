@@ -180,26 +180,38 @@ URI_Info extractInfoFromURI(StringL uri) {
 }
 
 
-StringL get_final_file_path(URI_Info info, cJSON* jsonDB) {
-	StringL ret = (StringL){NULL,0};
+char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 	cJSON* jsonPath;
-	if(info.host.s == NULL) {
-		if (cJSON_HasObjectItem(jsonDB,"default")) {
-			jsonPath = cJSON_GetObjectItem(jsonDB,"default");
+	if(headerHost.s == NULL) {
+		if(info.host.s == NULL) {
+			if (cJSON_HasObjectItem(jsonDB,"default")) {
+				jsonPath = cJSON_GetObjectItem(jsonDB,"default");
+			}
+			else {
+				fprintf(stderr,"erreur pas de site par defaut");
+				return NULL;
+			}
 		}
 		else {
-			fprintf(stderr,"erreur pas de site par defaut");
-			return ret;
+			char* temp = toRegularString(info.host);
+			if (cJSON_HasObjectItem(jsonDB,temp)) {
+				jsonPath = cJSON_GetObjectItem(jsonDB,temp);
+			}
+			else {
+				fprintf(stderr,"erreur pas de site \"%s\"",temp);
+				return NULL;
+			}
+			free(temp);
 		}
 	}
 	else {
-		char* temp = toRegularString(info.host);
+		char* temp = toRegularString(headerHost);
 		if (cJSON_HasObjectItem(jsonDB,temp)) {
 			jsonPath = cJSON_GetObjectItem(jsonDB,temp);
 		}
 		else {
 			fprintf(stderr,"erreur pas de site \"%s\"",temp);
-			return ret;
+			return NULL;
 		}
 		free(temp);
 	}
@@ -208,10 +220,38 @@ StringL get_final_file_path(URI_Info info, cJSON* jsonDB) {
 		relative = toRegularString(info.path);
 	}
 	else {
-		relative = toRegularString((StringL){"/index.html",11});
+		relative = toRegularString((StringL){"/",1});
 	}
 	
 	char* absolute = cJSON_Print(jsonPath);
-	printf("json abs path : %s",absolute);
-	return info.path;
+	int absoluteLen = strlen(absolute);
+	int relativeLen = strlen(relative);
+	int totalLen = absoluteLen+relativeLen;
+	char* finalPath = malloc((totalLen+1)*sizeof(char));
+	int i;
+	for(i=0;i<absoluteLen;i++) {
+		finalPath[i] = absolute[i];
+	}
+	int k;
+	for(k=0;k<relativeLen-1;k++) {
+		if(relative[0] == '/')
+			finalPath[i+k]=relative[k+1];
+		else
+			finalPath[i+k]=relative[k];
+	}
+	if(relative[0]=='/') {
+		finalPath[i+k]='\0';
+	}
+	else {
+		finalPath[i+k]=relative[k];
+		finalPath[i+k+1]='\0';
+	}
+	
+	
+	
+	printf("path : %s\n",finalPath);
+	free(relative);
+	free(absolute);
+	free(finalPath);
+	return finalPath;
 }
