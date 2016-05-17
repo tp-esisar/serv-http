@@ -233,7 +233,15 @@ char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 		relative = toRegularString((StringL){"/",1});
 	}
 	
-	char* absolute = cJSON_PrintUnformatted(jsonPath);
+	char* absoluteGuillemet = cJSON_PrintUnformatted(jsonPath);
+	int absoluteGuillemetLen = strlen(absoluteGuillemet);
+	char* absolute = malloc((absoluteGuillemetLen + 1)*sizeof(char));
+	int j;
+	for(j=1;j<absoluteGuillemetLen-1;j++) {
+		absolute[j-1]=absoluteGuillemet[j];
+	}
+	absolute[j-1]='\0';
+	free(absoluteGuillemet);
 	int absoluteLen = strlen(absolute);
 	int relativeLen = strlen(relative);
 	int totalLen = absoluteLen+relativeLen;
