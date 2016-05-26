@@ -287,12 +287,12 @@ char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 	
 	char* absoluteGuillemet = cJSON_PrintUnformatted(jsonPath);
 	int absoluteGuillemetLen = strlen(absoluteGuillemet);
-	char* absolute = malloc((absoluteGuillemetLen + 1)*sizeof(char));
+	char* absolute = malloc((absoluteGuillemetLen)*sizeof(char));
 	int j;
-	for(j=1;j<absoluteGuillemetLen-1;j++) {
-		absolute[j-1]=absoluteGuillemet[j];
+	for(j=0;j<absoluteGuillemetLen-2;j++) {
+		absolute[j]=absoluteGuillemet[j+1];
 	}
-	absolute[j-1]='\0';
+	absolute[j]='\0';
 	free(absoluteGuillemet);
 	int absoluteLen = strlen(absolute);
 	int relativeLen = strlen(relative);
@@ -303,19 +303,19 @@ char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 		finalPath[i] = absolute[i];
 	}
 	int k;
-	for(k=0;k<relativeLen-1;k++) {
-		if(relative[0] == '/')
-			finalPath[i+k]=relative[k+1];
-		else
+	if(relative[0] != '/') {
+		for(k=0;k<relativeLen;k++) {
 			finalPath[i+k]=relative[k];
-	}
-	if(relative[0]=='/') {
-		finalPath[i+k]='\0';
+		}
 	}
 	else {
-		finalPath[i+k]=relative[k];
-		finalPath[i+k+1]='\0';
+		for(k=0;k<relativeLen-1;k++) {
+			finalPath[i+k]=relative[k+1];
+		}
 	}
+	finalPath[i+k]='\0';
+	
+	
 	if(finalPath[strlen(finalPath)-1]=='/') {
 		char* Old = finalPath;
 		finalPath = getIndex(Old);
