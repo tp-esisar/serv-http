@@ -4,46 +4,50 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 {
 	int retour;	
 	char* file;
+
+	if (state == PARSE_FAIL)
+	{
+		if (map == NULL )	
+			error(reponse, "500", "500 : Erreur de mémoire");
+		else 
+			error(reponse, "400", "400 : Erreur de syntaxe");
+		return 1;
+	}
+
 	Connection_HS* connectionType = get_Connection(map);
 	Content_Length_HS* Content_length = get_Content_Length(map);
 	//TranfertEncoding_HS* TranfertEncoding = get_TranfertEncoding(map);
 	Authorization_HS* Authorization = get_Authorization(map);
 	Host_HS* Host = get_Host(map);
 
-	if (state == PARSE_FAIL)
-	{
-		if (map == NULL )	
-			error(reponse, "500", "Erreur de mémoire");
-		else 
-			error(reponse, "400", "Erreur de syntaxe");
-	}
-
-	else if (map->http_version.s[5] != '1')
-		error(reponse, "505", "Version de HTTP non supportee");
+	if (map->http_version.s[5] != '1')
+		error(reponse, "505", "505 : Version de HTTP non supportee");
 
 	else if (Host == NULL) 
-		error(reponse, "400", "Erreur de syntaxe");
+		error(reponse, "400", "400 : Host obligatoire");
 
 	else {
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
 			map->request_target = normalisation(map->request_target);
-			file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
+			/*file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
 			accessFile(reponse, file, Authorization);
-			free(file);		
+			
+			free(file);*/	
+			accessFile(reponse, "../www/site2/download.png", Authorization);	
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 			/*if (TransfertEncoding != NULL)
 				error(reponse, "501", "Non implémenté");
 			else*/ if (Content_length == NULL)
-				error(reponse, "411", "Content-length requis");
+				error(reponse, "411", "411 : Content-length requis");
 			else if(Content_length->next != NULL || map->message_body.len != Content_length->Content_Length) 
-				error(reponse, "400", "Erreur de Content_length");
+				error(reponse, "400", "400 : Erreur de Content_length");
 			else
-				error(reponse, "201", "Accepted");
+				error(reponse, "201", "201 : Accepted");
 		}
 		else	
-			error(reponse, "501", "Methode non supportee");
+			error(reponse, "501", "501 : Methode non supportee");
 	}
 
 	

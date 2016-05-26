@@ -70,7 +70,8 @@ message* SreponseToMessage (Sreponse* Sreponse)
 		perror ("Erreur d'allocation mémoire");
 		exit(1);
 	}
-	
+	//size_t youhou = (strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+Sreponse->messagebody.len+2);
+	//reponse->buf = malloc(sizeof(char)*24800);
 	reponse->buf = malloc(sizeof(char)*(strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+Sreponse->messagebody.len+2));
 	if (reponse->buf == NULL)
 	{
@@ -83,7 +84,7 @@ message* SreponseToMessage (Sreponse* Sreponse)
 	memcpy(reponse->buf,Sreponse->startline, strlen(Sreponse->startline));
 	memcpy(&(reponse->buf[strlen(Sreponse->startline)]),Sreponse->headerfield, strlen(Sreponse->headerfield));
 	reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)]='\r';
-	reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+1]='\n';
+	reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+1]='\n';	
 	memcpy(&(reponse->buf[strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+2]),Sreponse->messagebody.s, Sreponse->messagebody.len);	
 	
 	free(Sreponse->startline);

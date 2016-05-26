@@ -102,20 +102,20 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	char ext[6];
 
 	if (chemin == NULL){
-		error(reponse, "400", "Erreur de syntaxe");
+		error(reponse, "400", "400 : Mauvais Target");
 		return;
 	}
 		
 	
 	if (droit_acces(chemin, Authorization) == -1) {
-		error(reponse, "401", "Non autorisé");
+		error(reponse, "401", "401 : Non autorisé");
 		addHeaderfield(reponse, "WWW-Authenticate: Basic realm=\"Espace privé\"");
 		return;
 	}
 
 	file = fopen(chemin, "rb");
 	if(file == NULL) {
-		error(reponse, "404", "Page inexistante");
+		error(reponse, "404", "404 : Page inexistante");
 		return;
 	}
 	
@@ -126,12 +126,12 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	reponse->messagebody.s = malloc (size*sizeof(char));
 	reponse->messagebody.len = size;
 	if(reponse->messagebody.s == NULL) {
-		error(reponse, "500", "Erreur interne");
+		error(reponse, "500", "500 : Erreur interne");
 		return;
 	}
 
 	if (fread (reponse->messagebody.s,1,size,file) != size) {
-		error(reponse, "500", "Erreur interne");
+		error(reponse, "500", "500 : Erreur interne");
 		return;
 	}
 
