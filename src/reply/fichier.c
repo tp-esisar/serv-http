@@ -102,7 +102,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	char ext[6];
 
 	if (chemin == NULL){
-		error(reponse, "400", "400 : Mauvais Target");
+		error(reponse, "400", "400 : Host ou Target errone");
 		return;
 	}
 		
@@ -162,5 +162,5 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	else if (strcmp(ext, "html") == 0)
 		addHeaderfield(reponse, "Content-Type: text/html");
 	else 
-		addHeaderfield(reponse, "Content-Type: application/octet-stream");		
+		addHeaderfield(reponse, "Content-Type: application/octet-stream");	
 }

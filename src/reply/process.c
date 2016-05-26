@@ -7,18 +7,15 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 
 	if (state == PARSE_FAIL)
 	{
-		if (map == NULL )	
-			error(reponse, "500", "500 : Erreur de mémoire");
-		else 
-			error(reponse, "400", "400 : Erreur de syntaxe");
+		error(reponse, "400", "400 : Erreur de syntaxe");
 		return 1;
 	}
 
 	Connection_HS* connectionType = get_Connection(map);
 	Content_Length_HS* Content_length = get_Content_Length(map);
-	//TranfertEncoding_HS* TranfertEncoding = get_TranfertEncoding(map);
 	Authorization_HS* Authorization = get_Authorization(map);
 	Host_HS* Host = get_Host(map);
+	//TranfertEncoding_HS* TranfertEncoding = get_TranfertEncoding(map);
 
 	if (map->http_version.s[5] != '1')
 		error(reponse, "505", "505 : Version de HTTP non supportee");
@@ -30,11 +27,10 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
 			map->request_target = normalisation(map->request_target);
-			/*file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
+			file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
 			accessFile(reponse, file, Authorization);
-			
-			free(file);*/	
-			accessFile(reponse, "../www/site2/download.png", Authorization);	
+			free(file);
+			//accessFile(reponse, "../www/site2/download.png", Authorization);	
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 			/*if (TransfertEncoding != NULL)
@@ -59,6 +55,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 		addHeaderfield(reponse, "Connection: Keep-Alive");
 		retour = 0;
 	}
+
 	free_Connection_HS(connectionType);
 	free_Content_Length_HS(Content_length);
 	free_Authorization_HS(Authorization);

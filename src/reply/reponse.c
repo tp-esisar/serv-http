@@ -44,11 +44,15 @@ void addHeaderfield(Sreponse* reponse, char* ajout)
 	int taille = 0;
 
 	if (reponse->headerfield == NULL) {
-		reponse->headerfield = malloc(sizeof(char)*(strlen(ajout)+3));
+		taille = strlen(ajout);
+		reponse->headerfield = malloc(sizeof(char)*(taille+3));
 		reponse->headerfield[0] = '\0';
 	}
-	else
-		reponse->headerfield = realloc(reponse->headerfield, sizeof(char)*(strlen(reponse->headerfield)+strlen(ajout)+2));
+	else {
+		taille = strlen(reponse->headerfield)+strlen(ajout);
+		reponse->headerfield = realloc(reponse->headerfield, sizeof(char)*(taille+3));	
+	}
+
 	if (reponse->headerfield == NULL)
 	{
 		perror ("Erreur d'allocation mémoire");
@@ -56,7 +60,6 @@ void addHeaderfield(Sreponse* reponse, char* ajout)
 	}
 	
 	memcpy(&(reponse->headerfield[strlen(reponse->headerfield)]), ajout, strlen(ajout)+1);
-	taille = strlen(reponse->headerfield);
 	reponse->headerfield[taille] = '\r';
 	reponse->headerfield[taille+1] = '\n';
 	reponse->headerfield[taille+2] = '\0';	

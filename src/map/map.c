@@ -180,7 +180,9 @@ int search_map (mapStruct* map, char* search, void (*callback)(char* found, unsi
  */
 static void free_bloc(field* bloc)
 {
-    if (bloc->suivant == NULL)
+    if (bloc == NULL)
+		return;
+	if (bloc->suivant == NULL)
         free(bloc);
     else
     {

@@ -31,8 +31,10 @@ int main(int argc, char *argv[])
 		perror("Impossible de charger le fichier de configuration");
 		exit(-1);
 	}
-	cJSON* config = cJSON_Parse(loadFile(file_config));
+	char* conf = loadFile(file_config);
+	cJSON* config = cJSON_Parse(conf);
 	fclose(file_config);
+	free(conf);
 
 	while ( 1 )
 	{
