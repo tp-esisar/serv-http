@@ -194,6 +194,57 @@ URI_Info extractInfoFromURI(StringL uri) {
 }
 
 
+char* getIndex(char* folder) {
+	
+	int folderLen = strlen(folder);
+	int i,k;
+	FILE *fichier = NULL;
+	
+	
+	char* htmlIndex = "index.html";
+	int htmlIndexLen = strlen(htmlIndex);
+	int totalHtmlLen = folderLen+htmlIndexLen;
+	char* finalPathHtml = malloc((totalHtmlLen+1)*sizeof(char));
+	for(i=0;i<folderLen;i++) {
+		finalPathHtml[i] = folder[i];
+	}
+	for(k=0;k<htmlIndexLen;k++) {
+		finalPathHtml[i+k]=htmlIndex[k];
+	}
+	finalPathHtml[i+k] = '\0';
+	
+	
+	
+	fichier = fopen(finalPathHtml,  "r");
+	 
+	if (fichier != NULL) {
+		fclose(fichier);
+		return finalPathHtml;
+	}
+	
+	
+	free(finalPathHtml);
+	char* phpIndex = "index.php";
+	int phpIndexLen = strlen(phpIndex);
+	int totalPhpLen = folderLen+phpIndexLen;
+	char* finalPathPhp = malloc((totalPhpLen+1)*sizeof(char));
+	for(i=0;i<folderLen;i++) {
+		finalPathPhp[i] = folder[i];
+	}
+	for(k=0;k<phpIndexLen;k++) {
+		finalPathPhp[i+k]=phpIndex[k];
+	}
+	finalPathPhp[i+k] = '\0';
+	
+	fichier = fopen(finalPathPhp,  "r");
+	
+	if (fichier != NULL) {
+		fclose(fichier);
+		return finalPathPhp;
+	}
+	return NULL;
+}
+
 char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 	cJSON* jsonPath;
 	if(headerHost.s == NULL) {
@@ -268,7 +319,16 @@ char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 		finalPath[i+k]=relative[k];
 		finalPath[i+k+1]='\0';
 	}
-	
+	if(finalPath[strlen(finalPath)-1]=='/') {
+		char* Old = finalPath;
+		finalPath = getIndex(Old);
+		free(Old);
+		if (finalPath == NULL) {
+			fprintf(stderr,"erreur index.{html,php} introuvable");
+			return NULL;
+		}
+		
+	}
 	
 	
 	printf("path : %s\n",finalPath);
@@ -276,3 +336,4 @@ char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 	free(absolute);
 	return finalPath;
 }
+
