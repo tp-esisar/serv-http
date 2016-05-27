@@ -22,7 +22,7 @@ reader get_reader(syntaxe_elem se, StringL* wBuff) {
         case CRLF: return or(letter('\n'),concat(letter('\r'),letter('\n'))); //CRLF non conforme à utiliser pour le debug sur linux
         case DIGIT: return charIn(((StringL){"0123456789",10}));
         case ALPHA: return charIn(((StringL){"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",52}));
-        case HEXDIG: return or(symb(DIGIT), charIn(((StringL){"ABCDEFabcdef",6})));
+        case HEXDIG: return or(symb(DIGIT), charIn(((StringL){"ABCDEFabcdef",12})));
         case VCHAR: return charBetween(0x21, 0x7E);
         case OCTET: return charBetween(0x00, 0xFF);
         case BWS: return symb(OWS);

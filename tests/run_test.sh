@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-for f in test*; do 
+for f in test_uri*; do 
 	clear
 	echo "----------- Processing $f ----------"
 	cat $f
