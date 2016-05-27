@@ -1,0 +1,4 @@
+GET /fi%63hier%20de%20%6d%65rde%21 HTTP/1.1
+Host: localhost:8080
+Connection: Close
+

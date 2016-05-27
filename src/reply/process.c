@@ -26,8 +26,8 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 	else {
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
-			map->request_target = normalisation(map->request_target);
 			file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
+			printf("%s %d", map->request_target.s,map->request_target.len);
 			accessFile(reponse, file, Authorization);
 			free(file);
 			//accessFile(reponse, "../www/site2/download.png", Authorization);	
@@ -279,6 +279,7 @@ char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost) {
 	}
 	char* relative;
 	if(info.path.s != NULL) {
+		info.path = normalisation(info.path);
 		relative = toRegularString(info.path);
 	}
 	else {
