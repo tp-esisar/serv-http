@@ -76,8 +76,10 @@ int droit_acces (char *chemin, Authorization_HS* Authorization) {
 	strcpy(&(chemin_lock[i]), ".lock");
 
 	file = fopen(chemin_lock, "r");
-	if(file == NULL)
+	if(file == NULL) {
+		free(chemin_lock);
 		return 0;
+	}
 	
 	fgets(chaine, TAILLE_MAX, file);
 	fclose(file);

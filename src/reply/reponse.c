@@ -101,6 +101,8 @@ message* SreponseToMessage (Sreponse* Sreponse)
 void error (Sreponse* message, char* num, char* detail)
 {
 	char header_size[30];
+	if (message->startline != NULL);
+		free(message->startline);
 	message->startline = startline (num, detail);
 	if (strcmp(num, "200") != 0) {
 		message->messagebody.s = malloc(strlen(detail)*sizeof(char)+1);
