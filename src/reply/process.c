@@ -27,10 +27,8 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
 			file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
-			printf("%s %d", map->request_target.s,map->request_target.len);
 			accessFile(reponse, file, Authorization);
-			free(file);
-			//accessFile(reponse, "../www/site2/download.png", Authorization);	
+			free(file);	
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 			/*if (TransfertEncoding != NULL)
