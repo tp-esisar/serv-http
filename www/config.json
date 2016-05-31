@@ -1,1 +1,1 @@
-{"127.0.0.1:8080":"../www/site1_prof/", "localhost:8080":"../www/site2_prof/"}
+{"127.0.0.1:8080":"../www/site1/", "localhost:8080":"../www/site2/", "127.0.0.2:8080":"../www/site1_prof/", "127.0.0.3:8080":"../www/site2_prof/"}

@@ -1,0 +1,6 @@
+Ne pas oublier de taper la commande pour lier la librarie :
+export "LD_LIBRARY_PATH=../lib"
+
+Commande pour lancer le serveur :
+./mainTest.e port [d]
+
