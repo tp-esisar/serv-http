@@ -58,7 +58,7 @@ parse_return parse_HTTP_message(StringL* buff) {
 	//LIRE(message_body,Smessage_body);
 	
 	map->message_body = *buff;
-	map->message_body.len--; //correction chelou
+	//map->message_body.len--; //correction chelou
 	
 	return (parse_return){PARSE_SUCC,map,*buff};
 }
