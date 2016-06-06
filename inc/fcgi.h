@@ -8,23 +8,23 @@ typedef struct {
     unsigned char nameAndValue[];
 } FCGI_NameValuePair11;
 
-typedef struct {
-    unsigned char nameLength;
-    unsigned long int valueLength;
-    unsigned char nameAndValue[];
-} FCGI_NameValuePair14;
+// typedef struct {
+//     unsigned char nameLength;
+//     unsigned long int valueLength;
+//     unsigned char nameAndValue[];
+// } FCGI_NameValuePair14;
 
-typedef struct {
-    unsigned long int nameLength;
-    unsigned char valueLength;
-    unsigned char nameAndValue[];
-} FCGI_NameValuePair41;
+// typedef struct {
+//     unsigned long int nameLength;
+//     unsigned char valueLength;
+//     unsigned char nameAndValue[];
+// } FCGI_NameValuePair41;
 
-typedef struct {
-    unsigned long int nameLength;
-    unsigned long int valueLength;
-    unsigned char nameAndValue[];
-} FCGI_NameValuePair44;
+// typedef struct {
+//     unsigned long int nameLength;
+//     unsigned long int valueLength;
+//     unsigned char nameAndValue[];
+// } FCGI_NameValuePair44;
 
 
 /*
@@ -143,7 +143,7 @@ typedef struct {
 FCGI_UnknownTypeRecord make_FCGI_UnknownTypeRecord(unsigned char type);
 
 typedef struct {
-    int variente;
+    char variente;
     FCGI_Record_generic data;
 } FCGI_ParamWrapper;
 
