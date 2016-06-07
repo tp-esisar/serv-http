@@ -2,6 +2,9 @@
 #include "StringL.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "socket.h"
+#include "cJSON.h"
 
 void* safeMalloc(size_t size) {
     void* temp = malloc(size);
@@ -44,30 +47,100 @@ FCGI_EndRequestRecord* make_FCGI_EndRequestRecord(unsigned short requestId,unsig
 }
 
 FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned short requestId) {
-    FCGI_Header header;
     FCGI_ParamWrapper* ret;
     unsigned short longueur;
     if(name.len<=127 && value.len <=127) {
         longueur = 2 + name.len + value.len;
-        ret = safeMalloc(longueur + 8 + 1);
+        ret = safeMalloc(longueur + sizeof(FCGI_Header));
         ret->variente = 11;
+        FCGI_NameValuePair11* temp = (FCGI_NameValuePair11*)&(ret->data.dataAndPad);
+        temp->nameLength = name.len;
+        temp->valueLength = value.len;
+        memcpy(temp+2,name.s,name.len);
+        memcpy(temp+2+name.len,value.s,value.len);
+        
     }
     else if(name.len>127 && value.len <=127) {
-        longueur =  + name.len + value.len;
-        ret = safeMalloc(longueur + 8 + 1);
+        longueur = 5 + name.len + value.len;
+        ret = safeMalloc(longueur + sizeof(FCGI_Header));
         ret->variente = 41;
+        FCGI_NameValuePair41* temp = (FCGI_NameValuePair41*)&(ret->data.dataAndPad);
+        temp->nameLength = name.len;
+        temp->valueLength = value.len;
+        memcpy(temp+5,name.s,name.len);
+        memcpy(temp+5+name.len,value.s,value.len);
     }
     else if(name.len<=127 && value.len >127) {
-        longueur =  + name.len + value.len;
-        ret = safeMalloc(longueur + 8 + 1);
+        longueur =  5 + name.len + value.len;
+        ret = safeMalloc(longueur + sizeof(FCGI_Header));
         ret->variente = 14;
+        FCGI_NameValuePair14* temp = (FCGI_NameValuePair14*)&(ret->data.dataAndPad);
+        temp->nameLength = name.len;
+        temp->valueLength = value.len;
+        memcpy(temp+5,name.s,name.len);
+        memcpy(temp+5+name.len,value.s,value.len);
     }
     else if(name.len>127 && value.len >127) {
-        longueur =  + name.len + value.len;
-        ret = safeMalloc(longueur + 8 + 1);
+        longueur =  8 + name.len + value.len;
+        ret = safeMalloc(longueur + sizeof(FCGI_Header));
         ret->variente = 44;
+        FCGI_NameValuePair44* temp = (FCGI_NameValuePair44*)&(ret->data.dataAndPad);
+        temp->nameLength = name.len;
+        temp->valueLength = value.len;
+        memcpy(temp+8,name.s,name.len);
+        memcpy(temp+8+name.len,value.s,value.len);
     }
-    header = make_FCGI_Header(FCGI_PARAMS, requestId, longueur, 0);
     ret->data.header = make_FCGI_Header(FCGI_PARAMS, requestId, longueur, 0);
     return ret;
 }
+
+
+
+int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, StringL buffer) {
+    FCGI_Record_generic* record;
+    if(buffer.len<=65535) {
+        record = safeMalloc(buffer.len + sizeof(FCGI_Header));
+        record->header = make_FCGI_Header(type,requestId,buffer.len,0);
+        memcpy(&(record->dataAndPad),buffer.s,buffer.len);
+        int errsocket = put_fcgi(sock, record);
+        if(errsocket == -1) {
+            fprintf(stderr,"erreur socket fcgi.c");
+            return -1;
+        }
+        free(record);
+    }
+    else {
+        StringL s1;
+        StringL s2;
+        s1.s = buffer.s;
+        s1.len = 65535;
+        s2.s = buffer.s + 65535;
+        s2.len = buffer.len - 65535;
+        int ret1 = sendStreamChunk(sock, type, requestId, s1);
+        if(ret1 == -1) {
+            fprintf(stderr,"erreur socket fcgi.c");
+            return -1;
+        }
+        int ret2 = sendStreamChunk(sock, type, requestId, s2);
+        if(ret2 == -1) {
+            fprintf(stderr,"erreur socket fcgi.c");
+            return -1;
+        }
+    }
+    return buffer.len;
+}
+
+
+StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
+    if(param->type != cJSON_Object) {
+        fprintf(stderr,"erreur fcgi conf json not object");
+        return (StringL){NULL,0};
+    }
+    cJSON* iter;
+    cJSON_ArrayForEach(iter, param) {
+        printf("%d",iter->type);
+    }
+    return stdinbuff;
+    
+}
+
