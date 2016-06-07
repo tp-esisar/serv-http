@@ -1,4 +1,7 @@
 #include "fcgi.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "fichier.h"
 
 
 int main() {
@@ -10,11 +13,11 @@ int main() {
 		exit(-1);
 	}
 	char* conf_php = loadFile(file_config_php);
-	cJSON* config_php = cJSON_Parse(conf);
+	cJSON* config_php = cJSON_Parse(conf_php);
 	fclose(file_config_php);
 	free(conf_php);
 
-    FCGI_Request((StringL){"yolo",4}, cJSON* param);
+    FCGI_Request((StringL){"yolo",4}, config_php);
     
     return 0;
 }

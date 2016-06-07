@@ -1,4 +1,5 @@
 #include "fichier.h"
+#include "fcgi.h"
 
 
 char* loadFile(FILE* file) {
@@ -177,6 +178,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 
 int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
 	StringL stream = FCGI_Request(stdinbuf, config_php);
+	int i;
 	for(i=0; i<stream.len-4; i++) {
 		int j=0;
 		if (stream.s[i]!='\r' && stream.s[i+1]!='\n' && stream.s[i+2]!='\r' && stream.s[i+3]!='\n') {

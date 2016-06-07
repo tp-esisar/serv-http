@@ -13,8 +13,8 @@ test_fcgi: $(BIN)/test_fcgi.e
 test_socket: $(BIN)/test_socket.e
 	$(BIN)/test_socket.e
 	
-$(BIN)/test_fcgi.e: $(OBJ)/test_fcgi.o $(OBJ)/fcgi.o $(OBJ)/socket.o
-	gcc $^ -o $@
+$(BIN)/test_fcgi.e: $(OBJ)/test_fcgi.o $(OBJ)/fcgi.o $(OBJ)/socket.o $(OBJ)/cJSON.o $(OBJ)/fichier.o
+	gcc $^ -o $@ -lm
 
 $(BIN)/test_socket.e: $(OBJ)/test_socket.o $(OBJ)/socket.o $(OBJ)/fcgi.o 
 	gcc $^ -o $@
