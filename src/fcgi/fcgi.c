@@ -60,7 +60,7 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
         temp->nameLength = name.len;
         temp->valueLength = value.len;
         memcpy(&(temp->nameAndValue),name.s,name.len);
-        memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
+        memcpy((void*)&(temp->nameAndValue[name.len-1]),(void*)value.s,(char)value.len);
     }
     else if(name.len>127 && value.len <=127) {
         longueur = 5 + name.len + value.len;
@@ -160,13 +160,14 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
         int err = sendStreamChunk(sock,FCGI_PARAMS,1,buff);
         if(err == -1) {
             fprintf(stderr,"erreur sendStreamChunk fcgi.c\n");
-            exit(-1);
+            return (StringL){NULL,0};
         }
         free(param);
         free(name.s);
         free(value.s);
         
     }
+    
     close(sock);
     return stdinbuff;
     
