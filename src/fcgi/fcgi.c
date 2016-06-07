@@ -49,22 +49,22 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
     unsigned short longueur;
     if(name.len<=127 && value.len <=127) {
         longueur = 2 + name.len + value.len;
-        safeMalloc(longueur + 8 + 1);
+        ret = safeMalloc(longueur + 8 + 1);
         ret->variente = 11;
     }
     else if(name.len>127 && value.len <=127) {
         longueur =  + name.len + value.len;
-        safeMalloc(longueur + 8 + 1);
+        ret = safeMalloc(longueur + 8 + 1);
         ret->variente = 41;
     }
     else if(name.len<=127 && value.len >127) {
         longueur =  + name.len + value.len;
-        safeMalloc(longueur + 8 + 1);
+        ret = safeMalloc(longueur + 8 + 1);
         ret->variente = 14;
     }
     else if(name.len>127 && value.len >127) {
         longueur =  + name.len + value.len;
-        safeMalloc(longueur + 8 + 1);
+        ret = safeMalloc(longueur + 8 + 1);
         ret->variente = 44;
     }
     header = make_FCGI_Header(FCGI_PARAMS, requestId, longueur, 0);
