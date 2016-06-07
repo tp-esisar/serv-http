@@ -177,7 +177,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 }
 
 int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
-	StringL stream = FCGI_Request(stdinbuf, config_php);
+	/*StringL stream = FCGI_Request(stdinbuf, config_php);
 	int i;
 	for(i=0; i<stream.len-4; i++) {
 		int j=0;
@@ -197,7 +197,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	}
 	reponse->messagebody.s = malloc ((stream.len-i)*sizeof(char));
 	reponse->messagebody.len = stream.len-i;
-	memecpy(reponse->messagebody.s, &(stream[i]), reponse->messagebody.len);
+	memcpy(reponse->messagebody.s, &(stream[i]), reponse->messagebody.len);*/
 
 	//Free le buffer d'alexis
 	return 0;
