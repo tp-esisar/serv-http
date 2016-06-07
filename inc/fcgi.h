@@ -149,7 +149,8 @@ FCGI_UnknownTypeRecord* make_FCGI_UnknownTypeRecord(unsigned char type);
 
 typedef struct {
     char variente;
-    FCGI_Record_generic data;
+    unsigned long long totalLen;
+    char* data;
 } FCGI_ParamWrapper;
 
 
