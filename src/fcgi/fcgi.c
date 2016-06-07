@@ -9,7 +9,7 @@
 void* safeMalloc(size_t size) {
     void* temp = malloc(size);
     if(temp == NULL) {
-        fprintf(stderr,"erreur malloc fcgi.c");
+        fprintf(stderr,"erreur malloc fcgi.c\n");
         exit(-1);
     }
     return temp;
@@ -69,8 +69,8 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
         FCGI_NameValuePair41* temp = (FCGI_NameValuePair41*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
-        memcpy(temp+5,name.s,name.len);
-        memcpy(temp+5+name.len,value.s,value.len);
+        memcpy(&(temp->nameAndValue),name.s,name.len);
+        memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
     }
     else if(name.len<=127 && value.len >127) {
         longueur = 5 + name.len + value.len;
@@ -80,8 +80,8 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
         FCGI_NameValuePair14* temp = (FCGI_NameValuePair14*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
-        memcpy(temp+5,name.s,name.len);
-        memcpy(temp+5+name.len,value.s,value.len);
+        memcpy(&(temp->nameAndValue),name.s,name.len);
+        memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
     }
     else if(name.len>127 && value.len >127) {
         longueur = 8 + name.len + value.len;
@@ -91,9 +91,10 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
         FCGI_NameValuePair44* temp = (FCGI_NameValuePair44*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
-        memcpy(temp+8,name.s,name.len);
-        memcpy(temp+8+name.len,value.s,value.len);
+        memcpy(&(temp->nameAndValue),name.s,name.len);
+        memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
     }
+    
     return ret;
 }
 
@@ -107,7 +108,7 @@ int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, Stri
         memcpy(&(record->dataAndPad),buffer.s,buffer.len);
         int errsocket = put_fcgi(sock, record);
         if(errsocket == -1) {
-            fprintf(stderr,"erreur socket fcgi.c");
+            fprintf(stderr,"erreur socket fcgi.c\n");
             return -1;
         }
         free(record);
@@ -121,12 +122,12 @@ int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, Stri
         s2.len = buffer.len - 65535;
         int ret1 = sendStreamChunk(sock, type, requestId, s1);
         if(ret1 == -1) {
-            fprintf(stderr,"erreur socket fcgi.c");
+            fprintf(stderr,"erreur socket fcgi.c\n");
             return -1;
         }
         int ret2 = sendStreamChunk(sock, type, requestId, s2);
         if(ret2 == -1) {
-            fprintf(stderr,"erreur socket fcgi.c");
+            fprintf(stderr,"erreur socket fcgi.c\n");
             return -1;
         }
     }
@@ -136,15 +137,18 @@ int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, Stri
 
 StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
     if(param->type != cJSON_Object) {
-        fprintf(stderr,"erreur fcgi conf json not object");
+        fprintf(stderr,"erreur fcgi conf json not object\n");
         return (StringL){NULL,0};
     }
+    int sock = creat_fcgi("127.0.0.1",9000);
     cJSON* iter;
     cJSON_ArrayForEach(iter, param) {
         StringL name = fromRegularString(iter->string);
         StringL value = fromRegularString(iter->valuestring);
         FCGI_ParamWrapper* param = make_FCGI_ParamWrapper(name,value,1);
-        printf("variente : %d\ntotalLength : %d\n",param->variente, param->totalLen);
+        StringL buff = (StringL){(char*)&(param->data),param->totalLen};
+        
+        int err = sendStreamChunk(sock,FCGI_PARAMS,1,buff);
         free(param);
         free(name.s);
         free(value.s);
