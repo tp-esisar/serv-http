@@ -140,7 +140,15 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
         fprintf(stderr,"erreur fcgi conf json not object\n");
         return (StringL){NULL,0};
     }
+    FCGI_BeginRequestRecord* begin;
+	begin = malloc(sizeof(FCGI_BeginRequestRecord));
+	begin->header = make_FCGI_Header(FCGI_BEGIN_REQUEST, 1, 8, 0);
+	begin->body.role = 1;
+	begin->body.flags = 0;
+	
+	
     int sock = creat_fcgi("127.0.0.1",9000);
+    put_fcgi(sock, (FCGI_Record_generic*)begin);
     cJSON* iter;
     cJSON_ArrayForEach(iter, param) {
         StringL name = fromRegularString(iter->string);
@@ -154,6 +162,7 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
         free(value.s);
         
     }
+    close(sock);
     return stdinbuff;
     
 }
