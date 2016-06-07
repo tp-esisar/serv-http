@@ -10,10 +10,16 @@ objects: $(OBJ)/fcgi.o $(OBJ)/socket.o
 test_fcgi: $(BIN)/test_fcgi.e
 	$(BIN)/test_fcgi.e
 
+test_fcgiH: $(BIN)/test_fcgiH.e
+	$(BIN)/test_fcgiH.e
+
 test_socket: $(BIN)/test_socket.e
 	$(BIN)/test_socket.e
 	
 $(BIN)/test_fcgi.e: $(OBJ)/test_fcgi.o $(OBJ)/fcgi.o $(OBJ)/socket.o $(OBJ)/cJSON.o $(OBJ)/fichier.o $(OBJ)/reponse.o $(OBJ)/StringL.o
+	gcc $^ -o $@ -lm
+
+$(BIN)/test_fcgiH.e: $(OBJ)/test_fcgiH.o $(OBJ)/fcgi.o $(OBJ)/socket.o $(OBJ)/cJSON.o $(OBJ)/fichier.o $(OBJ)/reponse.o $(OBJ)/StringL.o
 	gcc $^ -o $@ -lm
 
 $(BIN)/test_socket.e: $(OBJ)/test_socket.o $(OBJ)/socket.o $(OBJ)/fcgi.o 
@@ -27,6 +33,9 @@ $(OBJ)/socket.o: socket.c $(INC)/*
 
 $(OBJ)/test_fcgi.o: test_fcgi.c $(INC)/*
 	gcc $(CFLAGS) -c test_fcgi.c -o $(OBJ)/test_fcgi.o
+
+$(OBJ)/test_fcgiH.o: test_fcgiH.c $(INC)/*
+	gcc $(CFLAGS) -c test_fcgiH.c -o $(OBJ)/test_fcgiH.o
 
 $(OBJ)/test_socket.o: test_socket.c $(INC)/*
 	gcc $(CFLAGS) -c test_socket.c -o $(OBJ)/test_socket.o
