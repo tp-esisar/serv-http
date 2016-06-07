@@ -142,10 +142,9 @@ typedef struct {
 
 FCGI_UnknownTypeRecord* make_FCGI_UnknownTypeRecord(unsigned char type);
 
-#endif
-
-
 typedef struct {
     char variente;
     FCGI_Record_generic data;
 } FCGI_ParamWrapper;
+
+#endif
