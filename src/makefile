@@ -10,7 +10,7 @@ DEBUG_ITEM=method
 MAKEPARAM=--no-print-directory -s -C
 
 $(BIN)/mainTest.e: objects
-	gcc -g -Wall -I$(INC) $(OBJ)/StringL.o $(OBJ)/reader.o $(OBJ)/parser.o $(OBJ)/main.o $(OBJ)/map.o $(OBJ)/api_test.o $(OBJ)/fichier.o $(OBJ)/process.o $(OBJ)/reponse.o $(LIB)/libgc.a.ext $(OBJ)/cJSON.o $(LIB)/librequest.so $(OBJ)/header-getter.o $(OBJ)/mini-map.o -o $(BIN)/mainTest.e -lm
+	gcc -g -Wall -I$(INC) $(OBJ)/StringL.o $(OBJ)/reader.o $(OBJ)/parser.o $(OBJ)/main.o $(OBJ)/map.o $(OBJ)/api_test.o $(OBJ)/fichier.o $(OBJ)/process.o $(OBJ)/reponse.o $(LIB)/libgc.a.ext $(OBJ)/cJSON.o $(LIB)/librequest.so $(OBJ)/header-getter.o $(OBJ)/mini-map.o $(OBJ)/fcgi.o $(OBJ)/socket.o -o $(BIN)/mainTest.e -lm
 
 objects: parseur map StringL $(INC)/* main.c api_test.c
 	
@@ -18,6 +18,7 @@ objects: parseur map StringL $(INC)/* main.c api_test.c
 	$(MAKE) $(MAKEPARAM) parseur objects
 	$(MAKE) $(MAKEPARAM) map objects
 	$(MAKE) $(MAKEPARAM) extracteur objects
+	$(MAKE) $(MAKEPARAM) fcgi objects
 	#gcc -g -Wall -c main.c -I$(INC) -o $(OBJ)/main.o
 	gcc -g -Wall -c api_test.c -I$(INC) -o $(OBJ)/api_test.o
 	$(MAKE) $(MAKEPARAM) reply objects

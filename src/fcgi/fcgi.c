@@ -48,49 +48,52 @@ FCGI_EndRequestRecord* make_FCGI_EndRequestRecord(unsigned short requestId,unsig
 
 FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned short requestId) {
     FCGI_ParamWrapper* ret;
+    unsigned short baseLen = sizeof(unsigned char) + sizeof(unsigned long long);
     unsigned short longueur;
     if(name.len<=127 && value.len <=127) {
         longueur = 2 + name.len + value.len;
-        ret = safeMalloc(longueur + sizeof(FCGI_Header));
+        ret = safeMalloc(longueur+baseLen);
         ret->variente = 11;
-        FCGI_NameValuePair11* temp = (FCGI_NameValuePair11*)&(ret->data.dataAndPad);
+        ret->totalLen = longueur;
+        FCGI_NameValuePair11* temp = (FCGI_NameValuePair11*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
-        memcpy(temp+2,name.s,name.len);
-        memcpy(temp+2+name.len,value.s,value.len);
-        
+        memcpy(&(temp->nameAndValue),name.s,name.len);
+        memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
     }
     else if(name.len>127 && value.len <=127) {
         longueur = 5 + name.len + value.len;
-        ret = safeMalloc(longueur + sizeof(FCGI_Header));
+        ret = safeMalloc(longueur+baseLen);
         ret->variente = 41;
-        FCGI_NameValuePair41* temp = (FCGI_NameValuePair41*)&(ret->data.dataAndPad);
+        ret->totalLen = longueur;
+        FCGI_NameValuePair41* temp = (FCGI_NameValuePair41*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
         memcpy(temp+5,name.s,name.len);
         memcpy(temp+5+name.len,value.s,value.len);
     }
     else if(name.len<=127 && value.len >127) {
-        longueur =  5 + name.len + value.len;
-        ret = safeMalloc(longueur + sizeof(FCGI_Header));
+        longueur = 5 + name.len + value.len;
+        ret = safeMalloc(longueur + baseLen);
         ret->variente = 14;
-        FCGI_NameValuePair14* temp = (FCGI_NameValuePair14*)&(ret->data.dataAndPad);
+        ret->totalLen = longueur;
+        FCGI_NameValuePair14* temp = (FCGI_NameValuePair14*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
         memcpy(temp+5,name.s,name.len);
         memcpy(temp+5+name.len,value.s,value.len);
     }
     else if(name.len>127 && value.len >127) {
-        longueur =  8 + name.len + value.len;
-        ret = safeMalloc(longueur + sizeof(FCGI_Header));
+        longueur = 8 + name.len + value.len;
+        ret = safeMalloc(longueur + baseLen);
         ret->variente = 44;
-        FCGI_NameValuePair44* temp = (FCGI_NameValuePair44*)&(ret->data.dataAndPad);
+        ret->totalLen = longueur;
+        FCGI_NameValuePair44* temp = (FCGI_NameValuePair44*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
         memcpy(temp+8,name.s,name.len);
         memcpy(temp+8+name.len,value.s,value.len);
     }
-    ret->data.header = make_FCGI_Header(FCGI_PARAMS, requestId, longueur, 0);
     return ret;
 }
 
@@ -138,6 +141,13 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
     }
     cJSON* iter;
     cJSON_ArrayForEach(iter, param) {
+        StringL name = fromRegularString(iter->string);
+        StringL value = fromRegularString(iter->valuestring);
+        FCGI_ParamWrapper* param = make_FCGI_ParamWrapper(name,value,1);
+        printf("variente : %d\ntotalLength : %d\n",param->variente, param->totalLen);
+        free(param);
+        free(name.s);
+        free(value.s);
         
     }
     return stdinbuff;
