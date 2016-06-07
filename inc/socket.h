@@ -12,7 +12,9 @@
 #include <arpa/inet.h>
 #include "fcgi.h"
 
-int record_fcgi (char* adresse, int port, FCGI_Record_generic* message);
-FCGI_Record_generic* get_fcgi (int sock); //Ne pas oublier de free et de fermer la connection !!!
+int creat_fcgi (char* adresse, int port);
+int put_fcgi (int sock, FCGI_Record_generic* message);
+FCGI_Record_generic* get_fcgi (int sock); 
+//Ne pas oublier de free et de fermer la connection !!!
 
 #endif //SOCKET_H
