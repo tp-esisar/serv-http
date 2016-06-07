@@ -26,7 +26,7 @@ int main (void){
 
 	stdin->header = make_FCGI_Header(FCGI_STDIN, 1, 0, 0);
 	
-	int sock = creat_fcgi("172.20.11.118", 9000);
+	int sock = creat_fcgi("127.0.0.1", 9000);
 
 	printf("\nconnexion\n");
 
