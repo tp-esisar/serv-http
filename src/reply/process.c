@@ -27,7 +27,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
 			file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
-			accessFile(reponse, file, Authorization);
+			accessFile(reponse, file, Authorization, map);
 			free(file);	
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
@@ -37,8 +37,10 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 				error(reponse, "411", "411 : Content-length requis");
 			else if(Content_length->next != NULL || map->message_body.len != Content_length->Content_Length) 
 				error(reponse, "400", "400 : Erreur de Content_length");
-			else
+			else {
 				error(reponse, "201", "201 : Accepted");
+				//Gestion POST
+			}
 		}
 		else	
 			error(reponse, "501", "501 : Methode non supportee");

@@ -10,6 +10,6 @@
 #include <stdint.h>
 
 char* loadFile(FILE* file);
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization);
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map);
 
 #endif // FICHIER_H
