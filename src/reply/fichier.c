@@ -179,17 +179,17 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	StringL stream = FCGI_Request(stdinbuf, config_php);
 	for(i=0; i<stream.len-4; i++) {
 		int j=0;
-		if (stream[i]!='\r' && stream[i+1]!='\n' && stream[i+2]!='\r' && stream[i+3]!='\n') {
-			stream[i] = '\0';
+		if (stream.s[i]!='\r' && stream.s[i+1]!='\n' && stream.s[i+2]!='\r' && stream.s[i+3]!='\n') {
+			stream.s[i] = '\0';
 			addHeaderfield(reponse, &(stream[j]));
-			stream[i]= '\r';
+			stream.s[i]= '\r';
 			i += 4;
 			break;
 		}
-		else if (stream[i]!='\r' && stream[i+1]!='\n') {
-			stream[i] = '\0';
-			addHeaderfield(reponse, &(stream[j]));
-			stream[i]= '\r';
+		else if (stream.s[i]!='\r' && stream.s[i+1]!='\n') {
+			stream.s[i] = '\0';
+			addHeaderfield(reponse, &(stream.s[j]));
+			stream.s[i]= '\r';
 			i=j=i+2;
 		}
 	}
