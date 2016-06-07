@@ -5,6 +5,7 @@
 #include <string.h>
 #include "socket.h"
 #include "cJSON.h"
+#include <arpa/inet.h>
 
 void* safeMalloc(size_t size) {
     void* temp = malloc(size);
@@ -67,7 +68,7 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
         ret->variente = 41;
         ret->totalLen = longueur;
         FCGI_NameValuePair41* temp = (FCGI_NameValuePair41*)&(ret->data);
-        temp->nameLength = name.len;
+        temp->nameLength = htonl(name.len);
         temp->valueLength = value.len;
         memcpy(&(temp->nameAndValue),name.s,name.len);
         memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
@@ -79,7 +80,7 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
         ret->totalLen = longueur;
         FCGI_NameValuePair14* temp = (FCGI_NameValuePair14*)&(ret->data);
         temp->nameLength = name.len;
-        temp->valueLength = value.len;
+        temp->valueLength = htonl(value.len);
         memcpy(&(temp->nameAndValue),name.s,name.len);
         memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
     }
@@ -89,8 +90,8 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
         ret->variente = 44;
         ret->totalLen = longueur;
         FCGI_NameValuePair44* temp = (FCGI_NameValuePair44*)&(ret->data);
-        temp->nameLength = name.len;
-        temp->valueLength = value.len;
+        temp->nameLength = htons(name.len);
+        temp->valueLength = htons(value.len);
         memcpy(&(temp->nameAndValue),name.s,name.len);
         memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
     }
@@ -143,8 +144,8 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
     FCGI_BeginRequestRecord* begin;
 	begin = malloc(sizeof(FCGI_BeginRequestRecord));
 	begin->header = make_FCGI_Header(FCGI_BEGIN_REQUEST, 1, 8, 0);
-	begin->body.role = 1;
-	begin->body.flags = 0;
+	begin->body.role = htons(FCGI_RESPONDER);
+	begin->body.flags = htons(0);
 	
 	
     int sock = creat_fcgi("127.0.0.1",9000);
@@ -157,6 +158,10 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
         StringL buff = (StringL){(char*)&(param->data),param->totalLen};
         
         int err = sendStreamChunk(sock,FCGI_PARAMS,1,buff);
+        if(err == -1) {
+            fprintf(stderr,"erreur sendStreamChunk fcgi.c\n");
+            exit(-1);
+        }
         free(param);
         free(name.s);
         free(value.s);
