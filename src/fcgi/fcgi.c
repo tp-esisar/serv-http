@@ -53,7 +53,7 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
     unsigned short longueur;
     if(name.len<=127 && value.len <=127) {
         longueur = 2 + name.len + value.len;
-        ret = safeMalloc(longueur+baseLen+5);
+        ret = safeMalloc(longueur+baseLen+6);
         ret->variente = 11;
         ret->totalLen = longueur;
         FCGI_NameValuePair11* temp = (FCGI_NameValuePair11*)&(ret->data);
