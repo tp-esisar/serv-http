@@ -91,7 +91,7 @@ typedef struct {
     FCGI_Header header;
     FCGI_BeginRequestBody body;
 } FCGI_BeginRequestRecord;
-
+FCGI_BeginRequestRecord* make_FCGI_BeginRequestRecord(unsigned short requestId,unsigned short role, unsigned char flags);
 /*
  * Mask for flags component of FCGI_BeginRequestBody
  */
@@ -114,7 +114,7 @@ typedef struct {
     FCGI_Header header;
     FCGI_EndRequestBody body;
 } FCGI_EndRequestRecord;
-
+FCGI_EndRequestRecord* make_FCGI_EndRequestRecord(unsigned short requestId,unsigned long int appStatus, unsigned char protocolStatus);
 /*
  * Values for protocolStatus component of FCGI_EndRequestBody
  */
@@ -140,7 +140,7 @@ typedef struct {
     FCGI_UnknownTypeBody body;
 } FCGI_UnknownTypeRecord;
 
-FCGI_UnknownTypeRecord make_FCGI_UnknownTypeRecord(unsigned char type);
+FCGI_UnknownTypeRecord* make_FCGI_UnknownTypeRecord(unsigned char type);
 
 #endif
 
