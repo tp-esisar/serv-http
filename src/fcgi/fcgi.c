@@ -58,8 +58,8 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
         FCGI_NameValuePair11* temp = (FCGI_NameValuePair11*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
-        memcpy(temp+2,name.s,name.len);
-        memcpy(temp+2+name.len,value.s,value.len);
+        memcpy(&(temp->nameAndValue),name.s,name.len);
+        memcpy((char*)&(temp->nameAndValue)+name.len,value.s,value.len);
     }
     else if(name.len>127 && value.len <=127) {
         longueur = 5 + name.len + value.len;

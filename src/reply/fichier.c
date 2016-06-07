@@ -177,13 +177,17 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 }
 
 int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
-	/*StringL stream = FCGI_Request(stdinbuf, config_php);
+	///Ajout des attribus dans le config JSON !	
+
+	StringL stream = FCGI_Request(stdinbuf, config_php);
+	//if (stream.s == NULL)
+		return -1;
 	int i;
 	for(i=0; i<stream.len-4; i++) {
 		int j=0;
 		if (stream.s[i]!='\r' && stream.s[i+1]!='\n' && stream.s[i+2]!='\r' && stream.s[i+3]!='\n') {
 			stream.s[i] = '\0';
-			addHeaderfield(reponse, &(stream[j]));
+			addHeaderfield(reponse, &(stream.s[j]));
 			stream.s[i]= '\r';
 			i += 4;
 			break;
@@ -197,8 +201,8 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	}
 	reponse->messagebody.s = malloc ((stream.len-i)*sizeof(char));
 	reponse->messagebody.len = stream.len-i;
-	memcpy(reponse->messagebody.s, &(stream[i]), reponse->messagebody.len);*/
+	memcpy(reponse->messagebody.s, &(stream.s[i]), reponse->messagebody.len);
 
-	//Free le buffer d'alexis
+	free(stream.s); 
 	return 0;
 }
