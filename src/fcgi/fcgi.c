@@ -28,14 +28,6 @@ FCGI_UnknownTypeRecord* make_FCGI_UnknownTypeRecord(unsigned char type) {
     return ret;
 }
 
-FCGI_UnknownTypeRecord* make_FCGI_UnknownTypeRecord(unsigned char type) {
-    FCGI_Header header = make_FCGI_Header(FCGI_UNKNOWN_TYPE,FCGI_NULL_REQUEST_ID,8,0);
-    FCGI_UnknownTypeRecord* ret = safeMalloc(sizeof(FCGI_Header)+8);
-    ret->header = header;
-    ret->body.type = type;
-    return ret;
-}
-
 FCGI_BeginRequestRecord* make_FCGI_BeginRequestRecord(unsigned short requestId,unsigned short role, unsigned char flags) {
     FCGI_Header header = make_FCGI_Header(FCGI_BEGIN_REQUEST,requestId,8,0);
     FCGI_BeginRequestRecord* ret = safeMalloc(sizeof(FCGI_Header)+8);
@@ -146,7 +138,7 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
     }
     cJSON* iter;
     cJSON_ArrayForEach(iter, param) {
-        printf("%d",iter->type);
+        
     }
     return stdinbuff;
     
