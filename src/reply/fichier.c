@@ -129,9 +129,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	ext[j] = '\0';
 
 	if (strcmp(ext, "php") == 0){
-		
-		//gestion php
-		//Taille message body
+		//gestion php			
 	}
 	else {
 		fseek (file , 0 , SEEK_END);
@@ -172,4 +170,29 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		addHeaderfield(reponse, "Content-Type: text/html");
 	else 
 		addHeaderfield(reponse, "Content-Type: application/octet-stream");	
+}
+
+void php_request (Sreponse* reponse, char *chemin, mapStruct* map) {
+	StringL stream = //Fonction
+	for(i=0; i<stream.len-4; i++) {
+		int j=0;
+		if (stream[i]!='\r' && stream[i+1]!='\n' && stream[i+2]!='\r' && stream[i+3]!='\n') {
+			stream[i] = '\0';
+			addHeaderfield(reponse, &(stream[j]));
+			stream[i]= '\r';
+			i += 4;
+			break;
+		}
+		else if (stream[i]!='\r' && stream[i+1]!='\n') {
+			stream[i] = '\0';
+			addHeaderfield(reponse, &(stream[j]));
+			stream[i]= '\r';
+			i=j=i+2;
+		}
+	}
+	reponse->messagebody.s = malloc ((stream.len-i)*sizeof(char));
+	reponse->messagebody.len = stream.len-i;
+	memecpy(reponse->messagebody.s, &(stream[i]), reponse->messagebody.len);
+
+	//Free le buffer d'alexis
 }

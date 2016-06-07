@@ -12,4 +12,4 @@
 char* loadFile(FILE* file);
 void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map);
 
-#endif // FICHIER_H
+#endif // FICHIER_H 
