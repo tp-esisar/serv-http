@@ -9,7 +9,7 @@ int main() {
 		perror("Impossible de charger le fichier de configuration php");
 		exit(-1);
 	}
-	char* conf_php = loadFile(file_config);
+	char* conf_php = loadFile(file_config_php);
 	cJSON* config_php = cJSON_Parse(conf);
 	fclose(file_config_php);
 	free(conf_php);
