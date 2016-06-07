@@ -1,4 +1,5 @@
 #include "fichier.h"
+#include "fcgi.h"
 
 
 char* loadFile(FILE* file) {
@@ -95,7 +96,7 @@ int droit_acces (char *chemin, Authorization_HS* Authorization) {
 	return -1;
 }
 
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization)
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php)
 {
 	FILE* file = NULL;
 	char header_size[30];
@@ -121,33 +122,41 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		return;
 	}
 	
-	fseek (file , 0 , SEEK_END);
-	size = ftell (file);
-	rewind (file);
-
-	reponse->messagebody.s = malloc (size*sizeof(char));
-	reponse->messagebody.len = size;
-	if(reponse->messagebody.s == NULL) {
-		error(reponse, "500", "500 : Erreur interne");
-		return;
-	}
-
-	if (fread (reponse->messagebody.s,1,size,file) != size) {
-		error(reponse, "500", "500 : Erreur interne");
-		return;
-	}
-
-	fclose (file);
-	
-	snprintf (header_size, 30, "Content-Length: %ld", size);
-	addHeaderfield(reponse, header_size);
-	
 	i=strlen(chemin)-1;
 	while(chemin[i--] != '.');
 	i+=2;
 	while(j<6 && chemin[i] != '\0')
 		ext[j++]= chemin[i++];
 	ext[j] = '\0';
+
+	if (strcmp(ext, "php") == 0){
+		if(php_request (reponse, chemin, map, config_php, (StringL){NULL, 0} )==-1){
+			error(reponse, "404", "404 : Erreur PHP");
+			return;	
+		}	
+	}
+	else {
+		fseek (file , 0 , SEEK_END);
+		size = ftell (file);
+		rewind (file);
+
+		reponse->messagebody.s = malloc (size*sizeof(char));
+		reponse->messagebody.len = size;
+		if(reponse->messagebody.s == NULL) {
+			error(reponse, "500", "500 : Erreur interne");
+			return;
+		}
+
+		if (fread (reponse->messagebody.s,1,size,file) != size) {
+			error(reponse, "500", "500 : Erreur interne");
+			return;
+		}
+	}
+
+	fclose (file);
+	
+	snprintf (header_size, 30, "Content-Length: %ld", size);
+	addHeaderfield(reponse, header_size);
 	
 	if (strcmp(ext, "js") == 0)
 		addHeaderfield(reponse, "Content-Type: application/javascript");
@@ -161,8 +170,35 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		addHeaderfield(reponse, "Content-Type: image/png");
 	else if (strcmp(ext, "css") == 0)
 		addHeaderfield(reponse, "Content-Type: text/css");
-	else if (strcmp(ext, "html") == 0)
+	else if (strcmp(ext, "html") == 0 || strcmp(ext, "php") == 0)
 		addHeaderfield(reponse, "Content-Type: text/html");
 	else 
 		addHeaderfield(reponse, "Content-Type: application/octet-stream");	
+}
+
+int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
+	StringL stream = FCGI_Request(stdinbuf, config_php);
+	int i;
+	for(i=0; i<stream.len-4; i++) {
+		int j=0;
+		if (stream[i]!='\r' && stream[i+1]!='\n' && stream[i+2]!='\r' && stream[i+3]!='\n') {
+			stream[i] = '\0';
+			addHeaderfield(reponse, &(stream[j]));
+			stream[i]= '\r';
+			i += 4;
+			break;
+		}
+		else if (stream[i]!='\r' && stream[i+1]!='\n') {
+			stream[i] = '\0';
+			addHeaderfield(reponse, &(stream[j]));
+			stream[i]= '\r';
+			i=j=i+2;
+		}
+	}
+	reponse->messagebody.s = malloc ((stream.len-i)*sizeof(char));
+	reponse->messagebody.len = stream.len-i;
+	memecpy(reponse->messagebody.s, &(stream[i]), reponse->messagebody.len);
+
+	//Free le buffer d'alexis
+	return 0;
 }

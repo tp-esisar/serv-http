@@ -1,5 +1,10 @@
+#include "StringL.h"
+#include "cJSON.h"
+
+
 #ifndef FCGI_H
 #define FCGI_H
+
 
 
 typedef struct {
@@ -8,23 +13,23 @@ typedef struct {
     unsigned char nameAndValue[];
 } FCGI_NameValuePair11;
 
-// typedef struct {
-//     unsigned char nameLength;
-//     unsigned long int valueLength;
-//     unsigned char nameAndValue[];
-// } FCGI_NameValuePair14;
+typedef struct {
+    unsigned char nameLength;
+    unsigned long int valueLength;
+    unsigned char nameAndValue[];
+} FCGI_NameValuePair14;
 
-// typedef struct {
-//     unsigned long int nameLength;
-//     unsigned char valueLength;
-//     unsigned char nameAndValue[];
-// } FCGI_NameValuePair41;
+typedef struct {
+    unsigned long int nameLength;
+    unsigned char valueLength;
+    unsigned char nameAndValue[];
+} FCGI_NameValuePair41;
 
-// typedef struct {
-//     unsigned long int nameLength;
-//     unsigned long int valueLength;
-//     unsigned char nameAndValue[];
-// } FCGI_NameValuePair44;
+typedef struct {
+    unsigned long int nameLength;
+    unsigned long int valueLength;
+    unsigned char nameAndValue[];
+} FCGI_NameValuePair44;
 
 
 /*
@@ -147,4 +152,8 @@ typedef struct {
     FCGI_Record_generic data;
 } FCGI_ParamWrapper;
 
+
+
+int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, StringL buffer);
+StringL FCGI_Request(StringL stdinbuff, cJSON* param);
 #endif
