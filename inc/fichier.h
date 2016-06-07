@@ -8,6 +8,7 @@
 #include "StringL.h"
 #include <string.h>
 #include <stdint.h>
+#include "cJSON.h"
 
 char* loadFile(FILE* file);
 void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php);

@@ -13,7 +13,7 @@ int main() {
 		exit(-1);
 	}
 	char* conf_php = loadFile(file_config_php);
-	cJSON* config_php = cJSON_Parse(conf);
+	cJSON* config_php = cJSON_Parse(conf_php);
 	fclose(file_config_php);
 	free(conf_php);
 
