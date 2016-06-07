@@ -1,6 +1,6 @@
 #include "process.h"
 
-int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* config) 
+int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* config, cJSON* config_php) 
 {
 	int retour;	
 	char* file;
@@ -27,7 +27,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
 			file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
-			accessFile(reponse, file, Authorization, map);
+			accessFile(reponse, file, Authorization, map, config_php);
 			free(file);	
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
@@ -39,7 +39,11 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 				error(reponse, "400", "400 : Erreur de Content_length");
 			else {
 				error(reponse, "201", "201 : Accepted");
-				//Gestion POST
+				file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);				
+				if(php_request (reponse, file, map, config_php, map->message_body)==-1){
+					error(reponse, "404", "404 : Erreur PHP");
+				free(file);	
+		}	
 			}
 		}
 		else	

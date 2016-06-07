@@ -36,6 +36,16 @@ int main(int argc, char *argv[])
 	fclose(file_config);
 	free(conf);
 
+	FILE* file_config_php = fopen("../www/config_php.json", "r");
+	if(file_config_php == NULL) {
+		perror("Impossible de charger le fichier de configuration php");
+		exit(-1);
+	}
+	char* conf_php = loadFile(file_config);
+	cJSON* config_php = cJSON_Parse(conf);
+	fclose(file_config_php);
+	free(conf_php);
+
 	while ( 1 )
 	{
 		requete = getRequest(atoi(argv[1]));
@@ -47,7 +57,7 @@ int main(int argc, char *argv[])
 			printf("\n\n---Client [%d] [%s:%d]\n%.*s\n",requete->clientId,inet_ntoa(requete->clientAddress->sin_addr),htons(requete->clientAddress->sin_port),requete->len,requete->buf);
 
 		parse = parse_HTTP_message(&wBuff);
-		close = processing(parse.state, parse.map, Sreponse, config);
+		close = processing(parse.state, parse.map, Sreponse, config, config_php);
 
 		reponse = SreponseToMessage(Sreponse);
 		reponse->clientId=requete->clientId; 

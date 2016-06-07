@@ -95,7 +95,7 @@ int droit_acces (char *chemin, Authorization_HS* Authorization) {
 	return -1;
 }
 
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map)
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php)
 {
 	FILE* file = NULL;
 	char header_size[30];
@@ -129,7 +129,10 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	ext[j] = '\0';
 
 	if (strcmp(ext, "php") == 0){
-		//gestion php			
+		if(php_request (reponse, chemin, map, config_php, (StringL){NULL, 0} )==-1){
+			error(reponse, "404", "404 : Erreur PHP");
+			return;	
+		}	
 	}
 	else {
 		fseek (file , 0 , SEEK_END);
@@ -172,8 +175,8 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		addHeaderfield(reponse, "Content-Type: application/octet-stream");	
 }
 
-void php_request (Sreponse* reponse, char *chemin, mapStruct* map) {
-	StringL stream = //Fonction
+int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
+	StringL stream = FCGI_Request(stdinbuf, config_php);
 	for(i=0; i<stream.len-4; i++) {
 		int j=0;
 		if (stream[i]!='\r' && stream[i+1]!='\n' && stream[i+2]!='\r' && stream[i+3]!='\n') {
@@ -195,4 +198,5 @@ void php_request (Sreponse* reponse, char *chemin, mapStruct* map) {
 	memecpy(reponse->messagebody.s, &(stream[i]), reponse->messagebody.len);
 
 	//Free le buffer d'alexis
+	return 0;
 }

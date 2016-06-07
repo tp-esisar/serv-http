@@ -10,6 +10,7 @@
 #include <stdint.h>
 
 char* loadFile(FILE* file);
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map);
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php);
+int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf);
 
 #endif // FICHIER_H 

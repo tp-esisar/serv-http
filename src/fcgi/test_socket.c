@@ -1,7 +1,9 @@
 
 #include "socket.h"
+#include "json.h"
 
 int main (void){
+
 	FCGI_BeginRequestRecord* begin = make_FCGI_BeginRequestRecord(1,FCGI_RESPONDER,0);
 	int sock = creat_fcgi ("127.0.0.1", 9000);
 	if(put_fcgi(sock, (FCGI_Record_generic*) begin) == -1) {
