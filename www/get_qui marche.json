@@ -1,0 +1,5 @@
+{
+"SCRIPT_FILENAME":"/var/www/fcgi/groupe12/test.php",
+"REQUEST_METHOD":"GET",
+"QUERY_STRING":"name=coucou"
+}

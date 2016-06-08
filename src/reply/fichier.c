@@ -130,7 +130,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	ext[j] = '\0';
 
 	if (strcmp(ext, "php") == 0){
-		if(php_request (reponse, chemin, map, config_php, (StringL){NULL, 0}, uri_info )==-1){
+		if(php_request (reponse, chemin, map, config_php, (StringL){"", 0}, uri_info )==-1){
 			error(reponse, "500", "500 : Erreur PHP");
 			return;	
 		}	
@@ -195,18 +195,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 		fprintf(stderr,"erreur champ param invalide dans config_php.json\n");
 		return -1;
 	}
-	
-	if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
-		updateJsonObject(param, "REQUEST_METHODE","GET");
-		char* query = toRegularString(uri_info.query);
-		updateJsonObject(param, "QUERY_STRING",query);
-		free(query);
-	}
-	else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
-		updateJsonObject(param, "REQUEST_METHODE","POST");
-	
-	}
-	
+
 
 	///Ajout des attribus dans le config JSON !
 	char* remoteDocRoot;
@@ -233,6 +222,22 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	sprintf(remotePath,"%s%s",remoteDocRoot,commonPath);
 	updateJsonObject(param, "SCRIPT_FILENAME",remotePath);
 	free(remotePath);
+
+
+	
+	if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
+		updateJsonObject(param, "REQUEST_METHOD","GET");
+		char* query = toRegularString(uri_info.query);
+		updateJsonObject(param, "QUERY_STRING",query);
+		free(query);
+	}
+	else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
+		updateJsonObject(param, "REQUEST_METHOD","POST");
+	
+	}
+	
+
+
 	
 	AppResult result = FCGI_Request(stdinbuf, param);
 	StringL stream = result.stdout;
@@ -241,6 +246,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 		return -1;
 	
 	printf("%.*s", result.stderr.len, result.stderr.s);
+	printf("%.*s", result.stdout.len, result.stdout.s);
 
 	if (stream.len == 0)
 		return -1;
@@ -248,14 +254,14 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	int i;
 	for(i=0; i<stream.len-4; i++) {
 		int j=0;
-		if (stream.s[i]!='\r' && stream.s[i+1]!='\n' && stream.s[i+2]!='\r' && stream.s[i+3]!='\n') {
+		if (stream.s[i]=='\r' && stream.s[i+1]=='\n' && stream.s[i+2]=='\r' && stream.s[i+3]=='\n') {
 			stream.s[i] = '\0';
 			addHeaderfield(reponse, &(stream.s[j]));
 			stream.s[i]= '\r';
 			i += 4;
 			break;
 		}
-		else if (stream.s[i]!='\r' && stream.s[i+1]!='\n') {
+		else if (stream.s[i]=='\r' && stream.s[i+1]=='\n') {
 			if (j==0 && (strncmp(stream.s, "status", 6)==0) ){
 				char num[3];
 				char* detail = malloc(sizeof(char)*i);
