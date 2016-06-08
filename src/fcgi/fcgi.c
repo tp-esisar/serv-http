@@ -149,11 +149,55 @@ int sendEndStream(int sock,unsigned char type, unsigned short requestId) {
     free(record);
 }
 
+int addRecordStreamToStringL(StringL* buff, FCGI_Record_generic* record) {
+    unsigned short longueur = record->header.contentLength + buff->len;
+    buff->s = realloc(buff->s,longueur);
+    if(buff->s == NULL) {
+        fprintf(stderr,"erreur realloc fcgi");
+        return -1;
+    }
+    memcpy(&(buff->s[buff->len]), &(record->dataAndPad), record->header.contentLength);
+    
+    buff->len = longueur;
+    
+    return 0;
+}
 
-StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
+AppResult retriveResultFromApp(int sock, unsigned short requestId) {
+    AppResult result;
+    result.stdout.s = safeMalloc(0);
+    result.stdout.len = 0;
+    result.stderr.s = safeMalloc(0);
+    result.stderr.len = 0;
+    result.status = 0;
+    FCGI_Record_generic* record;
+    while((record = get_fcgi(sock)) != NULL || ( record->header.type != FCGI_END_REQUEST && record->header.requestId == 1)) {
+        if(record->header.requestId == 1) {
+            if(record->header.type == FCGI_STDOUT) {
+                if(addRecordStreamToStringL(&(result.stdout), record) == -1) {
+                    result.status = -1;
+                    return result;
+                }
+            }
+            else if(record->header.type == FCGI_STDERR) {
+                if(addRecordStreamToStringL(&(result.stderr), record) == -1) {
+                    result.status = -1;
+                    return result;
+                }
+            }
+        }
+        free(record);
+    }
+    return result;
+    
+}
+
+AppResult FCGI_Request(StringL stdinbuff, cJSON* param) {
+    AppResult ret;
+    ret.status = -1;
     if(param->type != cJSON_Object) {
         fprintf(stderr,"erreur fcgi conf json not object\n");
-        return (StringL){NULL,0};
+        return ret;
     }
     FCGI_BeginRequestRecord* begin;
 	begin = malloc(sizeof(FCGI_BeginRequestRecord));
@@ -176,7 +220,7 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
         int err = sendStreamChunk(sock,FCGI_PARAMS,1,buff);
         if(err == -1) {
             fprintf(stderr,"erreur sendStreamChunk fcgi.c\n");
-            return (StringL){NULL,0};
+            return ret;
         }
         free(param);
         free(name.s);
@@ -185,23 +229,23 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
     int err = sendEndStream(sock,FCGI_PARAMS,1);
     if(err == -1) {
         fprintf(stderr,"erreur sendEndStream fcgi.c\n");
-        return (StringL){NULL,0};
+        return ret;
     }
     
     //envoi du STDIN
     err = sendStreamChunk(sock,FCGI_STDIN,1,stdinbuff);
     if(err == -1) {
         fprintf(stderr,"erreur sendEndStream fcgi.c\n");
-        return (StringL){NULL,0};
+        return ret;
     }
     err = sendEndStream(sock,FCGI_STDIN,1);
     if(err == -1) {
         fprintf(stderr,"erreur sendEndStream fcgi.c\n");
-        return (StringL){NULL,0};
+        return ret;
     }
-    
+    ret = retriveResultFromApp(sock, 1);
     close(sock);
-    return stdinbuff;
+    return ret;
     
 }
 

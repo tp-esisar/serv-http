@@ -154,13 +154,15 @@ typedef struct {
 } __attribute__((packed,aligned(1))) FCGI_ParamWrapper;
 
 
+typedef struct {
+    StringL stdout;
+    StringL stderr;
+    int status;
+} AppResult;
+
 
 int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, StringL buffer);
-StringL FCGI_Request(StringL stdinbuff, cJSON* param);
+AppResult FCGI_Request(StringL stdinbuff, cJSON* param);
 
-struct {
-    char* stdout;
-    char* stderr;
-}
 
 #endif
