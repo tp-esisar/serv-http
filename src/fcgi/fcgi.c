@@ -99,11 +99,11 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
     return ret;
 }
 
-
+#define STDIN_MAXLEN 8000
 
 int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, StringL buffer) {
     FCGI_Record_generic* record;
-    if(buffer.len<=65535) {
+    if(buffer.len<=STDIN_MAXLEN) {
         record = safeMalloc(buffer.len + sizeof(FCGI_Header));
         record->header = make_FCGI_Header(type,requestId,buffer.len,0);
         memcpy(&(record->dataAndPad),buffer.s,buffer.len);
@@ -119,9 +119,9 @@ int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, Stri
         StringL s1;
         StringL s2;
         s1.s = buffer.s;
-        s1.len = 65535;
-        s2.s = buffer.s + 65535;
-        s2.len = buffer.len - 65535;
+        s1.len = STDIN_MAXLEN;
+        s2.s = buffer.s + STDIN_MAXLEN;
+        s2.len = buffer.len - STDIN_MAXLEN;
         int ret1 = sendStreamChunk(sock, type, requestId, s1);
         if(ret1 == -1) {
             fprintf(stderr,"erreur socket fcgi.c\n");
