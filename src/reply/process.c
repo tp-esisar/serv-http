@@ -26,8 +26,9 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 	else {
 		if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
 			reponse->startline=startline ("200", "OK");
-			file = get_final_file_path(extractInfoFromURI(map->request_target), config, Host->Host);
-			accessFile(reponse, file, Authorization, map, config_php);
+			URI_Info uri_info = extractInfoFromURI(map->request_target);
+			file = get_final_file_path(uri_info, config, Host->Host);
+			accessFile(reponse, file, Authorization, map, config_php, uri_info);
 			free(file);	
 		}
 		else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {

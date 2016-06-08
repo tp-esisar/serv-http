@@ -9,9 +9,10 @@
 #include <string.h>
 #include <stdint.h>
 #include "cJSON.h"
+#include "process.h"
 
 char* loadFile(FILE* file);
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php);
-int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf);
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php, URI_Info uri_info);
+int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf, URI_Info uri_info);
 
 #endif // FICHIER_H 

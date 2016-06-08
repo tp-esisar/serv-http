@@ -96,7 +96,7 @@ int droit_acces (char *chemin, Authorization_HS* Authorization) {
 	return -1;
 }
 
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php)
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php, URI_Info uri_info)
 {
 	FILE* file = NULL;
 	char header_size[30];
@@ -130,7 +130,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	ext[j] = '\0';
 
 	if (strcmp(ext, "php") == 0){
-		if(php_request (reponse, chemin, map, config_php, (StringL){NULL, 0} )==-1){
+		if(php_request (reponse, chemin, map, config_php, (StringL){NULL, 0}, uri_info )==-1){
 			error(reponse, "500", "500 : Erreur PHP");
 			return;	
 		}	
@@ -176,7 +176,20 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		addHeaderfield(reponse, "Content-Type: application/octet-stream");	
 }
 
-int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
+int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf, URI_Info uri_info) {
+
+	if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
+		updateJsonObject(config_php, "REQUEST_METHODE","GET");
+		char* query = toRegularString(uri_info.query);
+		updateJsonObject(config_php, "QUERY_STRING",query);
+		free(query);
+	}
+	else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
+		updateJsonObject(config_php, "REQUEST_METHODE","POST");
+	
+	}
+	
+
 	///Ajout des attribus dans le config JSON !
 
 	AppResult result = FCGI_Request(stdinbuf, config_php);
