@@ -176,6 +176,14 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		addHeaderfield(reponse, "Content-Type: application/octet-stream");	
 }
 
+
+void updateJsonObject(cJSON* obj, char* name, char* value) {
+	if(cJSON_HasObjectItem(obj,name))
+		cJSON_DeleteItemFromObject(obj,name);
+	cJSON_AddStringToObject(obj,name,value);
+}
+
+
 int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
 	///Ajout des attribus dans le config JSON !
 

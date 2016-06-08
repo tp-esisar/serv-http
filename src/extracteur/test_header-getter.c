@@ -83,7 +83,7 @@ int main() {
     }
     else printf("\x1b[32mtest Content_Length OK\x1b[0m\n");
     
-    free(temp.s);
+
     free_map(map_Content_Length);
     free_Content_Length_HS(Content_Length_val);
     free(txt);
