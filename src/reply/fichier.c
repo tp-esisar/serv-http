@@ -192,7 +192,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	}
 	cJSON* param = cJSON_GetObjectItem(config_php,"param");
 	if(param->type != cJSON_Object) {
-		fprintf(stderr,"erreur champ param invalide dans config_php.json\n);
+		fprintf(stderr,"erreur champ param invalide dans config_php.json\n");
 		return -1;
 	}
 	
@@ -218,13 +218,13 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 		fprintf(stderr,"erreur DOCUMENT_ROOT manquant dans param de json\n");
 		return -1;
 	}
-	remoteDocRoot = cJSON_GetObjectItem(param,"DOCUMENT_ROOT");
+	remoteDocRoot = cJSON_GetObjectItem(param,"DOCUMENT_ROOT")->valuestring;
 	if(!cJSON_HasObjectItem(config_php,"localRoot")) {
 		fprintf(stderr,"erreur localRoot manquant dans json");
-		return -1
+		return -1;
 	}
-	localDocRoot = cJSON_GetObjectItem(config_php,"localRoot");
-	commonPath = &chemin[strlen(localRoot)];
+	localDocRoot = cJSON_GetObjectItem(config_php,"localRoot")->valuestring;
+	commonPath = &chemin[strlen(localDocRoot)];
 	remotePath = malloc(strlen(remoteDocRoot) + strlen(commonPath) + 1);
 	if(remotePath == NULL) {
 		fprintf(stderr,"erreur malloc");

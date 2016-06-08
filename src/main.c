@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include "parser.h"
 #include "process.h"
+#include "fichier.h"
 #include "reponse.h"
 #include "request.h"
 #include "cJSON.h"
@@ -46,7 +47,7 @@ int main(int argc, char *argv[])
 		exit(-1);
 	}
 	char* conf_php = loadFile(file_config);
-	cJSON* config_php = cJSON_Parse(conf);
+	cJSON* config_php = cJSON_Parse(conf_php);
 	fclose(file_config_php);
 	free(conf_php);
 	if(config_php == NULL) {

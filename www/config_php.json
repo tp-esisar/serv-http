@@ -1,10 +1,10 @@
 {
-    
-    "param":{
+	"localRoot":"../www",
+
+	"param":{
         "SERVER_PROTOCOL":"HTTP/1.1",
         "REQUEST_SCHEME":"HTTP",
-        "DOCUMENT_ROOT":"/var/www/fcgi/groupe12",
-        "SCRIPT_FILENAME":"/var/www/fcgi/groupe12/test.php"
-    },
-    "localRoot":"../www"
+        "DOCUMENT_ROOT":"/var/www/fcgi/groupe12"
+    }
+    
 }
