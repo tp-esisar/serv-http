@@ -53,7 +53,7 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
     unsigned short longueur;
     if(name.len<=127 && value.len <=127) {
         longueur = 2 + name.len + value.len;
-        ret = safeMalloc(longueur+baseLen+5);
+        ret = safeMalloc(longueur+baseLen);
         ret->variente = 11;
         ret->totalLen = longueur;
         FCGI_NameValuePair11* temp = (FCGI_NameValuePair11*)&(ret->data);
@@ -110,6 +110,7 @@ int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, Stri
         int errsocket = put_fcgi(sock, record);
         if(errsocket == -1) {
             fprintf(stderr,"erreur socket fcgi.c\n");
+            free(record);
             return -1;
         }
         free(record);
@@ -133,6 +134,19 @@ int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, Stri
         }
     }
     return buffer.len;
+}
+int sendEndStream(int sock,unsigned char type, unsigned short requestId) {
+    FCGI_Record_generic* record;
+    record = safeMalloc(sizeof(FCGI_Header));
+    record->header = make_FCGI_Header(type,requestId,0,0);
+    int errsocket = put_fcgi(sock, record);
+    if(errsocket == -1) {
+        fprintf(stderr,"erreur socket fcgi.c\n");
+        free(record);
+        return -1;
+    }
+    return 0;
+    free(record);
 }
 
 
@@ -165,8 +179,9 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
         free(param);
         free(name.s);
         free(value.s);
-        
     }
+    sendEndStream(sock,FCGI_PARAMS,1);
+    //FCGI_Record_generic* recFromApp;
     
     close(sock);
     return stdinbuff;
