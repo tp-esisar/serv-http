@@ -41,18 +41,18 @@ mapStruct* getMapFromFile(char* fileName, char** ptxt)
     return pr.map;
 }
 
-#define test_header_helper(X,Y) \
+#define test_header_helper(N,X,Y) \
     mapStruct* map_ ## X = getMapFromFile(Y,&txt);\
     X ## _HS* X ## _val = get_ ## X(map_ ## X);\
     if(X ## _val == NULL) {\
-        fprintf(stderr,"\x1b[31mtest ## X ## get NULL FAILED\x1b[0m\n");\
+        fprintf(stderr,"\x1b[31mtest %s get NULL FAILED\x1b[0m\n",N);\
         exit(0);\
     }\
 
 int main() {
     char* txt=NULL;
     
-    test_header_helper(Host,"test_req1")
+    test_header_helper("Host",Host,"test_req1")
     
     StringL temp = fromRegularString("www.cvedetails.com");
     if(stringLEq(Host_val->Host,temp) != 1) {
@@ -77,7 +77,7 @@ int main() {
     free_Host_HS(Host_val);
     free(txt);
     
-    test_header_helper(Content_Length,"test_req1")
+    test_header_helper("Content_Length",Content_Length,"test_req1")
     if(Content_Length_val->Content_Length != 42) {
         fprintf(stderr,"\x1b[31mtest Content_Length bad Content_Length FAILED\x1b[0m\n");
     }
@@ -87,8 +87,8 @@ int main() {
     free_map(map_Content_Length);
     free_Content_Length_HS(Content_Length_val);
     free(txt);
-    /*
-    test_header_helper(Cookie,"test_req1")
+    
+    test_header_helper("Cookie",Cookie,"test_req1")
     StringL key1 = fromRegularString("key1");
     StringL key2 = fromRegularString("key2");
     StringL value1 = fromRegularString("value1");
@@ -102,7 +102,7 @@ int main() {
         fprintf(stderr,"\x1b[31mtest Cookie bad value2 FAILED\x1b[0m\n");
     }
     printf("\x1b[32mtest Cookie OK\x1b[0m\n");
-    */
+    
     
     
     
