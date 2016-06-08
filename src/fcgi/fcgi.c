@@ -99,7 +99,7 @@ FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned 
     return ret;
 }
 
-#define STDIN_MAXLEN 100
+#define STDIN_MAXLEN 8000
 
 int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, StringL buffer) {
     FCGI_Record_generic* record;
