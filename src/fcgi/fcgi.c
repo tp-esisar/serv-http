@@ -163,7 +163,9 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
 	
 	
     int sock = creat_fcgi("127.0.0.1",9000);
+    //envoi du begin
     put_fcgi(sock, (FCGI_Record_generic*)begin);
+    //envoi des param
     cJSON* iter;
     cJSON_ArrayForEach(iter, param) {
         StringL name = fromRegularString(iter->string);
@@ -180,11 +182,28 @@ StringL FCGI_Request(StringL stdinbuff, cJSON* param) {
         free(name.s);
         free(value.s);
     }
-    sendEndStream(sock,FCGI_PARAMS,1);
-    //FCGI_Record_generic* recFromApp;
+    int err = sendEndStream(sock,FCGI_PARAMS,1);
+    if(err == -1) {
+        fprintf(stderr,"erreur sendEndStream fcgi.c\n");
+        return (StringL){NULL,0};
+    }
+    
+    //envoi du STDIN
+    err = sendStreamChunk(sock,FCGI_STDIN,1,stdinbuff);
+    if(err == -1) {
+        fprintf(stderr,"erreur sendEndStream fcgi.c\n");
+        return (StringL){NULL,0};
+    }
+    err = sendEndStream(sock,FCGI_STDIN,1);
+    if(err == -1) {
+        fprintf(stderr,"erreur sendEndStream fcgi.c\n");
+        return (StringL){NULL,0};
+    }
     
     close(sock);
     return stdinbuff;
     
 }
+
+
 

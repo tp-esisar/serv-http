@@ -157,4 +157,10 @@ typedef struct {
 
 int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, StringL buffer);
 StringL FCGI_Request(StringL stdinbuff, cJSON* param);
+
+struct {
+    char* stdout;
+    char* stderr;
+}
+
 #endif
