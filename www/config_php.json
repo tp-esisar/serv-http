@@ -1,5 +1,10 @@
 {
-"SCRIPT_FILENAME":"/var/www/fcgi/groupe12/test.php",
-"REQUEST_METHOD":"GET",
-"QUERY_STRING":"name=coucou"
+    
+    "param":{
+        "SERVER_PROTOCOL":"HTTP/1.1",
+        "REQUEST_SCHEME":"HTTP",
+        "DOCUMENT_ROOT":"/var/www/fcgi/groupe12",
+        "SCRIPT_FILENAME":"/var/www/fcgi/groupe12/test.php"
+    },
+    "localRoot":"../www"
 }

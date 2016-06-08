@@ -96,7 +96,7 @@ int droit_acces (char *chemin, Authorization_HS* Authorization) {
 	return -1;
 }
 
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php)
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php, URI_Info uri_info)
 {
 	FILE* file = NULL;
 	char header_size[30];
@@ -130,7 +130,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	ext[j] = '\0';
 
 	if (strcmp(ext, "php") == 0){
-		if(php_request (reponse, chemin, map, config_php, (StringL){NULL, 0} )==-1){
+		if(php_request (reponse, chemin, map, config_php, (StringL){NULL, 0}, uri_info )==-1){
 			error(reponse, "500", "500 : Erreur PHP");
 			return;	
 		}	
@@ -184,10 +184,57 @@ void updateJsonObject(cJSON* obj, char* name, char* value) {
 }
 
 
-int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
-	///Ajout des attribus dans le config JSON !
+int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf, URI_Info uri_info) {
+	
+	if(!cJSON_HasObjectItem(config_php,"param")) {
+		fprintf(stderr,"erreur pas de champ param dans config_php.json\n");
+		return -1;
+	}
+	cJSON* param = cJSON_GetObjectItem(config_php,"param");
+	if(param->type != cJSON_Object) {
+		fprintf(stderr,"erreur champ param invalide dans config_php.json\n);
+		return -1;
+	}
+	
+	if (stringLEq (map->methode, (StringL){"GET", 3}) == 1) {
+		updateJsonObject(param, "REQUEST_METHODE","GET");
+		char* query = toRegularString(uri_info.query);
+		updateJsonObject(param, "QUERY_STRING",query);
+		free(query);
+	}
+	else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
+		updateJsonObject(param, "REQUEST_METHODE","POST");
+	
+	}
+	
 
-	AppResult result = FCGI_Request(stdinbuf, config_php);
+	///Ajout des attribus dans le config JSON !
+	char* remoteDocRoot;
+	char* localDocRoot;
+	char* commonPath;
+	char* remotePath;
+	
+	if(!cJSON_HasObjectItem(param,"DOCUMENT_ROOT")) {
+		fprintf(stderr,"erreur DOCUMENT_ROOT manquant dans param de json\n");
+		return -1;
+	}
+	remoteDocRoot = cJSON_GetObjectItem(param,"DOCUMENT_ROOT");
+	if(!cJSON_HasObjectItem(config_php,"localRoot")) {
+		fprintf(stderr,"erreur localRoot manquant dans json");
+		return -1
+	}
+	localDocRoot = cJSON_GetObjectItem(config_php,"localRoot");
+	commonPath = &chemin[strlen(localRoot)];
+	remotePath = malloc(strlen(remoteDocRoot) + strlen(commonPath) + 1);
+	if(remotePath == NULL) {
+		fprintf(stderr,"erreur malloc");
+		return -1;
+	}
+	sprintf(remotePath,"%s%s",remoteDocRoot,commonPath);
+	updateJsonObject(param, "SCRIPT_FILENAME",remotePath);
+	free(remotePath);
+	
+	AppResult result = FCGI_Request(stdinbuf, param);
 	StringL stream = result.stdout;
 	
 	if (result.status == -1)
