@@ -131,7 +131,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 
 	if (strcmp(ext, "php") == 0){
 		if(php_request (reponse, chemin, map, config_php, (StringL){NULL, 0} )==-1){
-			error(reponse, "404", "404 : Erreur PHP");
+			error(reponse, "500", "500 : Erreur PHP");
 			return;	
 		}	
 	}
@@ -177,11 +177,19 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 }
 
 int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_php, StringL stdinbuf) {
-	///Ajout des attribus dans le config JSON !	
+	///Ajout des attribus dans le config JSON !
 
-	StringL stream = FCGI_Request(stdinbuf, config_php);
-	//if (stream.s == NULL)
+	AppResult result = FCGI_Request(stdinbuf, config_php);
+	StringL stream = result.stdout;
+	
+	if (result.status == -1)
 		return -1;
+	
+	printf("%.*s", result.stderr.len, result.stderr.s);
+
+	if (stream.len == 0)
+		return -1;
+
 	int i;
 	for(i=0; i<stream.len-4; i++) {
 		int j=0;
@@ -193,6 +201,15 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 			break;
 		}
 		else if (stream.s[i]!='\r' && stream.s[i+1]!='\n') {
+			if (j==0 && (strncmp(stream.s, "status", 6)==0) ){
+				char num[3];
+				char* detail = malloc(sizeof(char)*i);
+				memcpy(num, &(stream.s[8]), 3);
+				memcpy(detail, &(stream.s[12]), i-12);
+				error(reponse, num, detail);
+				free(detail);
+			}
+
 			stream.s[i] = '\0';
 			addHeaderfield(reponse, &(stream.s[j]));
 			stream.s[i]= '\r';

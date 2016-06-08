@@ -35,6 +35,10 @@ int main(int argc, char *argv[])
 	cJSON* config = cJSON_Parse(conf);
 	fclose(file_config);
 	free(conf);
+	if(config == NULL) {
+		perror("Impossible de charger le fichier de configuration");
+		exit(-1);
+	}
 
 	FILE* file_config_php = fopen("../www/config_php.json", "r");
 	if(file_config_php == NULL) {
@@ -45,6 +49,10 @@ int main(int argc, char *argv[])
 	cJSON* config_php = cJSON_Parse(conf);
 	fclose(file_config_php);
 	free(conf_php);
+	if(config_php == NULL) {
+		perror("Impossible de charger le fichier de configuration php");
+		exit(-1);
+	}
 
 	while ( 1 )
 	{
