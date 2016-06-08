@@ -49,18 +49,18 @@ FCGI_EndRequestRecord* make_FCGI_EndRequestRecord(unsigned short requestId,unsig
 
 FCGI_ParamWrapper* make_FCGI_ParamWrapper(StringL name, StringL value, unsigned short requestId) {
     FCGI_ParamWrapper* ret;
-    unsigned short baseLen = sizeof(unsigned char) + sizeof(unsigned long long);
+    unsigned short baseLen = sizeof(unsigned char)+sizeof(unsigned long long);
     unsigned short longueur;
     if(name.len<=127 && value.len <=127) {
         longueur = 2 + name.len + value.len;
-        ret = safeMalloc(longueur+baseLen+6);
+        ret = safeMalloc(longueur+baseLen);
         ret->variente = 11;
         ret->totalLen = longueur;
         FCGI_NameValuePair11* temp = (FCGI_NameValuePair11*)&(ret->data);
         temp->nameLength = name.len;
         temp->valueLength = value.len;
         memcpy(&(temp->nameAndValue),name.s,name.len);
-        memcpy((void*)&(temp->nameAndValue[name.len]),(void*)value.s,(char)value.len);
+        memcpy((char*)&(temp->nameAndValue[name.len]),value.s,value.len);
     }
     else if(name.len>127 && value.len <=127) {
         longueur = 5 + name.len + value.len;
