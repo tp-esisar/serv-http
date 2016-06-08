@@ -200,7 +200,7 @@ AppResult FCGI_Request(StringL stdinbuff, cJSON* param) {
         return ret;
     }
     FCGI_BeginRequestRecord* begin;
-	begin = malloc(sizeof(FCGI_BeginRequestRecord));
+	begin = safeMalloc(sizeof(FCGI_BeginRequestRecord));
 	begin->header = make_FCGI_Header(FCGI_BEGIN_REQUEST, 1, 8, 0);
 	begin->body.role = htons(FCGI_RESPONDER);
 	begin->body.flags = htons(0);
@@ -211,22 +211,30 @@ AppResult FCGI_Request(StringL stdinbuff, cJSON* param) {
     put_fcgi(sock, (FCGI_Record_generic*)begin);
     //envoi des param
     cJSON* iter;
+    char* allParams = safeMalloc(0);
+    unsigned int longueur = 0;
+    
     cJSON_ArrayForEach(iter, param) {
         StringL name = fromRegularString(iter->string);
         StringL value = fromRegularString(iter->valuestring);
         FCGI_ParamWrapper* param = make_FCGI_ParamWrapper(name,value,1);
-        StringL buff = (StringL){(char*)&(param->data),param->totalLen};
-        
-        int err = sendStreamChunk(sock,FCGI_PARAMS,1,buff);
-        if(err == -1) {
-            fprintf(stderr,"erreur sendStreamChunk fcgi.c\n");
+        allParams = realloc(allParams,longueur + param->totalLen);
+        if(allParams == NULL) {
+            fprintf(stderr,"erreur realloc fcgi");
             return ret;
         }
+        memcpy(&(allParams[longueur]), &(param->data), param->totalLen);
+        longueur = longueur + param->totalLen;
         free(param);
         free(name.s);
         free(value.s);
     }
-    int err = sendEndStream(sock,FCGI_PARAMS,1);
+    int err = sendStreamChunk(sock,FCGI_PARAMS,1,(StringL){allParams,longueur});
+    if(err == -1) {
+        fprintf(stderr,"erreur sendStreamChunk fcgi.c\n");
+        return ret;
+    }
+    err = sendEndStream(sock,FCGI_PARAMS,1);
     if(err == -1) {
         fprintf(stderr,"erreur sendEndStream fcgi.c\n");
         return ret;
