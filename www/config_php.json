@@ -1,9 +1,5 @@
 {
-"DOCUMENT_ROOT":"/var/www/fcgi/groupe12",
-"REQUEST_SCHEME":"HTTP", 
-"GATEWAY_INTERFACE":"CGI/1.1",
-"SCRIPT_FILENAME":"",
-"SERVER_PROTOCOL":"HTTP/1.1",
-"REQUEST_METHOD":""
+"SCRIPT_FILENAME":"/var/www/fcgi/groupe12/test.php",
+"REQUEST_METHOD":"POST"
 }
 

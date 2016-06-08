@@ -17,7 +17,7 @@ int main() {
 	fclose(file_config_php);
 	free(conf_php);
 
-    FCGI_Request((StringL){"yolo",4}, config_php);
+    FCGI_Request((StringL){"fname=ceaz&lname=fzzs",21}, config_php);
     
     return 0;
 }
