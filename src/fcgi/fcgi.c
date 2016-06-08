@@ -171,7 +171,7 @@ AppResult retriveResultFromApp(int sock, unsigned short requestId) {
     result.stderr.len = 0;
     result.status = 0;
     FCGI_Record_generic* record;
-    while((record = get_fcgi(sock)) != NULL || ( record->header.type != FCGI_END_REQUEST && record->header.requestId == 1)) {
+    while((record = get_fcgi(sock)) != NULL && ( record->header.type != FCGI_END_REQUEST && record->header.requestId == 1)) {
         if(record->header.requestId == 1) {
             if(record->header.type == FCGI_STDOUT) {
                 if(addRecordStreamToStringL(&(result.stdout), record) == -1) {

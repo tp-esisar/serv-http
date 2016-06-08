@@ -46,7 +46,7 @@ FCGI_Record_generic* get_fcgi (int sock) {
 	FCGI_Header header;
 	FCGI_Record_generic* record = NULL; 
 
-	taille_header = recv(sock, &header, sizeof(header)-1, 0);
+	taille_header = recv(sock, &header, sizeof(header), 0);
 	if (taille_header != sizeof(header)) {
 		printf("erreur reception header\n");
 		return(NULL);
@@ -65,7 +65,7 @@ FCGI_Record_generic* get_fcgi (int sock) {
 
 	memcpy(record, &header, sizeof(FCGI_Header));
 
-	taille_body = recv(sock, record->dataAndPad, taille-1, 0);
+	taille_body = recv(sock, record->dataAndPad, taille, 0);
 	if (taille != taille_body) {
 		printf("erreur reception body\n");
 		return(NULL);
