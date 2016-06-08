@@ -17,7 +17,7 @@ int main() {
 	fclose(file_config_php);
 	free(conf_php);
 
-	AppResult result = FCGI_Request((StringL){"fname=ceaz&lname=fzzs",21}, config_php);
+	AppResult result = FCGI_Request((StringL){"",0}, config_php);
 	if (result.status == -1)
 		return -1;
 
