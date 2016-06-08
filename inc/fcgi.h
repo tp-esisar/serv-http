@@ -11,25 +11,25 @@ typedef struct {
     unsigned char nameLength;
     unsigned char valueLength;
     unsigned char nameAndValue[];
-} FCGI_NameValuePair11;
+} __attribute__((packed,aligned(1))) FCGI_NameValuePair11;
 
 typedef struct {
     unsigned char nameLength;
     unsigned long int valueLength;
     unsigned char nameAndValue[];
-} FCGI_NameValuePair14;
+} __attribute__((packed,aligned(1))) FCGI_NameValuePair14;
 
 typedef struct {
     unsigned long int nameLength;
     unsigned char valueLength;
     unsigned char nameAndValue[];
-} FCGI_NameValuePair41;
+} __attribute__((packed,aligned(1))) FCGI_NameValuePair41;
 
 typedef struct {
     unsigned long int nameLength;
     unsigned long int valueLength;
     unsigned char nameAndValue[];
-} FCGI_NameValuePair44;
+} __attribute__((packed,aligned(1))) FCGI_NameValuePair44;
 
 
 /*
@@ -44,14 +44,14 @@ typedef struct {
     unsigned short contentLength;
     unsigned char paddingLength;
     unsigned char reserved;
-} FCGI_Header;
+} __attribute__((packed,aligned(1))) FCGI_Header;
 
 FCGI_Header make_FCGI_Header(unsigned char type, unsigned short requestId, unsigned short contentLength, unsigned char paddingLength);
 
 typedef struct {
     FCGI_Header header;
     unsigned char dataAndPad[];
-} FCGI_Record_generic;
+} __attribute__((packed,aligned(1))) FCGI_Record_generic;
 
 
 /*
@@ -90,12 +90,12 @@ typedef struct {
     unsigned short role;
     unsigned char flags;
     unsigned char reserved[5];
-} FCGI_BeginRequestBody;
+} __attribute__((packed,aligned(1))) FCGI_BeginRequestBody;
 
 typedef struct {
     FCGI_Header header;
     FCGI_BeginRequestBody body;
-} FCGI_BeginRequestRecord;
+} __attribute__((packed,aligned(1))) FCGI_BeginRequestRecord;
 FCGI_BeginRequestRecord* make_FCGI_BeginRequestRecord(unsigned short requestId,unsigned short role, unsigned char flags);
 /*
  * Mask for flags component of FCGI_BeginRequestBody
@@ -113,12 +113,12 @@ typedef struct {
     unsigned long int appStatus;
     unsigned char protocolStatus;
     unsigned char reserved[3];
-} FCGI_EndRequestBody;
+} __attribute__((packed,aligned(1))) FCGI_EndRequestBody;
 
 typedef struct {
     FCGI_Header header;
     FCGI_EndRequestBody body;
-} FCGI_EndRequestRecord;
+} __attribute__((packed,aligned(1))) FCGI_EndRequestRecord;
 FCGI_EndRequestRecord* make_FCGI_EndRequestRecord(unsigned short requestId,unsigned long int appStatus, unsigned char protocolStatus);
 /*
  * Values for protocolStatus component of FCGI_EndRequestBody
@@ -138,12 +138,12 @@ FCGI_EndRequestRecord* make_FCGI_EndRequestRecord(unsigned short requestId,unsig
 typedef struct {
     unsigned char type;    
     unsigned char reserved[7];
-} FCGI_UnknownTypeBody;
+} __attribute__((packed,aligned(1))) FCGI_UnknownTypeBody;
 
 typedef struct {
     FCGI_Header header;
     FCGI_UnknownTypeBody body;
-} FCGI_UnknownTypeRecord;
+} __attribute__((packed,aligned(1))) FCGI_UnknownTypeRecord;
 
 FCGI_UnknownTypeRecord* make_FCGI_UnknownTypeRecord(unsigned char type);
 
@@ -151,7 +151,7 @@ typedef struct {
     char variente;
     unsigned long long totalLen;
     char data[];
-} FCGI_ParamWrapper;
+} __attribute__((packed,aligned(1))) FCGI_ParamWrapper;
 
 
 
