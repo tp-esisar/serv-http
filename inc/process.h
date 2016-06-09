@@ -24,7 +24,7 @@ typedef struct {
     StringL port;
 } URI_Info;
 
-int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* config, cJSON* config_php);
+int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* config, cJSON* config_php_const);
 StringL normalisation (StringL url);
 URI_Info extractInfoFromURI(StringL uri);
 char* get_final_file_path(URI_Info info, cJSON* jsonDB, StringL headerHost);

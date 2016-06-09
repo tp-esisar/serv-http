@@ -9,6 +9,14 @@
 
 #define free_decl(T) void free_ ## T(T* obj);
 
+typedef struct Content_Type_HS {
+    StringL Content_Type;
+    struct Content_Type_HS* next;
+} Content_Type_HS;
+free_decl(Content_Type_HS)
+Content_Type_HS* get_Content_Type(mapStruct* map);
+
+
 typedef struct Host_HS {
     StringL Host;
     struct Host_HS* next;

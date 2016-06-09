@@ -34,6 +34,30 @@ Host_HS* get_Host(mapStruct* map) {
 }
 
 
+free_builder(Content_Type_HS)
+Content_Type_HS* get_Content_Type(mapStruct* map) {
+    
+    Content_Type_HS* headerList = NULL;
+    int error = 0;
+    void callback(char* buff, unsigned int len) {
+        Content_Type_HS* temp = malloc(sizeof(Content_Type_HS));
+        if (temp == NULL) {
+            error = 1;
+            return;
+        }
+        temp->Content_Type = (StringL){buff,len};
+        temp->next = headerList;
+        headerList = temp;
+    }
+    search_map (map, "Content-Type", callback);
+    if (error != 0) {
+        free_Content_Type_HS(headerList);
+        return NULL;
+    }
+    return headerList;
+}
+
+
 free_builder(Content_Length_HS)
 Content_Length_HS* get_Content_Length(mapStruct* map) {
     

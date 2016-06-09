@@ -5,7 +5,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 {
 	int retour;	
 	char* file;
-	cJSON* config_php cJSON_Duplicate(config_php_const,1);
+	cJSON* config_php = cJSON_Duplicate(config_php_const,1);
 	if (state == PARSE_FAIL)
 	{
 		error(reponse, "400", "400 : Erreur de syntaxe");

@@ -104,7 +104,6 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	unsigned long int size=0;
 	char ext[6];
 	
-	
 	if (chemin == NULL){
 		error(reponse, "400", "400 : Host ou Target errone");
 		return;
@@ -269,8 +268,8 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 		return -1;
 
 	int i;
+	int j=0;
 	for(i=0; i<stream.len-4; i++) {
-		int j=0;
 		if (stream.s[i]=='\r' && stream.s[i+1]=='\n' && stream.s[i+2]=='\r' && stream.s[i+3]=='\n') {
 			stream.s[i] = '\0';
 			addHeaderfield(reponse, &(stream.s[j]));
@@ -279,12 +278,13 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 			break;
 		}
 		else if (stream.s[i]=='\r' && stream.s[i+1]=='\n') {
-			if (j==0 && (strncmp(stream.s, "status", 6)==0) ){
+			if (j==0 && (strncmp(stream.s, "Status", 6)==0) ){
 				char num[3];
-				char* detail = malloc(sizeof(char)*i);
+				char* detail = malloc(sizeof(char)*(i-11));
 				memcpy(num, &(stream.s[8]), 3);
 				memcpy(detail, &(stream.s[12]), i-12);
-				error(reponse, num, detail);
+				detail[i-12] = '\0';
+				reponse->startline=startline (num, detail);
 				free(detail);
 			}
 
