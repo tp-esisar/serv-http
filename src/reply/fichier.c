@@ -243,6 +243,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 
 	
 	AppResult result = FCGI_Request(stdinbuf, param);
+	printf("===> Envoi requete au serveur PHP \n");
 	StringL stream = result.stdout;
 	
 	if (result.status == -1)
