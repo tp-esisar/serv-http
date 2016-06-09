@@ -40,13 +40,16 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 			else if(Content_length->next != NULL || map->message_body.len != Content_length->Content_Length) 
 				error(reponse, "400", "400 : Erreur de Content_length");
 			else {
-				error(reponse, "201", "201 : Accepted");
+				char header_size[30];
+				reponse->startline=startline ("201", "Accepted");
 				URI_Info uri_info = extractInfoFromURI(map->request_target);
 				file = get_final_file_path(uri_info, config, Host->Host);				
 				if(php_request (reponse, file, map, config_php, map->message_body, uri_info)==-1){
 					error(reponse, "500", "500 : Erreur PHP");
-				free(file);	
-		}	
+					free(file);	
+				}
+				snprintf (header_size, 30, "Content-Length: %d", reponse->messagebody.len);
+				addHeaderfield(reponse, header_size);	
 			}
 		}
 		else	

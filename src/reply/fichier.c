@@ -235,13 +235,17 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	}
 	else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 		updateJsonObject(param, "REQUEST_METHOD","POST");
-		Content_Length_HS contentLength = get_Content_Length(map);
+		Content_Length_HS* contentLength = get_Content_Length(map);
 		if(contentLength == NULL) {
 			fprintf(stderr,"erreur post, contentLength manquant");
 			return -1;
 		}
-		updateJsonObject(param, "CONTENT_LENGTH",contentLength->Content_Length);
-		Content_Type_HS contentType = get_Content_Type(map);
+		char length[50];
+		sprintf(length,"%ld",contentLength->Content_Length);
+		updateJsonObject(param, "CONTENT_LENGTH", length);
+
+		
+		Content_Type_HS* contentType = get_Content_Type(map);
 		if(contentType == NULL) {
 			fprintf(stderr,"erreur post, contentType manquant");
 			return -1;
@@ -250,7 +254,9 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 			fprintf(stderr,"erreur post, plus d'1 contentType");
 			return -1;
 		}
-		updateJsonObject(param, "CONTENT_TYPE",contentType->Content_Type);
+		char* type = toRegularString(contentType->Content_Type);
+		updateJsonObject(param, "CONTENT_TYPE",type);
+		free(type);
 		
 	
 	}
@@ -266,7 +272,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 		return -1;
 	
 	printf("%.*s", result.stderr.len, result.stderr.s);
-	printf("%.*s", result.stdout.len, result.stdout.s);
+	//printf("%.*s", result.stdout.len, result.stdout.s);
 
 	if (stream.len == 0)
 		return -1;

@@ -1,0 +1,11 @@
+<html>
+	<head>
+		<title>maggle</title>
+	</head>
+	<body>
+		<p>youhou</p>
+			<?php 
+				var_dump($_POST);
+			?>
+	</body>
+</html>
