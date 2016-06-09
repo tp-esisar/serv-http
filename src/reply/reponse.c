@@ -73,8 +73,7 @@ message* SreponseToMessage (Sreponse* Sreponse)
 		perror ("Erreur d'allocation mémoire");
 		exit(1);
 	}
-	//size_t youhou = (strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+Sreponse->messagebody.len+2);
-	//reponse->buf = malloc(sizeof(char)*24800);
+
 	reponse->buf = malloc(sizeof(char)*(strlen(Sreponse->startline)+strlen(Sreponse->headerfield)+Sreponse->messagebody.len+2));
 	if (reponse->buf == NULL)
 	{
