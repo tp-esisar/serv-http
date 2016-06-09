@@ -103,7 +103,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	int i=0, j=0;
 	unsigned long int size=0;
 	char ext[6];
-
+	
 	if (chemin == NULL){
 		error(reponse, "400", "400 : Host ou Target errone");
 		return;
@@ -133,7 +133,8 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		if(php_request (reponse, chemin, map, config_php, (StringL){"", 0}, uri_info )==-1){
 			error(reponse, "500", "500 : Erreur PHP");
 			return;	
-		}	
+		}
+		snprintf (header_size, 30, "Content-Length: %d", reponse->messagebody.len);
 	}
 	else {
 		fseek (file , 0 , SEEK_END);
@@ -151,29 +152,30 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 			error(reponse, "500", "500 : Erreur interne");
 			return;
 		}
-	}
+		snprintf (header_size, 30, "Content-Length: %ld", size);
 
+		if (strcmp(ext, "js") == 0)
+			addHeaderfield(reponse, "Content-Type: application/javascript");
+		else if (strcmp(ext, "pdf") == 0)
+			addHeaderfield(reponse, "Content-Type: application/pdf");
+		else if (strcmp(ext, "gif") == 0)
+			addHeaderfield(reponse, "Content-Type: image/gif");
+		else if (strcmp(ext, "jpg") == 0)
+			addHeaderfield(reponse, "Content-Type: image/jpeg");
+		else if (strcmp(ext, "png") == 0)
+			addHeaderfield(reponse, "Content-Type: image/png");
+		else if (strcmp(ext, "css") == 0)
+			addHeaderfield(reponse, "Content-Type: text/css");
+		else if (strcmp(ext, "html") == 0 || strcmp(ext, "php") == 0)
+			addHeaderfield(reponse, "Content-Type: text/html");
+		else 
+			addHeaderfield(reponse, "Content-Type: application/octet-stream");
+	}
+	
 	fclose (file);
 	
-	snprintf (header_size, 30, "Content-Length: %ld", size);
 	addHeaderfield(reponse, header_size);
-	
-	if (strcmp(ext, "js") == 0)
-		addHeaderfield(reponse, "Content-Type: application/javascript");
-	else if (strcmp(ext, "pdf") == 0)
-		addHeaderfield(reponse, "Content-Type: application/pdf");
-	else if (strcmp(ext, "gif") == 0)
-		addHeaderfield(reponse, "Content-Type: image/gif");
-	else if (strcmp(ext, "jpg") == 0)
-		addHeaderfield(reponse, "Content-Type: image/jpeg");
-	else if (strcmp(ext, "png") == 0)
-		addHeaderfield(reponse, "Content-Type: image/png");
-	else if (strcmp(ext, "css") == 0)
-		addHeaderfield(reponse, "Content-Type: text/css");
-	else if (strcmp(ext, "html") == 0 || strcmp(ext, "php") == 0)
-		addHeaderfield(reponse, "Content-Type: text/html");
-	else 
-		addHeaderfield(reponse, "Content-Type: application/octet-stream");	
+		
 }
 
 
@@ -240,6 +242,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 
 	
 	AppResult result = FCGI_Request(stdinbuf, param);
+	printf("===> Envoi requete au serveur PHP \n");
 	StringL stream = result.stdout;
 	
 	if (result.status == -1)
@@ -252,8 +255,8 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 		return -1;
 
 	int i;
+	int j=0;
 	for(i=0; i<stream.len-4; i++) {
-		int j=0;
 		if (stream.s[i]=='\r' && stream.s[i+1]=='\n' && stream.s[i+2]=='\r' && stream.s[i+3]=='\n') {
 			stream.s[i] = '\0';
 			addHeaderfield(reponse, &(stream.s[j]));
@@ -262,12 +265,13 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 			break;
 		}
 		else if (stream.s[i]=='\r' && stream.s[i+1]=='\n') {
-			if (j==0 && (strncmp(stream.s, "status", 6)==0) ){
+			if (j==0 && (strncmp(stream.s, "Status", 6)==0) ){
 				char num[3];
-				char* detail = malloc(sizeof(char)*i);
+				char* detail = malloc(sizeof(char)*(i-11));
 				memcpy(num, &(stream.s[8]), 3);
 				memcpy(detail, &(stream.s[12]), i-12);
-				error(reponse, num, detail);
+				detail[i-12] = '\0';
+				reponse->startline=startline (num, detail);
 				free(detail);
 			}
 
@@ -280,7 +284,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	reponse->messagebody.s = malloc ((stream.len-i)*sizeof(char));
 	reponse->messagebody.len = stream.len-i;
 	memcpy(reponse->messagebody.s, &(stream.s[i]), reponse->messagebody.len);
-
+	
 	free(stream.s); 
 	return 0;
 }

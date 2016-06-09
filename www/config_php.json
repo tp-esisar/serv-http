@@ -4,7 +4,7 @@
 	"param":{
         "SERVER_PROTOCOL":"HTTP/1.1",
         "REQUEST_SCHEME":"HTTP",
-        "DOCUMENT_ROOT":"/var/www/fcgi/groupe12"
+        "DOCUMENT_ROOT":"/home/userir/Desktop/serv-http/www"
     }
     
 }

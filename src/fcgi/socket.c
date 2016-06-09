@@ -35,7 +35,6 @@ int put_fcgi (int sock, FCGI_Record_generic* message) {
 		close(sock);
 		return -1;
 	}
-	printf("===> Envoi requete au serveur PHP \n");
 
 	return 0;
 }

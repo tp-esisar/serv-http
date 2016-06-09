@@ -158,7 +158,7 @@ typedef struct {
     StringL stdout;
     StringL stderr;
     int status;
-} AppResult;
+} __attribute__((packed,aligned(1))) AppResult;
 
 
 int sendStreamChunk(int sock, unsigned char type, unsigned short requestId, StringL buffer);

@@ -150,7 +150,7 @@ int sendEndStream(int sock,unsigned char type, unsigned short requestId) {
 }
 
 int addRecordStreamToStringL(StringL* buff, FCGI_Record_generic* record) {
-    unsigned short longueur = record->header.contentLength + buff->len;
+    unsigned int longueur = record->header.contentLength + buff->len;
     buff->s = realloc(buff->s,longueur);
     if(buff->s == NULL) {
         fprintf(stderr,"erreur realloc fcgi");
