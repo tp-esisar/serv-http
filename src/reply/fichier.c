@@ -236,6 +236,19 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	}
 	else if (stringLEq (map->methode, (StringL){"POST", 4}) == 1) {
 		updateJsonObject(param, "REQUEST_METHOD","POST");
+		Content_Length_HS contentLength = get_Content_Length(map);
+		if(contentLength == NULL) {
+			fprintf(stderr,"erreur post, contentLength manquant");
+			return -1;
+		}
+		updateJsonObject(param, "CONTENT_LENGTH",contentLength->Content_Length);
+		Content_Type_HS contentType = get_Content_Type(map);
+		if(contentType == NULL) {
+			fprintf(stderr,"erreur post, contentType manquant");
+			return -1;
+		}
+		updateJsonObject(param, "CONTENT_TYPE",contentType->Content_Type);
+		
 	
 	}
 	

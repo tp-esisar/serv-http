@@ -37,13 +37,13 @@ int main(int argc, char *argv[])
 	fclose(file_config);
 	free(conf);
 	if(config == NULL) {
-		perror("Impossible de charger le fichier de configuration");
+		perror("Impossible de charger le fichier de configuration\n");
 		exit(-1);
 	}
 
 	FILE* file_config_php = fopen("../www/config_php.json", "r");
 	if(file_config_php == NULL) {
-		perror("Impossible de charger le fichier de configuration php");
+		perror("Impossible de charger le fichier de configuration php\n");
 		exit(-1);
 	}
 	char* conf_php = loadFile(file_config);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	fclose(file_config_php);
 	free(conf_php);
 	if(config_php == NULL) {
-		perror("Impossible de charger le fichier de configuration php");
+		perror("Impossible de charger le fichier de configuration php\n");
 		exit(-1);
 	}
 
