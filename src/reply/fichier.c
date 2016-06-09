@@ -96,14 +96,15 @@ int droit_acces (char *chemin, Authorization_HS* Authorization) {
 	return -1;
 }
 
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php, URI_Info uri_info)
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php_const, URI_Info uri_info)
 {
 	FILE* file = NULL;
 	char header_size[30];
 	int i=0, j=0;
 	unsigned long int size=0;
 	char ext[6];
-
+	cJSON* config_php cJSON_Duplicate(config_php_const,1);
+	
 	if (chemin == NULL){
 		error(reponse, "400", "400 : Host ou Target errone");
 		return;
@@ -171,7 +172,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		else 
 			addHeaderfield(reponse, "Content-Type: application/octet-stream");
 	}
-
+	cJSON_Delete(config_php);
 	fclose (file);
 	
 	addHeaderfield(reponse, header_size);
