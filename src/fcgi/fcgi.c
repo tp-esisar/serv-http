@@ -156,7 +156,6 @@ int addRecordStreamToStringL(StringL* buff, FCGI_Record_generic* record) {
         fprintf(stderr,"erreur realloc fcgi");
         return -1;
     }
-	printf("%p ---> %p (l:%d)\n", &(record->dataAndPad), &(buff->s[buff->len]), record->header.contentLength);
     memcpy(&(buff->s[buff->len]), &(record->dataAndPad), record->header.contentLength);
     
     buff->len = longueur;

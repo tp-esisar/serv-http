@@ -103,7 +103,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 	int i=0, j=0;
 	unsigned long int size=0;
 	char ext[6];
-	cJSON* config_php cJSON_Duplicate(config_php_const,1);
+	cJSON* config_php = cJSON_Duplicate(config_php_const,1);
 	
 	if (chemin == NULL){
 		error(reponse, "400", "400 : Host ou Target errone");
