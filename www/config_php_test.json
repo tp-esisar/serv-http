@@ -1,8 +1,6 @@
 {
-"SERVER_PROTOCOL":"HTTP/1.1",
-"REQUEST_SCHEME":"HTTP",
-"DOCUMENT_ROOT":"/var/www/fcgi/groupe12",
 "SCRIPT_FILENAME":"/var/www/fcgi/groupe12/site1/test.php",
-"REQUEST_METHOD":"GET",
-"QUERY_STRING":""
+"REQUEST_METHOD":"POST",
+"CONTENT_TYPE":"application/x-www-form-urlencoded",
+"CONTENT_LENGTH":"11"
 }

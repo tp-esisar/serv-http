@@ -23,4 +23,5 @@
 "SCRIPT_NAME":"",
 "DOCUMENT_ROOT":"/var/www/fcgi/groupe12",
 "REQUEST_URI":"",
+"CONTENT_TYPE":"application/x-www-form-urlencoded"
 }
