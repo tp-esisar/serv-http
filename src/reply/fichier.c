@@ -134,7 +134,8 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		if(php_request (reponse, chemin, map, config_php, (StringL){"", 0}, uri_info )==-1){
 			error(reponse, "500", "500 : Erreur PHP");
 			return;	
-		}	
+		}
+		snprintf (header_size, 30, "Content-Length: %d", reponse->messagebody.len);
 	}
 	else {
 		fseek (file , 0 , SEEK_END);
@@ -152,29 +153,30 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 			error(reponse, "500", "500 : Erreur interne");
 			return;
 		}
+		snprintf (header_size, 30, "Content-Length: %ld", size);
+
+		if (strcmp(ext, "js") == 0)
+			addHeaderfield(reponse, "Content-Type: application/javascript");
+		else if (strcmp(ext, "pdf") == 0)
+			addHeaderfield(reponse, "Content-Type: application/pdf");
+		else if (strcmp(ext, "gif") == 0)
+			addHeaderfield(reponse, "Content-Type: image/gif");
+		else if (strcmp(ext, "jpg") == 0)
+			addHeaderfield(reponse, "Content-Type: image/jpeg");
+		else if (strcmp(ext, "png") == 0)
+			addHeaderfield(reponse, "Content-Type: image/png");
+		else if (strcmp(ext, "css") == 0)
+			addHeaderfield(reponse, "Content-Type: text/css");
+		else if (strcmp(ext, "html") == 0 || strcmp(ext, "php") == 0)
+			addHeaderfield(reponse, "Content-Type: text/html");
+		else 
+			addHeaderfield(reponse, "Content-Type: application/octet-stream");
 	}
 	cJSON_Delete(config_php);
 	fclose (file);
 	
-	snprintf (header_size, 30, "Content-Length: %ld", size);
 	addHeaderfield(reponse, header_size);
-	
-	if (strcmp(ext, "js") == 0)
-		addHeaderfield(reponse, "Content-Type: application/javascript");
-	else if (strcmp(ext, "pdf") == 0)
-		addHeaderfield(reponse, "Content-Type: application/pdf");
-	else if (strcmp(ext, "gif") == 0)
-		addHeaderfield(reponse, "Content-Type: image/gif");
-	else if (strcmp(ext, "jpg") == 0)
-		addHeaderfield(reponse, "Content-Type: image/jpeg");
-	else if (strcmp(ext, "png") == 0)
-		addHeaderfield(reponse, "Content-Type: image/png");
-	else if (strcmp(ext, "css") == 0)
-		addHeaderfield(reponse, "Content-Type: text/css");
-	else if (strcmp(ext, "html") == 0 || strcmp(ext, "php") == 0)
-		addHeaderfield(reponse, "Content-Type: text/html");
-	else 
-		addHeaderfield(reponse, "Content-Type: application/octet-stream");	
+		
 }
 
 
