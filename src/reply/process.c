@@ -1,11 +1,11 @@
 #include "process.h"
 #include "fichier.h"
 
-int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* config, cJSON* config_php) 
+int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* config, cJSON* config_php_const) 
 {
 	int retour;	
 	char* file;
-
+	cJSON* config_php = cJSON_Duplicate(config_php_const,1);
 	if (state == PARSE_FAIL)
 	{
 		error(reponse, "400", "400 : Erreur de syntaxe");
@@ -51,6 +51,7 @@ int processing(parse_state state, mapStruct* map, Sreponse* reponse, cJSON* conf
 		}
 		else	
 			error(reponse, "501", "501 : Methode non supportee");
+		cJSON_Delete(config_php);
 	}
 
 	

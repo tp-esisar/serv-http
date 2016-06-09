@@ -96,14 +96,13 @@ int droit_acces (char *chemin, Authorization_HS* Authorization) {
 	return -1;
 }
 
-void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php_const, URI_Info uri_info)
+void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorization, mapStruct* map, cJSON* config_php, URI_Info uri_info)
 {
 	FILE* file = NULL;
 	char header_size[30];
 	int i=0, j=0;
 	unsigned long int size=0;
 	char ext[6];
-	cJSON* config_php = cJSON_Duplicate(config_php_const,1);
 	
 	if (chemin == NULL){
 		error(reponse, "400", "400 : Host ou Target errone");
@@ -172,7 +171,7 @@ void accessFile (Sreponse* reponse, char *chemin, Authorization_HS* Authorizatio
 		else 
 			addHeaderfield(reponse, "Content-Type: application/octet-stream");
 	}
-	cJSON_Delete(config_php);
+	
 	fclose (file);
 	
 	addHeaderfield(reponse, header_size);
@@ -268,10 +267,11 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 		else if (stream.s[i]=='\r' && stream.s[i+1]=='\n') {
 			if (j==0 && (strncmp(stream.s, "Status", 6)==0) ){
 				char num[3];
-				char* detail = malloc(sizeof(char)*(i-12));
+				char* detail = malloc(sizeof(char)*(i-11));
 				memcpy(num, &(stream.s[8]), 3);
 				memcpy(detail, &(stream.s[12]), i-12);
-				error(reponse, num, detail);
+				detail[i-12] = '\0';
+				reponse->startline=startline (num, detail);
 				free(detail);
 			}
 
@@ -284,7 +284,7 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	reponse->messagebody.s = malloc ((stream.len-i)*sizeof(char));
 	reponse->messagebody.len = stream.len-i;
 	memcpy(reponse->messagebody.s, &(stream.s[i]), reponse->messagebody.len);
-
+	
 	free(stream.s); 
 	return 0;
 }
