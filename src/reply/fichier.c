@@ -246,6 +246,10 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 			fprintf(stderr,"erreur post, contentType manquant");
 			return -1;
 		}
+		if(contentType->next != NULL) {
+			fprintf(stderr,"erreur post, plus d'1 contentType");
+			return -1;
+		}
 		updateJsonObject(param, "CONTENT_TYPE",contentType->Content_Type);
 		
 	
