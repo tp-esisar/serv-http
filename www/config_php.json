@@ -1,12 +1,12 @@
 {
 	"localRoot":"../www",
 	"ip":"127.0.0.1",
-	"port":"9000",
+	"port":9000,
 
 	"param":{
         "SERVER_PROTOCOL":"HTTP/1.1",
         "REQUEST_SCHEME":"HTTP",
-        "DOCUMENT_ROOT":"/home/henri/Downloads/serv-http-fcgi/www"
+        "DOCUMENT_ROOT":"/home/userir/serv-http/www"
     }
     
 }
