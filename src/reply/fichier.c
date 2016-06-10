@@ -262,9 +262,18 @@ int php_request (Sreponse* reponse, char *chemin, mapStruct* map, cJSON* config_
 	}
 	
 
-
+	if(!cJSON_HasObjectItem(config_php,"ip")) {
+		fprintf(stderr,"erreur ip manquant dans json");
+		return -1;
+	}
+	char* ip = cJSON_GetObjectItem(config_php,"ip")->valuestring;
+	if(!cJSON_HasObjectItem(config_php,"port")) {
+		fprintf(stderr,"erreur port manquant dans json");
+		return -1;
+	}
+	int port = cJSON_GetObjectItem(config_php,"port")->valueint;
 	
-	AppResult result = FCGI_Request(stdinbuf, param);
+	AppResult result = FCGI_Request(stdinbuf, param,ip,port);
 	printf("===> Envoi requete au serveur PHP \n");
 	StringL stream = result.stdout;
 	

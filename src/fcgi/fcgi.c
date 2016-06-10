@@ -192,7 +192,7 @@ AppResult retriveResultFromApp(int sock, unsigned short requestId) {
     
 }
 
-AppResult FCGI_Request(StringL stdinbuff, cJSON* param) {
+AppResult FCGI_Request(StringL stdinbuff, cJSON* param, char* ip, int port) {
     AppResult ret;
     ret.status = -1;
     if(param->type != cJSON_Object) {
@@ -206,7 +206,7 @@ AppResult FCGI_Request(StringL stdinbuff, cJSON* param) {
 	begin->body.flags = htons(0);
 	
 	
-    int sock = creat_fcgi("127.0.0.1",9000);
+    int sock = creat_fcgi(ip,port);
     //envoi du begin
     put_fcgi(sock, (FCGI_Record_generic*)begin);
     //envoi des param
