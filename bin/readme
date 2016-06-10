@@ -1,14 +1,9 @@
+------ Compilation ------
 Afin de compiler le serveur, il suffit de se mettre dans le dossier "../src" et de taper la commande "make"
 
-Ne pas oublier de taper la commande pour lier la librarie :
-export "LD_LIBRARY_PATH=../lib"
-
-Commande pour lancer le serveur :
-./mainTest.e port [d]
-L'option [d] debug permet d'afficher les requetes recu et la reponse envoyée.
-
-Le dossier contenant le site est ../www/
-Un fichier "config.json" permet de définir la configuration des site (au format json)
+----- Configuration -----
+Le dossier contenant les sites est ../www/
+Un fichier "config.json" permet de définir la configuration des sites (au format json)
 Actuellement la configuration est la suivante :
 - 127.0.0.1:8080 = site1
 - localhost:8080 = site2
@@ -17,7 +12,20 @@ Actuellement la configuration est la suivante :
 
 Nous avons implémenté la fonctionnalité optionnelle d'authentification.
 Elle est actuellement en place pour l'url : 127.0.0.1:8080/images
-Pour la mettre en place dans un autre dossier, 
-il suffit de rajouter un fichier ".lock" dans le dossier avec la syntaxe suivante :
+Pour la mettre en place dans un autre dossier, il suffit de rajouter un fichier ".lock" dans le dossier avec la syntaxe suivante :
 user:password (suivi d'un saut de ligne)
+
+Pour la configuration PHP, on utilise le fichier config_json.php :
+- Pour l'objet "LocalRoot", on met le chemin relatif du dossier des sites
+- Dans l'ensemble suivant, on défini les paramètres par défaut qui sont nécéssaire à l'envoi de la requête FCGI
+Attention à DOCUMENT_ROOT : Il faut donner le chemin d'accès ABSOLU au dossier contenant les sites. 
+
+----- Exécution -----
+Ne pas oublier de taper la commande pour lier la librarie :
+export "LD_LIBRARY_PATH=../lib"
+
+Commande pour lancer le serveur :
+./mainTest.e port [d]
+L'option [d] debug permet d'afficher les requetes reçu et la reponse envoyée.
+
 
