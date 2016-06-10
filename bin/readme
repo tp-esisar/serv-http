@@ -17,8 +17,12 @@ user:password (suivi d'un saut de ligne)
 
 Pour la configuration PHP, on utilise le fichier config_json.php :
 - Pour l'objet "LocalRoot", on met le chemin relatif du dossier des sites
+- L'Ip et le port du serveur PHP5-fpm sont défini par les objets "ip" et "port"
 - Dans l'ensemble suivant, on défini les paramètres par défaut qui sont nécéssaire à l'envoi de la requête FCGI
 Attention à DOCUMENT_ROOT : Il faut donner le chemin d'accès ABSOLU au dossier contenant les sites. 
+
+Pour que l'upload de php fonctionne, dans le site 1, il faut créer un dossier "upload" avec les droits 
+pour le propriétaire "www-data" et les droits de lecture pour l'utilisateur courant.
 
 ----- Exécution -----
 Ne pas oublier de taper la commande pour lier la librarie :
