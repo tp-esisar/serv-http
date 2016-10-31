@@ -11,6 +11,11 @@
 
 int main(int argc, char *argv[])
 {
+	char name[64];
+	printf("%p\n", name);  // Print address of buffer.
+	puts("What's your name?");
+	gets(name);
+	printf("Hello, %s!\n", name);
 	message *requete = NULL; 
 	message *reponse = NULL;
 	Sreponse *Sreponse = NULL;
